@@ -8,7 +8,7 @@ function AppRouter() {
       <Route path="/" element={<h1>Home</h1>} />
       <Route path="/about" element={<h1>About</h1>} />
       <Route path="/auth" element={<Auth />} />
-      <Route path="/directory" element={<Directory />} />
+      <Route path="/directorio" element={<Directory />} />
     </Routes>
   )
 }
