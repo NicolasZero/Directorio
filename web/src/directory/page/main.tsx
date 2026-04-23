@@ -1,10 +1,13 @@
-import Hola from '../components/hola.tsx'
+import Clickme from '../components/hola.tsx'
+import {DirectoryLayout} from '../layaout.tsx'
 
 function Directory() {
 	return (
 		<>
-			<h1>Directory</h1>
-			<Hola />
+			<DirectoryLayout>
+				<h1>Directory</h1>
+				<Clickme />
+			</DirectoryLayout>
 		</>
 	)
 }
