@@ -1,9 +1,9 @@
-function Hola() {
+function Clickme() {
   return (
     <>
-      <h1 className="text-red-800">Hola Mundo</h1>
+      <button className='bg-red-800 px-3 py-1 rounded text-white'>Click Me</button>
     </>
   )
 }
 
-export default Hola
+export default Clickme
