@@ -1,7 +1,9 @@
 function DirectoryLayout () {
-    return {
-        
-    }
+    return (
+        <>
+            <header></header>
+        </>
+    )
 }
 
 export default DirectoryLayout
