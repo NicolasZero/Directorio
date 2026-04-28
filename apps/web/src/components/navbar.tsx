@@ -1,41 +1,41 @@
 import { NavLink } from "react-router";
+import { ModeToggle } from "./mode-toggle";
 
 const Navbar = () => {
     return (
-        <nav className="bg-linear-to-r from-primary to-secondary text-white p-2">
-            {/* <div className="container mx-auto"> */}
-                <ul className="flex flex-wrap gap-4">
-                    <li>
-                        <NavLink to="/" className="hover:underline">
-                            Inicio
-                        </NavLink>
-                    </li>
-                    <li>
-                        <NavLink to="/directorio" className="hover:underline">
-                            Directorio
-                        </NavLink>
-                    </li>
-                    <li>
-                        <NavLink to="/about" className="hover:underline">
-                            Mapa
-                        </NavLink>
-                    </li>
-                    <li>
-                        <NavLink to="/clases" className="hover:underline">
-                            Aprendisaje
-                        </NavLink>
-                    </li>
-                    
-                    <li>
-                        <NavLink to="/about" className="hover:underline">
-                            Conocenos
-                        </NavLink>
-                    </li>
-                    <span className="">
-                        [Cambiar tema]
-                    </span>
-                </ul>
-            {/* </div> */}
+        <nav className="bg-linear-to-r from-inm-primary to-inm-secondary text-white px-2 py-1">
+            <ul className="flex flex-wrap px-3">
+                <li className="hover:bg-black/50 transition-colors duration-200 px-3 py-2">
+                    <NavLink to="/">
+                        Inicio
+                    </NavLink>
+                </li>
+                <li className="hover:bg-black/50 transition-colors duration-200 px-3 py-2">
+                    <NavLink to="/directorio">
+                        Directorio
+                    </NavLink>
+                </li>
+                <li className="hover:bg-black/50 transition-colors duration-200 px-3 py-2">
+                    <NavLink to="/mapa">
+                        Mapa
+                    </NavLink>
+                </li>
+                <li className="hover:bg-black/50 transition-colors duration-200 px-3 py-2">
+                    <NavLink to="/clases">
+                        Aprendizaje
+                    </NavLink>
+                </li>
+                <li className="hover:bg-black/50 transition-colors duration-200 px-3 py-2">
+                    <NavLink to="/conocenos">
+                        Conócenos
+                    </NavLink>
+                </li>
+
+                <li className="ml-auto my-auto">
+                    <ModeToggle />
+                </li>
+
+            </ul>
         </nav>
     )
 }
