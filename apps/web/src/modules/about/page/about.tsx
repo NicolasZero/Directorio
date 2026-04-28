@@ -1,0 +1,12 @@
+const About = () => {
+    return (
+        <>
+            <h1>INSTITUTO NACIONAL DE LA MUJER</h1>
+            <p>
+                El Instituto Nacional de la Mujer (Inamujer) fue creado el 25 de octubre de 1999, por disposición de la Ley de Igualdad de Oportunidades para la Mujer, para la defensa y materialización de los derechos de la población femenina y el incremento de su participación en las misiones, planes y programas sociales del Estado, como parte de un nuevo estado de derecho para este sector. Como parte de estas políticas públicas se destacan, entre otros, la creación de una infraestructura institucional de servicio para la atención, prevención y erradicación de la violencia contra las damas, en concordancia con la Ley Orgánica sobre el Derecho de las Mujeres a una Vida Libre de Violencia. Luego de la creación del Ministerio del Poder Popular para la Mujer y la Igualdad de Género (MinMujer) en el año 2009, el Inamujer se implantó como órgano del Estado para ejecutar las políticas públicas emanadas para la defensa permanente de los derechos humanos de las mujeres, a fin de propiciar su acceso real y efectivo a todas las esferas de la vida social en igualdad de oportunidades y condiciones que los hombres. Le corresponde al Instituto Nacional de la Mujer la promoción y el fortalecimiento de mecanismos institucionales a escala nacional para la defensa de los derechos humanos de las mujeres. De allí que las acciones del Inamujer han fortalecido sustancialmente la capacidad del Estado venezolano para dar cumplimiento a los objetivos de la Plataforma de Acción aprobada por la Cuarta Conferencia Mundial sobre la Mujer, celebrada en Beijing en 1995 y la Convención sobre la Eliminación de todas las Formas de Discriminación contra la Mujer (CEDAW). Ciertamente, lograr la igualdad entre el hombre y la mujer depende de una profunda transformación en las actitudes y los comportamientos a todos los niveles de la sociedad, comenzando con la base y prosiguiendo hasta las instancias más altas de Gobierno. El Instituto Nacional de la Mujer es el órgano del Estado que ejecuta las políticas públicas emanadas del Ministerio del Poder Popular para la Mujer y la Igualdad de Género (Minmujer), para la defensa permanente de los derechos humanos de las mujeres, a fin de propiciar su acceso real y efectivo a todas las esferas de la vida social en igualdad de oportunidades y condiciones que los hombres.
+            </p>
+        </>
+    )
+}
+
+export default About

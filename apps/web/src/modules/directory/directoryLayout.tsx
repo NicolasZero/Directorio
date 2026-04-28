@@ -17,20 +17,172 @@ interface Props {
     handleSelectMunicipality: (value: string) => void
 }
 
-const states = {
+const states: Record<string, string[]> = {
     Caracas: [
         "Libertador"
     ],
     Miranda: [
         "Cristobal Rojas",
-        "Chacao"
+        "Chacao",
+        "Baruta",
+        "Sucre",
+        "El Hatillo"
+    ],
+    Aragua: [
+        "Girardot",
+        "Mario Briceño Iragorry",
+        "Santiago Mariño",
+        "José Angel Lamas",
+        "San Sebastián"
+    ],
+    Zulia: [
+        "Maracaibo",
+        "San Francisco",
+        "Cabimas",
+        "Lagunillas",
+        "Machiques"
+    ],
+    Lara: [
+        "Iribarren",
+        "Morán",
+        "Jiménez",
+        "Torres",
+        "Carora"
+    ],
+    Bolívar: [
+        "Caroní",
+        "Heres",
+        "Padre Pedro Chien",
+        "Angostura",
+        "El Callao"
+    ],
+    Trujillo: [
+        "Trujillo",
+        "Boconó",
+        "Valera",
+        "Carache",
+        "Escuque"
+    ],
+    Mérida: [
+        "Libertador",
+        "Campo Elias",
+        "Tovar",
+        "Santos Michelena",
+        "Alberto Adriani"
+    ],
+    Táchira: [
+        "San Cristóbal",
+        "Rubio",
+        "Capacho Nuevo",
+        "Ayacucho",
+        "Córdoba"
+    ],
+    Anzoátegui: [
+        "Barcelona",
+        "Puerto La Cruz",
+        "Anaco",
+        "Cantaura",
+        "Soledad"
+    ],
+    Barinas: [
+        "Barinas",
+        "Barinas",
+        "Alberto Arvelo Torrealba",
+        "Antonio José de Sucre",
+        "Cruz Paredes"
+    ],
+    Falcón: [
+        "Coro",
+        "Punto Fijo",
+        "Carirubana",
+        "Silva",
+        "Los Taques"
+    ],
+    Monagas: [
+        "Maturín",
+        "Acosta",
+        "Cedeño",
+        "Esequibo",
+        "Libertador"
+    ],
+    Portuguesa: [
+        "Acarigua",
+        "Guanare",
+        "Araure",
+        "Ospino",
+        "Páez"
+    ],
+    Sucre: [
+        "Cumaná",
+        "Cumanacoa",
+        "Carúpano",
+        "Güiria",
+        "Ribero"
+    ],
+    Yaracuy: [
+        "San Felipe",
+        "Chivacoa",
+        "Aroa",
+        "Nirgua",
+        "Yaritagua"
+    ],
+    Guárico: [
+        "San Juan de los Morros",
+        "Calabozo",
+        "Valle de la Pascua",
+        "Altagracia de Orituco",
+        "Tucupido"
+    ],
+    Cojedes: [
+        "San Carlos",
+        "Tinaquillo",
+        "La Arena",
+        "Guanare",
+        "Paez"
+    ],
+    Apure: [
+        "San Fernando de Apure",
+        "Achaguas",
+        "Biruaca",
+        "Guasdualito",
+        "Elorza"
+    ],
+    Amazonas: [
+        "Puerto Ayacucho",
+        "Atures",
+        "Autana",
+        "Manapiare",
+        "Maroa"
+    ],
+    "Delta Amacuro": [
+        "Tucupita",
+        "Antonio Díaz",
+        "Casacoima",
+        "Pedernales",
+        "Serranal"
+    ],
+    "Nueva Esparta": [
+        "La Asunción",
+        "Margarita",
+        "Gómez",
+        "Maneiro",
+        "Peninsula de Macanao"
+    ],
+    "Dependencias Federales": [
+        "Los Roques",
+        "Los Monjes",
+        "Isla La Tortuga",
+        "Islas Las Aves",
+        "Isla La Sola"
     ]
 }
 
 export const DirectoryLayout: FC<Props> = ({ children, selectedState, handleSelectState, selectedMunicipality, handleSelectMunicipality }) => {
     return (
         <>
-            <h1 className="text-2xl font-bold text-center my-2">Directorio de Inamujer</h1>
+        <div className="container mx-auto p-4">
+            <h1 className="text-center text-4xl font-bold mb-4">Directorio de Inamujer</h1>
+
             <div className="flex flex-wrap justify-center gap-2 my-2">
 
                 <Select value={selectedState} onValueChange={handleSelectState}>
@@ -87,6 +239,7 @@ export const DirectoryLayout: FC<Props> = ({ children, selectedState, handleSele
                 </Select>
             </div>
             {children}
+        </div>
         </>
     )
 }
