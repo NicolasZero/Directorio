@@ -1,23 +1,26 @@
-import {Routes, Route} from 'react-router'
-import Auth from '../auth/page/main.tsx'
-import Directory from '../directory/page/main.tsx'
-import Home from '../home/page/main.tsx'
+import { Routes, Route } from 'react-router'
+// Routes
+import Auth from '../modules/auth/page/login.tsx'
+import Directory from '../modules/directory/page/mainDirectory.tsx'
+import Home from '../modules/home/page/mainHome.tsx'
+import Map from '../modules/map/page/mainMap.tsx'
+// layouts
 import MainLayout from '../layaout.tsx'
 
 function AppRouter() {
   return (
     <Routes>
       {/* Public */}
-      <Route element={<MainLayout />}>
+      <Route path='/' element={<MainLayout />}>
         <Route path="/" element={<Home />} />
-        <Route path="/about" element={<h1>About</h1>} />
+        <Route path="/conocenos" element={<h1>Conócenos</h1>} />
         <Route path="/clases" element={<h1>Clases</h1>} />
-        <Route path="/clases" element={<h1>Mapa</h1>} />
+        <Route path="/mapa" element={<Map />} />
         <Route path="/directorio" element={<Directory />} />
       </Route>
 
       {/* Private */}
-      <Route path="/auth" element={<Auth />} />
+      <Route path="/auth/login" element={<Auth />} />
     </Routes>
   )
 }

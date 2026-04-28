@@ -1,4 +1,4 @@
-import Login from '../components/login.tsx'
+import Login from '../components/loginForm.tsx'
 
 function Auth() {
 	return (
