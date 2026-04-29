@@ -13,7 +13,7 @@ import {
   FileText,
   AlertCircle
 } from 'lucide-react'
-import { Link, useParams } from 'react-router'
+import { Link } from 'react-router'
 
 // Datos de ejemplo (simulando respuesta de base de datos)
 // En producción, esto vendría de una API basada en el ID
@@ -53,7 +53,7 @@ const directorioDetalle = {
 }
 
 function DirectoryDetail() {
-  const { id } = useParams()
+  // const { id } = useParams()
   
   // En producción, aquí harías una llamada a la API
   // const { data, loading } = useDirectoryDetail(id)

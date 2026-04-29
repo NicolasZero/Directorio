@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Clock, User, BarChart, BookOpen, Calendar, CheckCircle2, AlertCircle, GraduationCap } from "lucide-react"
-import { Link, useParams } from "react-router"
+import { Link } from "react-router"
 
 // Curso por defecto (en el futuro vendrá de la base de datos)
 const defaultCourse = {
