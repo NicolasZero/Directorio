@@ -1,20 +1,20 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { 
-  Heart, 
-  Users, 
-  Shield, 
-  Globe, 
+// import { Button } from "@/components/ui/button"
+import {
+  Heart,
+  Users,
+  Shield,
+  Globe,
   Scale,
   Calendar,
-  MapPin,
-  Phone,
-  Mail,
-  ArrowRight,
+  // MapPin,
+  // Phone,
+  // Mail,
+  // ArrowRight,
   Target,
   Lightbulb,
-  HandHeart
+  // HandHeart
 } from "lucide-react"
 
 const About = () => {
@@ -65,7 +65,7 @@ const About = () => {
       <section className="relative py-16 px-4 overflow-hidden">
         <div className="absolute inset-0 bg-linear-to-br from-rose-50 via-white to-rose-50/50" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-rose-100/40 via-transparent to-transparent" />
-        
+
         <div className="container mx-auto relative">
           <div className="text-center max-w-4xl mx-auto">
             <Badge variant="secondary" className="mb-4 bg-rose-100 text-rose-700 hover:bg-rose-200">
@@ -131,7 +131,7 @@ const About = () => {
               Los principios que guían nuestro trabajo diario
             </p>
           </div>
-          
+
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {institucion.valores.map((valor, index) => (
               <Card key={index} className="text-center hover:shadow-lg transition-shadow">
@@ -157,7 +157,7 @@ const About = () => {
               Números que reflejan nuestro compromiso con las mujeres
             </p>
           </div>
-          
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {institucion.logros.map((logro, index) => (
               <div key={index} className="text-center">
@@ -177,7 +177,7 @@ const About = () => {
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold mb-3">Nuestra Historia</h2>
             </div>
-            
+
             <Card>
               <CardContent className="p-8">
                 <p className="text-lg text-muted-foreground leading-relaxed mb-6">
@@ -204,7 +204,7 @@ const About = () => {
               Trabajamos de la mano con organizaciones que comparten nuestra visión
             </p>
           </div>
-          
+
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {institucion.aliados.map((aliado, index) => (
               <Card key={index} className="hover:shadow-md transition-shadow">
@@ -216,53 +216,6 @@ const About = () => {
               </Card>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Contacto */}
-      <section className="py-16 px-4">
-        <div className="container mx-auto">
-          <Card className="bg-rose-600 text-white overflow-hidden">
-            <CardContent className="p-8 md:p-12 relative">
-              <div className="text-center mb-8">
-                <HandHeart className="w-12 h-12 mx-auto mb-4 opacity-80" />
-                <h2 className="text-3xl font-bold mb-3">¿Necesitas Ayuda?</h2>
-                <p className="text-rose-100 max-w-xl mx-auto">
-                  Estamos aquí para apoyarte. Contáctanos mediante cualquiera de estos canales.
-                </p>
-              </div>
-              
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="flex flex-col items-center text-center p-4 rounded-lg bg-white/10 hover:bg-white/20 transition-colors">
-                  <MapPin className="h-8 w-8 mb-3" />
-                  <h3 className="font-semibold mb-1">Dirección</h3>
-                  <p className="text-rose-100 text-sm">{institucion.contacto.direccion}</p>
-                </div>
-                <div className="flex flex-col items-center text-center p-4 rounded-lg bg-white/10 hover:bg-white/20 transition-colors">
-                  <Phone className="h-8 w-8 mb-3" />
-                  <h3 className="font-semibold mb-1">Teléfono</h3>
-                  <p className="text-rose-100 text-sm">{institucion.contacto.telefono}</p>
-                </div>
-                <div className="flex flex-col items-center text-center p-4 rounded-lg bg-white/10 hover:bg-white/20 transition-colors">
-                  <Mail className="h-8 w-8 mb-3" />
-                  <h3 className="font-semibold mb-1">Correo</h3>
-                  <p className="text-rose-100 text-sm">{institucion.contacto.correo}</p>
-                </div>
-                <div className="flex flex-col items-center text-center p-4 rounded-lg bg-white/10 hover:bg-white/20 transition-colors">
-                  <Calendar className="h-8 w-8 mb-3" />
-                  <h3 className="font-semibold mb-1">Horario</h3>
-                  <p className="text-rose-100 text-sm">{institucion.contacto.horario}</p>
-                </div>
-              </div>
-              
-              <div className="text-center mt-8">
-                <Button variant="secondary" size="lg">
-                  Contáctanos
-                  <ArrowRight className="ml-2 w-4 h-4" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </section>
     </div>

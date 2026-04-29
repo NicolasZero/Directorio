@@ -1,13 +1,11 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { 
-  BookOpen, 
-  MapPin, 
-  Users, 
-  Calendar, 
-  Phone, 
-  Mail, 
+import {
+  BookOpen,
+  MapPin,
+  Users,
+  Calendar,
   ArrowRight,
   GraduationCap,
   Heart
@@ -68,25 +66,24 @@ function Home() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-16 md:py-24 px-4 overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-br from-rose-50 via-white to-rose-50/50" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-rose-100/40 via-transparent to-transparent" />
-        
-        <div className="container mx-auto relative">
+      <section className="bg-linear-to-br from-rose-100 dark:from-rose-950/50 via-white dark:via-rose-950 to-rose-100/50 dark:to-rose-950/50 py-16 md:py-24 px-4">
+        {/* <section className="light:bg-linear-to-br from-rose-100 via-white to-rose-100/50 dark:bg-rose-950 py-16 md:py-24 px-4"> */}
+
+        <div className="container mx-auto">
           <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
-            <div className="flex-1 text-center lg:text-left">
+            <div className="flex-1 text-center lg:text-left px-3">
               <Badge variant="secondary" className="mb-4 bg-rose-100 text-rose-700 hover:bg-rose-200">
                 Bienvenida
               </Badge>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-foreground">
-                Instituto de la <span className="text-rose-600">Mujer</span>
+                Instituto Nacional de la <span className="text-rose-600">Mujer</span>
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground mb-6 max-w-2xl mx-auto lg:mx-0">
-                Un espacio dedicado a empoderar, informar y acompañar a las mujeres en su desarrollo personal, 
+                Un espacio dedicado a empoderar, informar y acompañar a las mujeres en su desarrollo personal,
                 profesional y legal. Descubre los recursos y servicios que tenemos para ti.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-                <Button size="lg" className="bg-rose-600 hover:bg-rose-700">
+                <Button size="lg" className="text-base font-bold bg-rose-600 hover:bg-rose-700">
                   Explorar Directorio
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
@@ -95,27 +92,30 @@ function Home() {
                 </Button>
               </div>
             </div>
-            
+
             <div className="flex-1 flex justify-center">
               <div className="relative w-full max-w-md">
+
                 <div className="absolute inset-0 bg-linear-to-r from-rose-400 to-rose-600 rounded-3xl rotate-6 opacity-20" />
-                <div className="relative bg-white rounded-3xl shadow-xl p-8 border">
+
+                <div className="relative bg-neutral-50 dark:bg-neutral-900 rounded-3xl shadow-xl p-8 dark:border-0 border">
                   <div className="flex items-center justify-center gap-4 mb-6">
                     <div className="p-3 bg-rose-100 rounded-full">
                       <Heart className="h-8 w-8 text-rose-600" />
                     </div>
-                    <div className="text-2xl font-bold text-rose-600">INAmujer</div>
+                    <h3 className="text-2xl font-bold text-rose-600">INAMUJER</h3>
                   </div>
+
                   <div className="space-y-4">
-                    <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                    <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/80">
                       <BookOpen className="h-5 w-5 text-rose-500" />
                       <span className="text-sm font-medium">Directorio de Recursos</span>
                     </div>
-                    <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                    <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/80">
                       <MapPin className="h-5 w-5 text-rose-500" />
                       <span className="text-sm font-medium">Mapa de Servicios</span>
                     </div>
-                    <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                    <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/80">
                       <GraduationCap className="h-5 w-5 text-rose-500" />
                       <span className="text-sm font-medium">Educación y Capacitación</span>
                     </div>
@@ -128,7 +128,7 @@ function Home() {
       </section>
 
       {/* Servicios */}
-      <section className="py-16 px-4 bg-muted/30">
+      <section className="py-16 px-4 bg-muted/50 dark:bg-muted/30">
         <div className="container mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-3">Nuestros Servicios</h2>
@@ -136,7 +136,7 @@ function Home() {
               Explora las diferentes herramientas y recursos que ponemos a tu disposición
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-6">
             {servicios.map((servicio, index) => (
               <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
@@ -170,7 +170,7 @@ function Home() {
             </div>
             <Button variant="outline">Ver Todas</Button>
           </div>
-          
+
           <div className="grid md:grid-cols-2 gap-6">
             {ultimasClases.map((clase, index) => (
               <Card key={index} className="hover:shadow-md transition-shadow">
@@ -204,7 +204,7 @@ function Home() {
             <h2 className="text-3xl font-bold mb-3">Preguntas Frecuentes</h2>
             <p className="text-muted-foreground">Respuestas a las dudas más comunes</p>
           </div>
-          
+
           <div className="space-y-4">
             {preguntasFrecuentes.map((item, index) => (
               <Card key={index}>
@@ -222,46 +222,6 @@ function Home() {
               </Card>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Contacto */}
-      <section className="py-16 px-4">
-        <div className="container mx-auto">
-          <Card className="bg-rose-600 text-white overflow-hidden">
-            <CardContent className="p-8 md:p-12 relative">
-              <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold mb-3">¿Necesitas Ayuda?</h2>
-                <p className="text-rose-100 max-w-xl mx-auto">
-                  Estamos aquí para apoyarte. Contáctanos mediante cualquiera de estos canales.
-                </p>
-              </div>
-              
-              <div className="grid sm:grid-cols-3 gap-6">
-                <div className="flex flex-col items-center text-center p-4 rounded-lg bg-white/10 hover:bg-white/20 transition-colors">
-                  <Phone className="h-8 w-8 mb-3" />
-                  <h3 className="font-semibold mb-1">Teléfono</h3>
-                  <p className="text-rose-100 text-sm">+XX XXX XXX</p>
-                </div>
-                <div className="flex flex-col items-center text-center p-4 rounded-lg bg-white/10 hover:bg-white/20 transition-colors">
-                  <Mail className="h-8 w-8 mb-3" />
-                  <h3 className="font-semibold mb-1">Correo</h3>
-                  <p className="text-rose-100 text-sm">contacto@inamujer.gob.mx</p>
-                </div>
-                <div className="flex flex-col items-center text-center p-4 rounded-lg bg-white/10 hover:bg-white/20 transition-colors">
-                  <MapPin className="h-8 w-8 mb-3" />
-                  <h3 className="font-semibold mb-1">Dirección</h3>
-                  <p className="text-rose-100 text-sm">Ciudad de México</p>
-                </div>
-              </div>
-              
-              <div className="text-center mt-8">
-                <Button variant="secondary" size="lg">
-                  Contáctanos
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </section>
     </div>

@@ -3,7 +3,7 @@ import { ModeToggle } from "./mode-toggle";
 
 const Navbar = () => {
     return (
-        <nav className="bg-linear-to-r from-inm-primary to-inm-secondary text-white px-2 py-1">
+        <nav className="bg-linear-to-r from-rose-800 dark:from-rose-950 dark:to-rose-600 to-rose-400 text-white px-2 py-1">
             <ul className="flex flex-wrap px-3">
                 <li className="hover:bg-black/50 transition-colors duration-200">
                     <NavLink className="px-3 py-2 block" to="/">
