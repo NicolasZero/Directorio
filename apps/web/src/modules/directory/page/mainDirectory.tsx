@@ -1,7 +1,18 @@
 import { useState } from 'react'
-import { DirectoryLayout } from '../directoryLayout.tsx'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { MapPin, Phone, User } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { MapPin, Phone, Search, Building2, ArrowRight } from 'lucide-react'
+import { Link } from 'react-router'
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectLabel,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select"
 
 // Tipo para los datos del directorio
 interface DirectoryEntry {
@@ -104,6 +115,193 @@ const directoriosData: DirectoryEntry[] = [
 	},
 ]
 
+const listStates: string[] = [
+	"Caracas",
+	"Miranda",
+	"Aragua",
+	"Bolívar",
+	"Trujillo",
+	"Zulia",
+	"Falcón",
+	"Mérida",
+	"Apure",
+	"Táchira",
+	"Anzoátegui",
+	"Barinas",
+	"Cojedes",
+	"Delta Amacuro",
+	"Guárico",
+	"Lara",
+	"Monagas",
+	"Portuguesa",
+	"Sucre",
+	"Yaracuy",
+	"Amazonas",
+	"Nueva Esparta",
+	"Dependencias Federales"
+]
+
+const listMunicipalities: Record<string, string[]> = {
+	Caracas: [
+		"Libertador"
+	],
+	Miranda: [
+		"Cristobal Rojas",
+		"Chacao",
+		"Baruta",
+		"Sucre",
+		"El Hatillo"
+	],
+	Aragua: [
+		"Girardot",
+		"Mario Briceño Iragorry",
+		"Santiago Mariño",
+		"José Angel Lamas",
+		"San Sebastián"
+	],
+	Zulia: [
+		"Maracaibo",
+		"San Francisco",
+		"Cabimas",
+		"Lagunillas",
+		"Machiques"
+	],
+	Lara: [
+		"Iribarren",
+		"Morán",
+		"Jiménez",
+		"Torres",
+		"Carora"
+	],
+	Bolívar: [
+		"Caroní",
+		"Heres",
+		"Padre Pedro Chien",
+		"Angostura",
+		"El Callao"
+	],
+	Trujillo: [
+		"Trujillo",
+		"Boconó",
+		"Valera",
+		"Carache",
+		"Escuque"
+	],
+	Mérida: [
+		"Libertador",
+		"Campo Elias",
+		"Tovar",
+		"Santos Michelena",
+		"Alberto Adriani"
+	],
+	Táchira: [
+		"San Cristóbal",
+		"Rubio",
+		"Capacho Nuevo",
+		"Ayacucho",
+		"Córdoba"
+	],
+	Anzoátegui: [
+		"Barcelona",
+		"Puerto La Cruz",
+		"Anaco",
+		"Cantaura",
+		"Soledad"
+	],
+	Barinas: [
+		"Barinas",
+		"Barinas",
+		"Alberto Arvelo Torrealba",
+		"Antonio José de Sucre",
+		"Cruz Paredes"
+	],
+	Falcón: [
+		"Coro",
+		"Punto Fijo",
+		"Carirubana",
+		"Silva",
+		"Los Taques"
+	],
+	Monagas: [
+		"Maturín",
+		"Acosta",
+		"Cedeño",
+		"Esequibo",
+		"Libertador"
+	],
+	Portuguesa: [
+		"Acarigua",
+		"Guanare",
+		"Araure",
+		"Ospino",
+		"Páez"
+	],
+	Sucre: [
+		"Cumaná",
+		"Cumanacoa",
+		"Carúpano",
+		"Güiria",
+		"Ribero"
+	],
+	Yaracuy: [
+		"San Felipe",
+		"Chivacoa",
+		"Aroa",
+		"Nirgua",
+		"Yaritagua"
+	],
+	Guárico: [
+		"San Juan de los Morros",
+		"Calabozo",
+		"Valle de la Pascua",
+		"Altagracia de Orituco",
+		"Tucupido"
+	],
+	Cojedes: [
+		"San Carlos",
+		"Tinaquillo",
+		"La Arena",
+		"Guanare",
+		"Paez"
+	],
+	Apure: [
+		"San Fernando de Apure",
+		"Achaguas",
+		"Biruaca",
+		"Guasdualito",
+		"Elorza"
+	],
+	Amazonas: [
+		"Puerto Ayacucho",
+		"Atures",
+		"Autana",
+		"Manapiare",
+		"Maroa"
+	],
+	"Delta Amacuro": [
+		"Tucupita",
+		"Antonio Díaz",
+		"Casacoima",
+		"Pedernales",
+		"Serranal"
+	],
+	"Nueva Esparta": [
+		"La Asunción",
+		"Margarita",
+		"Gómez",
+		"Maneiro",
+		"Peninsula de Macanao"
+	],
+	"Dependencias Federales": [
+		"Los Roques",
+		"Los Monjes",
+		"Isla La Tortuga",
+		"Islas Las Aves",
+		"Isla La Sola"
+	]
+}
+
+
 function Directory() {
 	const [selectedState, setSelectedState] = useState<string>('')
 	const [selectedMunicipality, setSelectedMunicipality] = useState<string>('')
@@ -125,108 +323,243 @@ function Directory() {
 	})
 
 	return (
-		<>
-			<DirectoryLayout
-				selectedState={selectedState}
-				handleSelectState={handleSelectState}
-				selectedMunicipality={selectedMunicipality}
-				handleSelectMunicipality={handleSelectMunicipality}
-			>
-				<div className="container mx-auto py-6 px-4">
-					{selectedState ? (
-						<div>
-							<div className="mb-6">
-								<h2 className="text-xl font-semibold text-center">
-									{selectedMunicipality
-										? `Directorios en ${selectedMunicipality}, ${selectedState}`
-										: `Directorios en ${selectedState}`}
-								</h2>
-								<p className="text-center text-muted-foreground mt-1">
-									{filteredDirectorios.length} resultado
-									{filteredDirectorios.length !== 1 ? 's' : ''} encontrado
-									{filteredDirectorios.length !== 1 ? 's' : ''}
-								</p>
-							</div>
+		<div className="min-h-screen">
+			{/* Hero Section */}
+			<section className="relative py-12 px-4 overflow-hidden">
+				<div className="absolute inset-0 bg-linear-to-br from-rose-50 via-white to-rose-50/50" />
+				<div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-rose-100/40 via-transparent to-transparent" />
 
-							{filteredDirectorios.length > 0 ? (
-								<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-									{filteredDirectorios.map((directorio) => (
-										<Card
-											key={directorio.id}
-											className="hover:shadow-lg transition-shadow duration-200"
-										>
-											<CardHeader className="pb-3">
-												<div className="flex items-start gap-4">
-													{directorio.foto ? (
-														<img
-															src={directorio.foto}
-															alt={directorio.nombre}
-															className="w-16 h-16 rounded-full object-cover border-2 border-primary"
-														/>
-													) : (
-														<div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-															<User className="w-8 h-8 text-primary" />
-														</div>
-													)}
-													<div className="flex-1 min-w-0">
-														<CardTitle className="text-lg leading-tight">
-															{directorio.nombre}
-														</CardTitle>
-														<CardDescription className="mt-1">
-															{directorio.municipio}, {directorio.estado}
-														</CardDescription>
+				<div className="container mx-auto relative">
+					<div className="text-center max-w-2xl mx-auto">
+						<Badge variant="secondary" className="mb-4 bg-rose-100 text-rose-700 hover:bg-rose-200">
+							<Search className="w-3 h-3 mr-1" />
+							Directorio
+						</Badge>
+						<h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-foreground">
+							Encuentra <span className="text-rose-600">Centros de Atención</span>
+						</h1>
+						<p className="text-lg text-muted-foreground mb-6">
+							Explora los centros de atención disponibles en todo el país.
+							Selecciona un estado para comenzar tu búsqueda.
+						</p>
+
+						{/* Stats */}
+						<div className="flex justify-center gap-8 md:gap-12">
+							<div className="text-center">
+								<div className="text-3xl font-bold text-rose-600">{directoriosData.length}</div>
+								<div className="text-sm text-muted-foreground">Centros</div>
+							</div>
+							<div className="text-center">
+								<div className="text-3xl font-bold text-rose-600">
+									{new Set(directoriosData.map(d => d.estado)).size}
+								</div>
+								<div className="text-sm text-muted-foreground">Estados</div>
+							</div>
+							<div className="text-center">
+								<div className="text-3xl font-bold text-rose-600">
+									{new Set(directoriosData.map(d => d.municipio)).size}
+								</div>
+								<div className="text-sm text-muted-foreground">Municipios</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			{/* Selecionadores de estado */}
+			<section className="flex justify-center gap-5 m-auto">
+				<Select value={selectedState} onValueChange={handleSelectState}>
+					<SelectTrigger className="w-full max-w-48">
+						<SelectValue placeholder="Seleccione un Estado" />
+					</SelectTrigger>
+					<SelectContent>
+						<SelectGroup>
+							<SelectLabel>Estados</SelectLabel>
+							{
+								listStates && listStates.map((state: string) => (
+									<SelectItem key={state} value={state}>
+										{state}
+									</SelectItem>
+								))
+							}
+						</SelectGroup>
+					</SelectContent>
+				</Select>
+
+				<Select value={selectedMunicipality} onValueChange={handleSelectMunicipality} disabled={!selectedState}>
+					<SelectTrigger className="w-full max-w-48">
+						<SelectValue placeholder="Seleccione un municipio" />
+					</SelectTrigger>
+					<SelectContent>
+						<SelectGroup>
+							<SelectLabel>Municipios</SelectLabel>
+							{
+								selectedState && listMunicipalities[selectedState] &&
+								listMunicipalities[selectedState].map((municipality: string) => (
+									<SelectItem key={municipality} value={municipality}>
+										{municipality}
+									</SelectItem>
+								))
+							}
+						</SelectGroup>
+					</SelectContent>
+				</Select>
+			</section>
+
+			{/* Results Section */}
+			<section className="py-8 px-4">
+				{/* <div className="container mx-auto"> */}
+				{selectedState ? (
+					<div>
+						<div className="mb-8">
+							<div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-2">
+								<div>
+									<h2 className="text-2xl font-bold">
+										{selectedMunicipality
+											? `Directorios en ${selectedMunicipality}`
+											: `Directorios en ${selectedState}`}
+									</h2>
+									<p className="text-muted-foreground mt-1">
+										{filteredDirectorios.length} resultado
+										{filteredDirectorios.length !== 1 ? 's' : ''} encontrado
+										{filteredDirectorios.length !== 1 ? 's' : ''}
+									</p>
+								</div>
+								{selectedMunicipality && (
+									<Button
+										variant="outline"
+										size="sm"
+										onClick={() => setSelectedMunicipality('')}
+									>
+										Ver todo {selectedState}
+									</Button>
+								)}
+							</div>
+						</div>
+
+						{filteredDirectorios.length > 0 ? (
+							<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+								{filteredDirectorios.map((directorio) => (
+									<Card
+										key={directorio.id}
+										className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group"
+									>
+										<CardHeader className="pb-3">
+											<div className="flex items-start gap-4">
+												{directorio.foto ? (
+													<img
+														src={directorio.foto}
+														alt={directorio.nombre}
+														className="w-16 h-16 rounded-xl object-cover border-2 border-rose-100"
+													/>
+												) : (
+													<div className="w-16 h-16 rounded-xl bg-linear-to-br from-rose-100 to-rose-200 flex items-center justify-center group-hover:from-rose-200 group-hover:to-rose-300 transition-colors">
+														<Building2 className="w-8 h-8 text-rose-600" />
 													</div>
-												</div>
-											</CardHeader>
-											<CardContent className="pt-0">
-												<div className="space-y-2">
-													<div className="flex items-start gap-2 text-sm">
-														<MapPin className="w-4 h-4 mt-0.5 text-muted-foreground flex-shrink-0" />
-														<span className="text-muted-foreground">
-															{directorio.direccion}
+												)}
+												<div className="flex-1 min-w-0">
+													<CardTitle className="text-lg leading-tight mb-2">
+														{directorio.nombre}
+													</CardTitle>
+													<div className="flex items-center gap-2 flex-wrap">
+														<Badge variant="outline" className="bg-rose-50 text-rose-700 border-rose-200 text-xs">
+															{directorio.estado}
+														</Badge>
+														<span className="text-xs text-muted-foreground">
+															{directorio.municipio}
 														</span>
 													</div>
-													<div className="flex items-center gap-2 text-sm">
-														<Phone className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-														<a
-															href={`tel:${directorio.telefono}`}
-															className="text-primary hover:underline"
-														>
-															{directorio.telefono}
-														</a>
-													</div>
 												</div>
-											</CardContent>
-										</Card>
-									))}
-								</div>
-							) : (
-								<div className="text-center py-12">
-									<p className="text-lg text-muted-foreground">
-										No se encontraron directorios en esta ubicación
-									</p>
-									<p className="text-sm text-muted-foreground mt-1">
-										Intenta seleccionar un municipio diferente
-									</p>
-								</div>
-							)}
-						</div>
-					) : (
-						<div className="text-center py-12">
-							<div className="mb-4">
-								<MapPin className="w-16 h-16 mx-auto text-muted-foreground/30" />
+											</div>
+										</CardHeader>
+										<CardContent className="pt-0">
+											<div className="space-y-3">
+												<div className="flex items-start gap-2 text-sm">
+													<MapPin className="w-4 h-4 mt-0.5 text-rose-500 shrink-0" />
+													<span className="text-muted-foreground">
+														{directorio.direccion}
+													</span>
+												</div>
+												<div className="flex items-center gap-2 text-sm">
+													<Phone className="w-4 h-4 text-rose-500 shrink-0" />
+													<a
+														href={`tel:${directorio.telefono}`}
+														className="text-rose-600 hover:text-rose-700 font-medium transition-colors"
+													>
+														{directorio.telefono}
+													</a>
+												</div>
+											</div>
+											<div className="mt-4 pt-3 border-t">
+												<Button 
+													variant="ghost" 
+													size="sm" 
+													className="w-full justify-between text-rose-600 hover:text-rose-700 hover:bg-rose-50"
+													asChild
+												>
+													<Link to={`/directorio/${directorio.id}`}>
+														Ver detalles
+														<ArrowRight className="w-4 h-4" />
+													</Link>
+												</Button>
+											</div>
+										</CardContent>
+									</Card>
+								))}
 							</div>
-							<p className="text-lg text-muted-foreground">
-								Selecciona un estado para ver los directorios disponibles
-							</p>
-							<p className="text-sm text-muted-foreground mt-2">
-								Puedes filtrar aún más seleccionando un municipio
-							</p>
+						) : (
+							<Card className="max-w-md mx-auto">
+								<CardContent className="p-8 text-center">
+									<div className="w-16 h-16 rounded-full bg-rose-100 flex items-center justify-center mx-auto mb-4">
+										<Search className="w-8 h-8 text-rose-600" />
+									</div>
+									<h3 className="text-lg font-semibold mb-2">
+										No se encontraron directorios
+									</h3>
+									<p className="text-muted-foreground mb-4">
+										Intenta seleccionar un estado o municipio diferente
+									</p>
+									<Button
+										variant="outline"
+										onClick={() => {
+											setSelectedState('')
+											setSelectedMunicipality('')
+										}}
+									>
+										Ver todos los estados
+									</Button>
+								</CardContent>
+							</Card>
+						)}
+					</div>
+				) : (
+					<div className="text-center py-5">
+						<div className="w-20 h-20 rounded-full bg-rose-100 flex items-center justify-center mx-auto mb-6">
+							<MapPin className="w-10 h-10 text-rose-600" />
 						</div>
-					)}
-				</div>
-			</DirectoryLayout>
-		</>
+						<h3 className="text-xl font-semibold mb-2">
+							Selecciona un Estado
+						</h3>
+						<p className="text-muted-foreground max-w-md mx-auto mb-4">
+							Elige un estado del menú superior o uno de los botones inferiores para ver los centros de atención disponibles en esa zona.
+						</p>
+						<div className="flex flex-wrap justify-center gap-2">
+							{directoriosData.map(d => d.estado).filter((v, i, a) => a.indexOf(v) === i).map(estado => (
+								<Badge
+									key={estado}
+									variant="outline"
+									className="cursor-pointer hover:bg-rose-50 hover:border-rose-300 hover:text-rose-700 transition-colors"
+									onClick={() => handleSelectState(estado)}
+								>
+									{estado}
+								</Badge>
+							))}
+						</div>
+					</div>
+				)}
+				{/* </div> */}
+			</section>
+		</div>
 	)
 }
 

@@ -18,11 +18,11 @@ const MapaInteractivo = () => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent:'center'}}>
         <h1>En desarrollo</h1>
         <h2>Estado Seleccionado: {infoEstado || "Toca un estado"}</h2>
       
-        <div className="map-container w-[150]">
+        <div className="map-container w-[90%] my-5 flex justify-center overflow-auto border">
             <svg
                 width="600.57019"
                 height="527.14868"
