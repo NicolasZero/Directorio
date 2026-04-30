@@ -325,49 +325,46 @@ function Directory() {
 	return (
 		<div className="min-h-screen">
 			{/* Hero Section */}
-			<section className="relative py-12 px-4 overflow-hidden">
-				<div className="absolute inset-0 bg-linear-to-br from-rose-50 via-white to-rose-50/50" />
-				<div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-rose-100/40 via-transparent to-transparent" />
+			<section className="bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 py-12 px-4">
 
-				<div className="container mx-auto relative">
-					<div className="text-center max-w-2xl mx-auto">
-						<Badge variant="secondary" className="mb-4 bg-rose-100 text-rose-700 hover:bg-rose-200">
-							<Search className="w-3 h-3 mr-1" />
-							Directorio
-						</Badge>
-						<h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-foreground">
-							Encuentra <span className="text-rose-600">Centros de Atención</span>
-						</h1>
-						<p className="text-lg text-muted-foreground mb-6">
-							Explora los centros de atención disponibles en todo el país.
-							Selecciona un estado para comenzar tu búsqueda.
-						</p>
+				<div className="container mx-auto text-center max-w-2xl">
+					<Badge variant="outline" className="mb-4 bg-rose-100 dark:bg-rose-900 dark:text-rose-50 text-rose-700">
+						<Search className="w-3 h-3 mr-1" />
+						Directorio
+					</Badge>
+					<h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-foreground">
+						Encuentra <span className="text-rose-600">Centros de Atención</span>
+					</h1>
+					<p className="text-lg text-muted-foreground mb-6">
+						Explora los centros de atención disponibles en todo el país.
+						Selecciona un estado para comenzar tu búsqueda.
+					</p>
 
-						{/* Stats */}
-						<div className="flex justify-center gap-8 md:gap-12">
-							<div className="text-center">
-								<div className="text-3xl font-bold text-rose-600">{directoriosData.length}</div>
-								<div className="text-sm text-muted-foreground">Centros</div>
-							</div>
-							<div className="text-center">
-								<div className="text-3xl font-bold text-rose-600">
-									{new Set(directoriosData.map(d => d.estado)).size}
-								</div>
-								<div className="text-sm text-muted-foreground">Estados</div>
-							</div>
-							<div className="text-center">
-								<div className="text-3xl font-bold text-rose-600">
-									{new Set(directoriosData.map(d => d.municipio)).size}
-								</div>
-								<div className="text-sm text-muted-foreground">Municipios</div>
-							</div>
+					{/* Stats */}
+					<div className="flex justify-center gap-8 md:gap-12">
+						<div className="text-center">
+							<p className="text-3xl font-bold text-rose-600">{directoriosData.length}</p>
+							<h5 className="text-sm text-muted-foreground">Centros</h5>
+						</div>
+						<div className="text-center">
+							<p className="text-3xl font-bold text-rose-600">
+								{new Set(directoriosData.map(d => d.estado)).size}
+							</p>
+							<h5 className="text-sm text-muted-foreground">Estados</h5>
+						</div>
+						<div className="text-center">
+							<p className="text-3xl font-bold text-rose-600">
+								{new Set(directoriosData.map(d => d.municipio)).size}
+							</p>
+							<h5 className="text-sm text-muted-foreground">Municipios</h5>
 						</div>
 					</div>
 				</div>
+
 			</section>
 
 			{/* Selecionadores de estado */}
-			<section className="flex justify-center gap-5 m-auto">
+			<section className="flex justify-center gap-5 mt-6">
 				<Select value={selectedState} onValueChange={handleSelectState}>
 					<SelectTrigger className="w-full max-w-48">
 						<SelectValue placeholder="Seleccione un Estado" />
@@ -407,10 +404,10 @@ function Directory() {
 			</section>
 
 			{/* Results Section */}
-			<section className="py-8 px-4">
+			<section className="p-4 md:px-8">
 				{/* <div className="container mx-auto"> */}
 				{selectedState ? (
-					<div>
+					<>
 						<div className="mb-8">
 							<div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-2">
 								<div>
@@ -491,9 +488,9 @@ function Directory() {
 												</div>
 											</div>
 											<div className="mt-4 pt-3 border-t">
-												<Button 
-													variant="ghost" 
-													size="sm" 
+												<Button
+													variant="ghost"
+													size="sm"
 													className="w-full justify-between text-rose-600 hover:text-rose-700 hover:bg-rose-50"
 													asChild
 												>
@@ -531,7 +528,7 @@ function Directory() {
 								</CardContent>
 							</Card>
 						)}
-					</div>
+					</>
 				) : (
 					<div className="text-center py-5">
 						<div className="w-20 h-20 rounded-full bg-rose-100 flex items-center justify-center mx-auto mb-6">

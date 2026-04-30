@@ -66,45 +66,42 @@ function ClassesMain() {
 	return (
 		<div className="min-h-screen">
 			{/* Hero Section */}
-			<section className="relative py-12 px-4 overflow-hidden">
-				<div className="absolute inset-0 bg-linear-to-br from-rose-50 via-white to-rose-50/50" />
-				<div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-rose-100/40 via-transparent to-transparent" />
-				
-				<div className="container mx-auto relative">
-					<div className="text-center max-w-2xl mx-auto">
-						<Badge variant="secondary" className="mb-4 bg-rose-100 text-rose-700 hover:bg-rose-200">
-							<GraduationCap className="w-3 h-3 mr-1" />
-							Educación
-						</Badge>
-						<h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-foreground">
-							Cursos <span className="text-rose-600">en Línea</span>
-						</h1>
-						<p className="text-lg text-muted-foreground mb-6">
-							Explora nuestra oferta de cursos diseñados para impulsar tu desarrollo profesional.
-							Aprende a tu propio ritmo con contenido de calidad.
-						</p>
+			<section className="bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 py-10 px-4">
 
-						{/* Stats */}
-						<div className="flex justify-center gap-8 md:gap-12">
-							<div className="text-center">
-								<div className="text-3xl font-bold text-rose-600">{defaultCourses.length}</div>
-								<div className="text-sm text-muted-foreground">Cursos</div>
+				<div className="container mx-auto text-center max-w-2xl">
+					<Badge variant="secondary" className="mb-4 bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50">
+						<GraduationCap className="w-3 h-3 mr-1" />
+						Educación
+					</Badge>
+					<h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-foreground">
+						Cursos <span className="text-rose-600">en Línea</span>
+					</h1>
+					<p className="text-lg text-muted-foreground mb-6">
+						Explora nuestra oferta de cursos diseñados para impulsar tu desarrollo profesional.
+						Aprende a tu propio ritmo con contenido de calidad.
+					</p>
+
+					{/* Stats */}
+					<div className="flex justify-center gap-8 md:gap-12">
+						<div className="text-center">
+							<div className="text-3xl font-bold text-rose-600">{defaultCourses.length}</div>
+							<div className="text-sm text-muted-foreground">Cursos</div>
+						</div>
+						<div className="text-center">
+							<div className="text-3xl font-bold text-rose-600">
+								{defaultCourses.reduce((acc, c) => acc + parseInt(c.duration), 0)}
 							</div>
-							<div className="text-center">
-								<div className="text-3xl font-bold text-rose-600">
-									{defaultCourses.reduce((acc, c) => acc + parseInt(c.duration), 0)}
-								</div>
-								<div className="text-sm text-muted-foreground">Horas Totales</div>
+							<div className="text-sm text-muted-foreground">Horas Totales</div>
+						</div>
+						<div className="text-center">
+							<div className="text-3xl font-bold text-rose-600">
+								{new Set(defaultCourses.map(c => c.level)).size}
 							</div>
-							<div className="text-center">
-								<div className="text-3xl font-bold text-rose-600">
-									{new Set(defaultCourses.map(c => c.level)).size}
-								</div>
-								<div className="text-sm text-muted-foreground">Niveles</div>
-							</div>
+							<div className="text-sm text-muted-foreground">Niveles</div>
 						</div>
 					</div>
 				</div>
+
 			</section>
 
 			{/* Cursos Grid */}
@@ -112,8 +109,8 @@ function ClassesMain() {
 				<div className="container mx-auto">
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 						{defaultCourses.map((course) => (
-							<Card 
-								key={course.id} 
+							<Card
+								key={course.id}
 								className="flex flex-col overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group"
 							>
 								<div className="aspect-video relative overflow-hidden">
@@ -148,8 +145,8 @@ function ClassesMain() {
 									</div>
 								</CardContent>
 								<div className="p-4 pt-0">
-									<Button 
-										asChild 
+									<Button
+										asChild
 										className="w-full bg-rose-600 hover:bg-rose-700"
 									>
 										<Link to={`/clases/curso/${course.id}`}>

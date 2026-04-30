@@ -1,12 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { 
-  MapPin, 
-  Phone, 
-  Mail, 
-  Clock, 
-  User, 
+import {
+  MapPin,
+  Phone,
+  Mail,
+  Clock,
+  User,
   Building2,
   ArrowLeft,
   Calendar,
@@ -54,108 +54,103 @@ const directorioDetalle = {
 
 function DirectoryDetail() {
   // const { id } = useParams()
-  
+
   // En producción, aquí harías una llamada a la API
   // const { data, loading } = useDirectoryDetail(id)
-  
+
   // Por ahora usamos los datos de ejemplo
   const directorio = directorioDetalle
 
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-12 px-4 overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-br from-rose-50 via-white to-rose-50/50" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-rose-100/40 via-transparent to-transparent" />
-        
-        <div className="container mx-auto relative">
-          {/* Back button */}
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="mb-4 text-rose-600 hover:text-rose-700 hover:bg-rose-50"
-            asChild
-          >
-            <Link to="/directorio">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Volver al Directorio
-            </Link>
-          </Button>
+      <section className="bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 py-10 px-4 sm:px-8 mx-auto">
+        {/* Back button */}
+        <Button
+          variant="ghost"
+          size="sm"
+          className="mb-4 text-rose-600 hover:text-rose-700 hover:bg-rose-200"
+          asChild
+        >
+          <Link to="/directorio">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Volver al Directorio
+          </Link>
+        </Button>
 
-          <div className="flex flex-col lg:flex-row items-start gap-8">
-            {/* Info principal */}
-            <div className="flex-1">
-              <Badge variant="secondary" className="mb-4 bg-rose-100 text-rose-700 hover:bg-rose-200">
-                <Building2 className="w-3 h-3 mr-1" />
-                Centro de Atención
+        <div className="flex flex-col lg:flex-row items-start gap-8">
+          {/* Info principal */}
+          <div className="flex-1">
+            <Badge variant="secondary" className="mb-4 bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50 hover:bg-rose-200">
+              <Building2 className="w-3 h-3 mr-1" />
+              Centro de Atención
+            </Badge>
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-foreground">
+              {directorio.nombre}
+            </h1>
+            <div className="flex flex-wrap gap-2 mb-6">
+              <Badge variant="outline" className="bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50 border-rose-200 dark:border-0">
+                {directorio.estado}
               </Badge>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-foreground">
-                {directorio.nombre}
-              </h1>
-              <div className="flex flex-wrap gap-2 mb-6">
-                <Badge variant="outline" className="bg-rose-50 text-rose-700 border-rose-200">
-                  {directorio.estado}
-                </Badge>
-                <Badge variant="outline" className="bg-rose-50 text-rose-700 border-rose-200">
-                  {directorio.municipio}
-                </Badge>
-              </div>
-              <p className="text-lg text-muted-foreground">
-                {directorio.descripcion}
-              </p>
+              <Badge variant="outline" className="bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50 border-rose-200 dark:border-0">
+                {directorio.municipio}
+              </Badge>
             </div>
-
-            {/* Card de contacto rápido */}
-            <Card className="w-full lg:w-80 shadow-lg">
-              <CardHeader>
-                <CardTitle className="text-lg">Información de Contacto</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <MapPin className="w-5 h-5 text-rose-500 mt-0.5" />
-                  <div>
-                    <p className="font-medium text-sm">Dirección</p>
-                    <p className="text-sm text-muted-foreground">{directorio.direccion}</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Phone className="w-5 h-5 text-rose-500 mt-0.5" />
-                  <div>
-                    <p className="font-medium text-sm">Teléfono</p>
-                    <a 
-                      href={`tel:${directorio.telefono}`} 
-                      className="text-sm text-rose-600 hover:text-rose-700"
-                    >
-                      {directorio.telefono}
-                    </a>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Mail className="w-5 h-5 text-rose-500 mt-0.5" />
-                  <div>
-                    <p className="font-medium text-sm">Correo</p>
-                    <a 
-                      href={`mailto:${directorio.correo}`} 
-                      className="text-sm text-rose-600 hover:text-rose-700"
-                    >
-                      {directorio.correo}
-                    </a>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Clock className="w-5 h-5 text-rose-500 mt-0.5" />
-                  <div>
-                    <p className="font-medium text-sm">Horario</p>
-                    <p className="text-sm text-muted-foreground">{directorio.horario}</p>
-                  </div>
-                </div>
-                <Button className="w-full bg-rose-600 hover:bg-rose-700 mt-2">
-                  <Phone className="w-4 h-4 mr-2" />
-                  Llamar Ahora
-                </Button>
-              </CardContent>
-            </Card>
+            <p className="text-lg text-muted-foreground">
+              {directorio.descripcion}
+            </p>
           </div>
+
+          {/* Card de contacto rápido */}
+          <Card className="w-full lg:w-80 shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-lg">Información de Contacto</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-start gap-3">
+                <MapPin className="w-5 h-5 text-rose-500 mt-0.5" />
+                <div>
+                  <p className="font-medium text-sm">Dirección</p>
+                  <p className="text-sm text-muted-foreground">{directorio.direccion}</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Phone className="w-5 h-5 text-rose-500 mt-0.5" />
+                <div>
+                  <p className="font-medium text-sm">Teléfono</p>
+                  <a
+                    href={`tel:${directorio.telefono}`}
+                    className="text-sm text-rose-600 hover:text-rose-700"
+                  >
+                    {directorio.telefono}
+                  </a>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Mail className="w-5 h-5 text-rose-500 mt-0.5" />
+                <div>
+                  <p className="font-medium text-sm">Correo</p>
+                  <a
+                    href={`mailto:${directorio.correo}`}
+                    className="text-sm text-rose-600 hover:text-rose-700"
+                  >
+                    {directorio.correo}
+                  </a>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Clock className="w-5 h-5 text-rose-500 mt-0.5" />
+                <div>
+                  <p className="font-medium text-sm">Horario</p>
+                  <p className="text-sm text-muted-foreground">{directorio.horario}</p>
+                </div>
+              </div>
+              <Button className="w-full bg-rose-600 hover:bg-rose-700 mt-2">
+                <Phone className="w-4 h-4 mr-2" />
+                Llamar Ahora
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
@@ -256,10 +251,10 @@ function DirectoryDetail() {
                   <Phone className="w-4 h-4 mr-2" />
                   Llamar para Cita
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   size="lg"
-                  className="border-white text-white hover:bg-white/10"
+                  className=" font-bold text-rose-900 dark:text-white hover:bg-white/10 hover:text-white"
                 >
                   <Mail className="w-4 h-4 mr-2" />
                   Enviar Correo

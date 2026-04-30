@@ -49,19 +49,17 @@ function CourseDetail() {
 	return (
 		<div className="min-h-screen">
 			{/* Hero Section */}
-			<section className="relative py-12 px-4 overflow-hidden">
-				<div className="absolute inset-0 bg-linear-to-br from-rose-50 via-white to-rose-50/50" />
-				<div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-rose-100/40 via-transparent to-transparent" />
-				
-				<div className="container mx-auto relative">
+			<section className="bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 py-12 px-4 overflow-hidden">
+				<div className="container mx-auto">
 					{/* Back button */}
-					<Button 
-						variant="ghost" 
-						asChild 
-						className="mb-4 text-rose-600 hover:text-rose-700 hover:bg-rose-50"
+					<Button
+						variant="ghost"
+						size="sm"
+						className="mb-4 text-rose-600 hover:text-rose-700 hover:bg-rose-200"
+						asChild
 					>
-						<Link to="/clases" className="flex items-center gap-2">
-							<ArrowLeft className="h-4 w-4" />
+						<Link to="/clases">
+							<ArrowLeft className="w-4 h-4 mr-2" />
 							Volver a Cursos
 						</Link>
 					</Button>
@@ -71,7 +69,7 @@ function CourseDetail() {
 						<div className="lg:col-span-2 space-y-6">
 							{/* Badge y título */}
 							<div>
-								<Badge variant="secondary" className="mb-4 bg-rose-100 text-rose-700 hover:bg-rose-200">
+								<Badge variant="outline" className="mb-4 bg-rose-200 dark:bg-rose-900 dark:text-rose-50 text-rose-700">
 									<GraduationCap className="w-3 h-3 mr-1" />
 									{course.level}
 								</Badge>
@@ -149,7 +147,7 @@ function CourseDetail() {
 
 						{/* Sidebar */}
 						<div className="space-y-6">
-							<Card className="sticky top-8 shadow-lg border-rose-200">
+							<Card className="sticky top-8 shadow-lg border-rose-200 dark:border-rose-800">
 								<CardHeader>
 									<CardTitle>Información del Curso</CardTitle>
 								</CardHeader>
@@ -199,7 +197,7 @@ function CourseDetail() {
 									</div>
 
 									<div className="pt-4 border-t">
-										<Button className="w-full bg-rose-600 hover:bg-rose-700" size="lg">
+										<Button className="w-full font-semibold bg-rose-600 hover:bg-rose-700" size="lg">
 											Inscríbete Ahora
 										</Button>
 										<p className="text-xs text-center text-muted-foreground mt-2">

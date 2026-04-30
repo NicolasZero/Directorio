@@ -1,8 +1,12 @@
 const Header = () => {
     return (
-        <header className="h-16 md:h-22.5 w-full flex flex-row justify-between">
-            <img className="max-w-full h-auto" src="./banner_minmujer.png" alt="banner de minmujer" />
-            <img className="max-w-full h-auto" src="./logo_inamujer.png" alt="logo de inamujer" />
+        <header className="h-22.5 w-full py-2 flex flex-row justify-between">
+            <div>
+                <img className="h-full w-auto" src="/banner.png" alt="banner de minmujer" />
+            </div>
+            <div>
+                <img className="h-full w-auto" src="/logo.png" alt="logo de inamujer" />
+            </div>
         </header>
     )
 }

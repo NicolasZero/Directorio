@@ -62,30 +62,27 @@ const About = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-16 px-4 overflow-hidden">
-        <div className="absolute inset-0 bg-linear-to-br from-rose-50 via-white to-rose-50/50" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-rose-100/40 via-transparent to-transparent" />
+      <section className="bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 py-12 px-4">
 
-        <div className="container mx-auto relative">
-          <div className="text-center max-w-4xl mx-auto">
-            <Badge variant="secondary" className="mb-4 bg-rose-100 text-rose-700 hover:bg-rose-200">
-              <Heart className="w-3 h-3 mr-1" />
-              Conócenos
-            </Badge>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-foreground">
-              {institucion.nombre}
-            </h1>
-            <p className="text-xl text-muted-foreground mb-6">
-              {institucion.descripcion}
-            </p>
-            <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
-              <Calendar className="w-4 h-4" />
-              <span>Creado el {institucion.fechaCreacion}</span>
-              <span className="mx-2">•</span>
-              <span>Por {institucion.leyCreacion}</span>
-            </div>
+        <div className="container mx-auto text-center max-w-4xl">
+          <Badge variant="outline" className="mb-4 bg-rose-100 dark:bg-rose-900 dark:text-rose-50 text-rose-700">
+            <Heart className="w-3 h-3 mr-1" />
+            Conócenos
+          </Badge>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-foreground">
+            {institucion.nombre}
+          </h1>
+          <p className="text-xl text-muted-foreground mb-6">
+            {institucion.descripcion}
+          </p>
+          <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
+            <Calendar className="w-4 h-4" />
+            <span>Creado el {institucion.fechaCreacion}</span>
+            <span className="mx-2">•</span>
+            <span>Por {institucion.leyCreacion}</span>
           </div>
         </div>
+
       </section>
 
       {/* Misión y Visión */}
