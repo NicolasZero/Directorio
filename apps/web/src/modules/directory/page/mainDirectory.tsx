@@ -1,9 +1,8 @@
 import { useState } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { MapPin, Phone, Search, Building2, ArrowRight } from 'lucide-react'
-import { Link } from 'react-router'
+import { MapPin, Search } from 'lucide-react'
 import {
 	Select,
 	SelectContent,
@@ -13,6 +12,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select"
+import DirectoryCard from '../components/directoryCard'
 
 // Tipo para los datos del directorio
 interface DirectoryEntry {
@@ -210,7 +210,6 @@ const listMunicipalities: Record<string, string[]> = {
 	],
 	Barinas: [
 		"Barinas",
-		"Barinas",
 		"Alberto Arvelo Torrealba",
 		"Antonio José de Sucre",
 		"Cruz Paredes"
@@ -324,8 +323,7 @@ function Directory() {
 
 	return (
 		<div className="min-h-screen">
-			{/* Hero Section */}
-			<section className="bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 py-12 px-4">
+			<section className="bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 py-4 md:py-10 px-4">
 
 				<div className="container mx-auto text-center max-w-2xl">
 					<Badge variant="outline" className="mb-4 bg-rose-100 dark:bg-rose-900 dark:text-rose-50 text-rose-700">
@@ -337,7 +335,6 @@ function Directory() {
 					</h1>
 					<p className="text-lg text-muted-foreground mb-6">
 						Explora los centros de atención disponibles en todo el país.
-						Selecciona un estado para comenzar tu búsqueda.
 					</p>
 
 					{/* Stats */}
@@ -364,7 +361,7 @@ function Directory() {
 			</section>
 
 			{/* Selecionadores de estado */}
-			<section className="flex justify-center gap-5 mt-6">
+			<section className="flex justify-center gap-5 mt-6 flex-wrap p-2">
 				<Select value={selectedState} onValueChange={handleSelectState}>
 					<SelectTrigger className="w-full max-w-48">
 						<SelectValue placeholder="Seleccione un Estado" />
@@ -384,7 +381,7 @@ function Directory() {
 				</Select>
 
 				<Select value={selectedMunicipality} onValueChange={handleSelectMunicipality} disabled={!selectedState}>
-					<SelectTrigger className="w-full max-w-48">
+					<SelectTrigger className="w-full max-w-50">
 						<SelectValue placeholder="Seleccione un municipio" />
 					</SelectTrigger>
 					<SelectContent>
@@ -405,110 +402,41 @@ function Directory() {
 
 			{/* Results Section */}
 			<section className="p-4 md:px-8">
-				{/* <div className="container mx-auto"> */}
 				{selectedState ? (
 					<>
-						<div className="mb-8">
-							<div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-2">
-								<div>
-									<h2 className="text-2xl font-bold">
-										{selectedMunicipality
-											? `Directorios en ${selectedMunicipality}`
-											: `Directorios en ${selectedState}`}
-									</h2>
-									<p className="text-muted-foreground mt-1">
-										{filteredDirectorios.length} resultado
-										{filteredDirectorios.length !== 1 ? 's' : ''} encontrado
-										{filteredDirectorios.length !== 1 ? 's' : ''}
-									</p>
-								</div>
-								{selectedMunicipality && (
-									<Button
-										variant="outline"
-										size="sm"
-										onClick={() => setSelectedMunicipality('')}
-									>
-										Ver todo {selectedState}
-									</Button>
-								)}
+						<header className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-2">
+							<div>
+								<h2 className="text-2xl font-bold">
+									{`Directorios en ${selectedState} ${selectedMunicipality ? `- ${selectedMunicipality}` : ''}`}
+								</h2>
+								<p className="text-muted-foreground mt-1">
+									{filteredDirectorios.length} resultado
+									{filteredDirectorios.length !== 1 ? 's' : ''} encontrado
+									{filteredDirectorios.length !== 1 ? 's' : ''}
+								</p>
 							</div>
-						</div>
+							{selectedMunicipality && (
+								<Button
+									variant="outline"
+									size="sm"
+									onClick={() => setSelectedMunicipality('')}
+								>
+									Ver todos los municipios
+								</Button>
+							)}
+						</header>
 
 						{filteredDirectorios.length > 0 ? (
-							<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+							<main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 								{filteredDirectorios.map((directorio) => (
-									<Card
-										key={directorio.id}
-										className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group"
-									>
-										<CardHeader className="pb-3">
-											<div className="flex items-start gap-4">
-												{directorio.foto ? (
-													<img
-														src={directorio.foto}
-														alt={directorio.nombre}
-														className="w-16 h-16 rounded-xl object-cover border-2 border-rose-100"
-													/>
-												) : (
-													<div className="w-16 h-16 rounded-xl bg-linear-to-br from-rose-100 to-rose-200 flex items-center justify-center group-hover:from-rose-200 group-hover:to-rose-300 transition-colors">
-														<Building2 className="w-8 h-8 text-rose-600" />
-													</div>
-												)}
-												<div className="flex-1 min-w-0">
-													<CardTitle className="text-lg leading-tight mb-2">
-														{directorio.nombre}
-													</CardTitle>
-													<div className="flex items-center gap-2 flex-wrap">
-														<Badge variant="outline" className="bg-rose-50 text-rose-700 border-rose-200 text-xs">
-															{directorio.estado}
-														</Badge>
-														<span className="text-xs text-muted-foreground">
-															{directorio.municipio}
-														</span>
-													</div>
-												</div>
-											</div>
-										</CardHeader>
-										<CardContent className="pt-0">
-											<div className="space-y-3">
-												<div className="flex items-start gap-2 text-sm">
-													<MapPin className="w-4 h-4 mt-0.5 text-rose-500 shrink-0" />
-													<span className="text-muted-foreground">
-														{directorio.direccion}
-													</span>
-												</div>
-												<div className="flex items-center gap-2 text-sm">
-													<Phone className="w-4 h-4 text-rose-500 shrink-0" />
-													<a
-														href={`tel:${directorio.telefono}`}
-														className="text-rose-600 hover:text-rose-700 font-medium transition-colors"
-													>
-														{directorio.telefono}
-													</a>
-												</div>
-											</div>
-											<div className="mt-4 pt-3 border-t">
-												<Button
-													variant="ghost"
-													size="sm"
-													className="w-full justify-between text-rose-600 hover:text-rose-700 hover:bg-rose-50"
-													asChild
-												>
-													<Link to={`/directorio/${directorio.id}`}>
-														Ver detalles
-														<ArrowRight className="w-4 h-4" />
-													</Link>
-												</Button>
-											</div>
-										</CardContent>
-									</Card>
+									<DirectoryCard key={directorio.id} directorio={directorio} />
 								))}
-							</div>
+							</main>
 						) : (
 							<Card className="max-w-md mx-auto">
 								<CardContent className="p-8 text-center">
-									<div className="w-16 h-16 rounded-full bg-rose-100 flex items-center justify-center mx-auto mb-4">
-										<Search className="w-8 h-8 text-rose-600" />
+									<div className="w-16 h-16 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center mx-auto mb-4">
+										<Search className="w-8 h-8 text-rose-600 dark:text-rose-100" />
 									</div>
 									<h3 className="text-lg font-semibold mb-2">
 										No se encontraron directorios
@@ -531,21 +459,21 @@ function Directory() {
 					</>
 				) : (
 					<div className="text-center py-5">
-						<div className="w-20 h-20 rounded-full bg-rose-100 flex items-center justify-center mx-auto mb-6">
-							<MapPin className="w-10 h-10 text-rose-600" />
+						<div className="w-20 h-20 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center mx-auto mb-6">
+							<MapPin className="w-10 h-10 text-rose-600 dark:text-rose-100" />
 						</div>
 						<h3 className="text-xl font-semibold mb-2">
 							Selecciona un Estado
 						</h3>
 						<p className="text-muted-foreground max-w-md mx-auto mb-4">
-							Elige un estado del menú superior o uno de los botones inferiores para ver los centros de atención disponibles en esa zona.
+							Elige un estado para ver los centros de atención disponibles en esa zona.
 						</p>
 						<div className="flex flex-wrap justify-center gap-2">
 							{directoriosData.map(d => d.estado).filter((v, i, a) => a.indexOf(v) === i).map(estado => (
 								<Badge
 									key={estado}
 									variant="outline"
-									className="cursor-pointer hover:bg-rose-50 hover:border-rose-300 hover:text-rose-700 transition-colors"
+									className="cursor-pointer hover:bg-rose-50 hover:border-rose-300 hover:text-rose-700 dark:hover:text-rose-500 dark:hover:bg-background dark:hover:border-rose-500 transition-colors"
 									onClick={() => handleSelectState(estado)}
 								>
 									{estado}
@@ -554,7 +482,6 @@ function Directory() {
 						</div>
 					</div>
 				)}
-				{/* </div> */}
 			</section>
 		</div>
 	)

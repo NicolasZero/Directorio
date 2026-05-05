@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Link } from "react-router"
-import { Clock, User, BookOpen, ArrowRight, GraduationCap } from "lucide-react"
+import { Clock, User, ArrowRight, GraduationCap } from "lucide-react"
 
 // Cursos por defecto (en el futuro vendrán de la base de datos)
 const defaultCourses = [
@@ -66,7 +66,7 @@ function ClassesMain() {
 	return (
 		<div className="min-h-screen">
 			{/* Hero Section */}
-			<section className="bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 py-10 px-4">
+			<section className="bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 py-4 md:py-10 px-4">
 
 				<div className="container mx-auto text-center max-w-2xl">
 					<Badge variant="secondary" className="mb-4 bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50">
@@ -123,7 +123,7 @@ function ClassesMain() {
 								</div>
 								<CardHeader className="pb-3">
 									<div className="flex items-center justify-between mb-2">
-										<Badge variant="outline" className="bg-rose-50 text-rose-700 border-rose-200">
+										<Badge variant="outline" className="bg-rose-50 text-rose-700 dark:bg-rose-900 dark:text-rose-100 border-rose-200 dark:border-0">
 											{course.level}
 										</Badge>
 										<span className="text-xs text-muted-foreground flex items-center gap-1">
@@ -147,7 +147,7 @@ function ClassesMain() {
 								<div className="p-4 pt-0">
 									<Button
 										asChild
-										className="w-full bg-rose-600 hover:bg-rose-700"
+										className="w-full bg-rose-600 hover:bg-rose-700! dark:bg-rose-900 dark:hover:bg-rose-800 dark:text-rose-100"
 									>
 										<Link to={`/clases/curso/${course.id}`}>
 											Ver Curso
@@ -162,7 +162,7 @@ function ClassesMain() {
 			</section>
 
 			{/* CTA Section */}
-			<section className="py-12 px-4 bg-muted/30">
+			{/* <section className="py-12 px-4 bg-muted/30">
 				<div className="container mx-auto">
 					<Card className="bg-rose-600 text-white">
 						<CardContent className="p-8 md:p-12 text-center">
@@ -177,7 +177,7 @@ function ClassesMain() {
 						</CardContent>
 					</Card>
 				</div>
-			</section>
+			</section> */}
 		</div>
 	)
 }

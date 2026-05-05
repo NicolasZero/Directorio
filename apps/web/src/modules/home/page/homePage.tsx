@@ -10,6 +10,7 @@ import {
   GraduationCap,
   Heart
 } from "lucide-react"
+import { Link } from "react-router";
 
 function Home() {
   const servicios = [
@@ -23,13 +24,13 @@ function Home() {
       icon: <MapPin className="h-8 w-8" />,
       titulo: "Mapa Interactivo",
       descripcion: "Encuentra ubicaciones de interés cercanas mediante nuestro mapa interactivo.",
-      enlace: "/map"
+      enlace: "/mapa"
     },
     {
       icon: <Users className="h-8 w-8" />,
       titulo: "Clases y Cursos",
       descripcion: "Accede a materiales educativos y cursos disponibles para tu desarrollo.",
-      enlace: "/classes"
+      enlace: "/clases"
     }
   ]
 
@@ -38,13 +39,15 @@ function Home() {
       titulo: "Taller de Empoderamiento",
       descripcion: "Programa integral de desarrollo personal y profesional para mujeres.",
       categoria: "Desarrollo Personal",
-      fecha: "15 Abr 2026"
+      fecha: "15 Abr 2026",
+      id: 1
     },
     {
       titulo: "Curso de Derechos de la Mujer",
       descripcion: "Conocimiento sobre tus derechos legales y recursos disponibles.",
       categoria: "Educación Legal",
-      fecha: "10 Abr 2026"
+      fecha: "10 Abr 2026",
+      id: 1
     }
   ]
 
@@ -65,9 +68,7 @@ function Home() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="bg-linear-to-br from-rose-100 dark:from-rose-950/50 via-white dark:via-rose-950 to-rose-100/50 dark:to-rose-950/50 py-10 md:py-16 md:py-24 px-4">
-
+      <section className="bg-linear-to-br from-rose-100 dark:from-rose-950/50 via-white dark:via-rose-950 to-rose-100/50 dark:to-rose-950/50 py-8 md:py-12 px-4 md:px-6">
         <div className="container mx-auto flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
           <div className="flex-1 text-center lg:text-left px-3">
             <Badge variant="outline" className="mb-4 bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50">
@@ -81,13 +82,18 @@ function Home() {
               profesional y legal. Descubre los recursos y servicios que tenemos para ti.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-              <Button size="lg" className="text-base font-bold bg-rose-600 hover:bg-rose-700">
-                Explorar Directorio
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-              <Button size="lg" variant="outline">
-                Conocer Más
-              </Button>
+              <Link to="/directorio">
+                <Button size="lg" className="text-base font-bold bg-rose-600 hover:bg-rose-700">
+                  Explorar Directorio
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+              <Link to="/conocenos">
+                <Button size="lg" variant="outline">
+                  Conocer Más
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
             </div>
           </div>
 
@@ -126,7 +132,7 @@ function Home() {
       </section>
 
       {/* Servicios */}
-      <section className="py-16 px-4 bg-muted/50 dark:bg-muted/30">
+      <section className="py-10 md:py-14 px-4 md:px-6 bg-muted/50 dark:bg-muted/30">
         <div className="container mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-3">Nuestros Servicios</h2>
@@ -148,9 +154,11 @@ function Home() {
                   <CardDescription className="text-base">
                     {servicio.descripcion}
                   </CardDescription>
-                  <Button variant="link" className="px-0 mt-4 text-rose-600">
-                    Ver más <ArrowRight className="ml-1 h-4 w-4" />
-                  </Button>
+                  <Link to={servicio.enlace}>
+                    <Button variant="link" className="px-0 mt-4 text-rose-600">
+                      Ver más <ArrowRight className="ml-1 h-4 w-4" />
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
             ))}
@@ -159,35 +167,41 @@ function Home() {
       </section>
 
       {/* Últimas Clases */}
-      <section className="py-16 px-4">
+      <section className="py-10 md:py-14 px-4 md:px-6">
         <div className="container mx-auto">
           <div className="flex items-center justify-between mb-8">
             <div>
               <h2 className="text-3xl font-bold mb-2">Últimas Clases y Cursos</h2>
               <p className="text-muted-foreground">Material educativo reciente</p>
             </div>
-            <Button variant="outline">Ver Todas</Button>
+            <Link to="/clases">
+              <Button variant="outline">Ver Todas</Button>
+            </Link>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
             {ultimasClases.map((clase, index) => (
               <Card key={index} className="hover:shadow-md transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="p-3 bg-rose-100 rounded-lg h-fit">
-                      <Calendar className="h-6 w-6 text-rose-600" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Badge variant="outline" className="bg-rose-50 text-rose-700 border-rose-200">
-                          {clase.categoria}
-                        </Badge>
-                        <span className="text-sm text-muted-foreground">{clase.fecha}</span>
-                      </div>
-                      <h3 className="text-xl font-semibold mb-2">{clase.titulo}</h3>
-                      <p className="text-muted-foreground">{clase.descripcion}</p>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Calendar className="p-3 text-rose-600 dark:text-rose-50 bg-rose-100 dark:bg-rose-900 rounded-lg h-6 w-6 box-content" />
+                    <div className="flex justify-between w-full">
+                      <Badge variant="outline" className="text-nowrap bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50">
+                        {clase.categoria}
+                      </Badge>
+                      <span className="text-sm text-muted-foreground">{clase.fecha}</span>
                     </div>
                   </div>
+
+                  {/* <div className=""> */}
+                  <h3 className="text-xl font-semibold mb-2">{clase.titulo}</h3>
+                  <p className="text-muted-foreground">{clase.descripcion}</p>
+                  <Link to={`/clases/curso/${clase.id}`}>
+                    <Button variant="link" className="px-0 mt-4 text-rose-600">
+                      Ver más <ArrowRight className="ml-1 h-4 w-4" />
+                    </Button>
+                  </Link>
+                  {/* </div> */}
                 </CardContent>
               </Card>
             ))}
@@ -196,10 +210,10 @@ function Home() {
       </section>
 
       {/* Preguntas Frecuentes */}
-      <section className="py-16 px-4 bg-muted/30">
+      <section className="py-10 md:py-14 px-4 md:px-6 bg-muted/30">
         <div className="container mx-auto max-w-3xl">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-3">Preguntas Frecuentes</h2>
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold mb-2">Preguntas Frecuentes</h2>
             <p className="text-muted-foreground">Respuestas a las dudas más comunes</p>
           </div>
 
@@ -208,7 +222,7 @@ function Home() {
               <Card key={index}>
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-rose-100 text-rose-600 text-sm font-bold">
+                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-rose-100 text-rose-600 dark:bg-rose-900 dark:text-rose-50 text-sm font-bold">
                       {index + 1}
                     </span>
                     {item.pregunta}

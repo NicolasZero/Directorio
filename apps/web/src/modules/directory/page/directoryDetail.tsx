@@ -9,7 +9,6 @@ import {
   User,
   Building2,
   ArrowLeft,
-  Calendar,
   FileText,
   AlertCircle
 } from 'lucide-react'
@@ -64,7 +63,7 @@ function DirectoryDetail() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 py-10 px-4 sm:px-8 mx-auto">
+      <section className="py-10 px-4 sm:px-8 mx-auto">
         {/* Back button */}
         <Button
           variant="ghost"
@@ -81,7 +80,7 @@ function DirectoryDetail() {
         <div className="flex flex-col lg:flex-row items-start gap-8">
           {/* Info principal */}
           <div className="flex-1">
-            <Badge variant="secondary" className="mb-4 bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50 hover:bg-rose-200">
+            <Badge variant="outline" className="mb-4 bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50">
               <Building2 className="w-3 h-3 mr-1" />
               Centro de Atención
             </Badge>
@@ -145,7 +144,7 @@ function DirectoryDetail() {
                   <p className="text-sm text-muted-foreground">{directorio.horario}</p>
                 </div>
               </div>
-              <Button className="w-full bg-rose-600 hover:bg-rose-700 mt-2">
+              <Button className="w-full font-bold bg-rose-600 hover:bg-rose-700 mt-2">
                 <Phone className="w-4 h-4 mr-2" />
                 Llamar Ahora
               </Button>
@@ -156,20 +155,18 @@ function DirectoryDetail() {
 
       {/* Servicios */}
       <section className="py-12 px-4 bg-muted/30">
-        <div className="container mx-auto">
-          <h2 className="text-2xl font-bold mb-6">Servicios Disponibles</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {directorio.servicios.map((servicio, index) => (
-              <Card key={index} className="hover:shadow-md transition-shadow">
-                <CardContent className="p-4 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center shrink-0">
-                    <FileText className="w-5 h-5 text-rose-600" />
-                  </div>
-                  <span className="font-medium">{servicio}</span>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+        <h2 className="text-2xl font-bold mb-6">Servicios Disponibles</h2>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {directorio.servicios.map((servicio, index) => (
+            <Card key={index} className="hover:shadow-md transition-shadow">
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center shrink-0">
+                  <FileText className="w-5 h-5 text-rose-600 dark:text-rose-100" />
+                </div>
+                <span className="font-medium">{servicio}</span>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </section>
 
@@ -192,8 +189,8 @@ function DirectoryDetail() {
                 <div className="space-y-4">
                   {directorio.responsables.map((responsable, index) => (
                     <div key={index} className="flex items-center gap-4 p-3 rounded-lg bg-muted/50">
-                      <div className="w-12 h-12 rounded-full bg-rose-100 flex items-center justify-center">
-                        <User className="w-6 h-6 text-rose-600" />
+                      <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center">
+                        <User className="w-6 h-6 text-rose-600 dark:text-rose-100" />
                       </div>
                       <div>
                         <p className="font-medium">{responsable.nombre}</p>
@@ -220,8 +217,8 @@ function DirectoryDetail() {
                 <ul className="space-y-3">
                   {directorio.requisitos.map((requisito, index) => (
                     <li key={index} className="flex items-start gap-3">
-                      <div className="w-6 h-6 rounded-full bg-rose-100 flex items-center justify-center shrink-0 mt-0.5">
-                        <span className="text-xs font-bold text-rose-600">{index + 1}</span>
+                      <div className="w-6 h-6 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center shrink-0 mt-0.5">
+                        <span className="text-xs font-bold text-rose-600 dark:text-rose-100">{index + 1}</span>
                       </div>
                       <span className="text-muted-foreground">{requisito}</span>
                     </li>
@@ -230,38 +227,6 @@ function DirectoryDetail() {
               </CardContent>
             </Card>
           </div>
-        </div>
-      </section>
-
-      {/* Información adicional */}
-      <section className="py-12 px-4 bg-muted/30">
-        <div className="container mx-auto">
-          <Card className="bg-rose-600 text-white">
-            <CardContent className="p-8 md:p-12">
-              <div className="text-center mb-8">
-                <Calendar className="w-12 h-12 mx-auto mb-4 opacity-80" />
-                <h2 className="text-2xl font-bold mb-2">¿Necesitas agendar una cita?</h2>
-                <p className="text-rose-100 max-w-xl mx-auto">
-                  Puedes comunicarte directamente con nosotros para agendar tu cita de atención.
-                  Nuestro equipo te atenderá lo antes posible.
-                </p>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button variant="secondary" size="lg">
-                  <Phone className="w-4 h-4 mr-2" />
-                  Llamar para Cita
-                </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className=" font-bold text-rose-900 dark:text-white hover:bg-white/10 hover:text-white"
-                >
-                  <Mail className="w-4 h-4 mr-2" />
-                  Enviar Correo
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </section>
     </div>

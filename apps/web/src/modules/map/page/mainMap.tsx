@@ -1,10 +1,13 @@
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, Phone, Search, Building2, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router';
+import { MapPin, Search } from 'lucide-react';
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import DirectoryCard from '@/modules/directory/components/directoryCard'
+
+// Importamos el CSS que acabamos de crear
+import '@/modules/map/assets/style.css';
 
 // Tipo para los datos del directorio
 interface DirectoryEntry {
@@ -309,7 +312,7 @@ const estadoIdMap: Record<string, string> = {
 
 const MapaInteractivo = () => {
 	const [selectedState, setSelectedState] = useState<string>('');
-	// const [selectedMunicipality, setSelectedMunicipality] = useState<string>('');
+
 
 	const handleClick = (e: any) => {
 		// Obtenemos el nombre o ID del atributo del path
@@ -328,14 +331,13 @@ const MapaInteractivo = () => {
 	// Filtrar directorios según selección
 	const filteredDirectorios = directoriosData.filter((item) => {
 		const matchesState = selectedState ? item.estado === selectedState : true;
-		// const matchesMunicipality = selectedMunicipality ? item.municipio === selectedMunicipality : true;
 		return matchesState;
 	});
 
 	return (
 		<div className="min-h-screen">
 			{/* Hero Section */}
-			<section className="bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 py-12 px-4 overflow-hidden">
+			<section className="bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 py-4 md:py-10 px-4 overflow-hidden">
 				<div className="container mx-auto text-center max-w-2xl">
 					<Badge variant="outline" className="mb-4 bg-rose-100 dark:bg-rose-900 dark:text-rose-50 text-rose-700">
 						<MapPin className="w-3 h-3 mr-1" />
@@ -346,12 +348,10 @@ const MapaInteractivo = () => {
 					</h1>
 
 					{/* Stats */}
-					{/* <div className="flex justify-center gap-8 md:gap-12"> */}
 					<div className="text-center">
 						<span className="text-3xl font-bold text-rose-600">{directoriosData.length}</span>
 						<p className="text-sm text-muted-foreground">Centros</p>
 					</div>
-					{/* </div> */}
 				</div>
 			</section>
 
@@ -367,29 +367,29 @@ const MapaInteractivo = () => {
 				</div>
 
 				{/* Mapa de Venezuela */}
-				<div className="map-container w-[85%] h-[70vh] md:h-full  max-w-4xl mx-auto my-5 flex justify-center overflow-auto border rounded-xl shadow-lg">
+				<div className="map-container w-[85%] h-[70vh] md:h-full relative max-w-[650px] mx-auto my-5 flex justify-center overflow-auto border rounded-xl shadow-lg">
 
 					{/* 1. El Wrapper maneja la lógica del zoom */}
 					<TransformWrapper
 						initialScale={1}
 						minScale={0.5}
-						maxScale={1.5}
+						maxScale={3}
 					>
 						{(
-							// { zoomIn, zoomOut, resetTransform }
+							{ zoomIn, zoomOut, resetTransform }
 						) => (
 							<>
 								{/* Controles flotantes opcionales */}
-								{/* <div style={{ position: 'absolute', zIndex: 10, bottom: 20, left: 20 }}>
-									<button onClick={() => zoomIn()}>+</button>
-									<button onClick={() => zoomOut()}>-</button>
-									<button onClick={() => resetTransform()}>Reset</button>
-								</div> */}
+								<div className="flex items-center gap-2 absolute bottom-10 left-10 z-50">
+									<Button className='text-rose-300 dark:text-rose-800' onClick={() => zoomIn()}>+</Button>
+									<Button className='text-rose-300 dark:text-rose-800' onClick={() => zoomOut()}>-</Button>
+									<Button className='text-rose-300 dark:text-rose-800' onClick={() => resetTransform()}>Reset</Button>
+								</div>
 
 								{/* 2. El Component es el área visual donde ocurre el zoom */}
 
 								<TransformComponent wrapperStyle={{ width: "100%", height: "100%" }}>
-									<svg width="600.57019" height="527.14868" onClick={handleClick}>
+									<svg width="600" height="527" onClick={handleClick}>
 										<path
 											d="m 147.6002,0.9461982 0.91,-0.64 0.9,0.64 0,1.42 0.9,0.26 0.13,0.51 1.03,0.26 1.67,1.16 1.8,2.7 0,1.29 -0.77,0.77 -2.06,-0.38 -0.26,-0.91 -1.28,-0.77 -0.65,-0.13 -2.32,-1.54 -0.38,-1.68 -1.29,-0.38 0.9,-0.52 0.52,-0.51 z"
 											data-name="Aruba"
@@ -556,78 +556,14 @@ const MapaInteractivo = () => {
 						{filteredDirectorios.length > 0 ? (
 							<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 								{filteredDirectorios.map((directorio) => (
-									<Card
-										key={directorio.id}
-										className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group"
-									>
-										<CardHeader className="pb-3">
-											<div className="flex items-start gap-4">
-												{directorio.foto ? (
-													<img
-														src={directorio.foto}
-														alt={directorio.nombre}
-														className="w-16 h-16 rounded-xl object-cover border-2 border-rose-100"
-													/>
-												) : (
-													<div className="w-16 h-16 rounded-xl bg-linear-to-br from-rose-100 to-rose-200 flex items-center justify-center group-hover:from-rose-200 group-hover:to-rose-300 transition-colors">
-														<Building2 className="w-8 h-8 text-rose-600" />
-													</div>
-												)}
-												<div className="flex-1 min-w-0">
-													<CardTitle className="text-lg leading-tight mb-2">
-														{directorio.nombre}
-													</CardTitle>
-													<div className="flex items-center gap-2 flex-wrap">
-														<Badge variant="outline" className="bg-rose-50 text-rose-700 border-rose-200 text-xs">
-															{directorio.estado}
-														</Badge>
-														<span className="text-xs text-muted-foreground">
-															{directorio.municipio}
-														</span>
-													</div>
-												</div>
-											</div>
-										</CardHeader>
-										<CardContent className="pt-0">
-											<div className="space-y-3">
-												<div className="flex items-start gap-2 text-sm">
-													<MapPin className="w-4 h-4 mt-0.5 text-rose-500 shrink-0" />
-													<span className="text-muted-foreground">
-														{directorio.direccion}
-													</span>
-												</div>
-												<div className="flex items-center gap-2 text-sm">
-													<Phone className="w-4 h-4 text-rose-500 shrink-0" />
-													<a
-														href={`tel:${directorio.telefono}`}
-														className="text-rose-600 hover:text-rose-700 font-medium transition-colors"
-													>
-														{directorio.telefono}
-													</a>
-												</div>
-											</div>
-											<div className="mt-4 pt-3 border-t">
-												<Button
-													variant="ghost"
-													size="sm"
-													className="w-full justify-between text-rose-600 hover:text-rose-700 hover:bg-rose-50"
-													asChild
-												>
-													<Link to={`/directorio/${directorio.id}`}>
-														Ver detalles
-														<ArrowRight className="w-4 h-4" />
-													</Link>
-												</Button>
-											</div>
-										</CardContent>
-									</Card>
+									<DirectoryCard key={directorio.id} directorio={directorio} />
 								))}
 							</div>
 						) : (
 							<Card className="max-w-md mx-auto">
 								<CardContent className="p-8 text-center">
-									<div className="w-16 h-16 rounded-full bg-rose-100 flex items-center justify-center mx-auto mb-4">
-										<Search className="w-8 h-8 text-rose-600" />
+									<div className="w-16 h-16 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center mx-auto mb-4">
+										<Search className="w-8 h-8 text-rose-600 dark:text-rose-100" />
 									</div>
 									<h3 className="text-lg font-semibold mb-2">
 										No se encontraron directorios
@@ -649,28 +585,6 @@ const MapaInteractivo = () => {
 					</div>
 				)}
 			</section>
-			<style>
-				{`
-					.estado-path {
-						stroke: #fff;
-						stroke-width: 0.5px;
-						cursor: pointer;
-						transition: fill 0.3s ease;
-					}
-					html.dark .estado-path {
-						fill: #af5567ff;
-					}
-					html.light .estado-path {
-						fill: #ddaec1ff;
-					}
-					html.dark .estado-path:hover {
-						fill: #770e25ff !important; /* Color al pasar el mouse */
-					}
-					html.light .estado-path:hover {
-						fill: #e28096 !important; /* Color al pasar el mouse */
-					}
-				`}
-			</style>
 		</div>
 	);
 };

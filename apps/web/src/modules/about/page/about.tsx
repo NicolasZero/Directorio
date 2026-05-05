@@ -61,8 +61,7 @@ const About = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 py-12 px-4">
+      <section className="bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 py-4 md:py-10 px-4">
 
         <div className="container mx-auto text-center max-w-4xl">
           <Badge variant="outline" className="mb-4 bg-rose-100 dark:bg-rose-900 dark:text-rose-50 text-rose-700">
@@ -91,7 +90,7 @@ const About = () => {
           <div className="grid md:grid-cols-2 gap-8">
             <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
-                <div className="p-3 w-fit rounded-lg bg-rose-100 text-rose-600 mb-3">
+                <div className="p-3 w-fit rounded-lg bg-rose-100 text-rose-600 dark:bg-rose-900 dark:text-rose-100 mb-3">
                   <Target className="w-8 h-8" />
                 </div>
                 <CardTitle>Misión</CardTitle>
@@ -104,7 +103,7 @@ const About = () => {
             </Card>
             <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
-                <div className="p-3 w-fit rounded-lg bg-rose-100 text-rose-600 mb-3">
+                <div className="p-3 w-fit rounded-lg bg-rose-100 text-rose-600 dark:bg-rose-900 dark:text-rose-100 mb-3">
                   <Lightbulb className="w-8 h-8" />
                 </div>
                 <CardTitle>Visión</CardTitle>
@@ -133,7 +132,7 @@ const About = () => {
             {institucion.valores.map((valor, index) => (
               <Card key={index} className="text-center hover:shadow-lg transition-shadow">
                 <CardContent className="p-6">
-                  <div className="p-4 w-fit rounded-full bg-rose-100 text-rose-600 mx-auto mb-4">
+                  <div className="p-4 w-fit rounded-full bg-rose-100 text-rose-600 dark:bg-rose-900 dark:text-rose-100 mx-auto mb-4">
                     {valor.icono}
                   </div>
                   <h3 className="text-lg font-semibold mb-2">{valor.titulo}</h3>
@@ -146,11 +145,11 @@ const About = () => {
       </section>
 
       {/* Logros */}
-      <section className="py-16 px-4 bg-rose-600 text-white">
+      <section className="py-16 px-4 bg-rose-600 dark:bg-rose-900 text-white">
         <div className="container mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-3">Nuestro Impacto</h2>
-            <p className="text-rose-100 max-w-xl mx-auto">
+            <p className="text-rose-100 dark:text-rose-300 max-w-xl mx-auto">
               Números que reflejan nuestro compromiso con las mujeres
             </p>
           </div>

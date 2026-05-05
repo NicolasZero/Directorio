@@ -49,7 +49,7 @@ function CourseDetail() {
 	return (
 		<div className="min-h-screen">
 			{/* Hero Section */}
-			<section className="bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 py-12 px-4 overflow-hidden">
+			<section className="py-4 md:py-10 px-4 overflow-hidden">
 				<div className="container mx-auto">
 					{/* Back button */}
 					<Button
@@ -82,7 +82,7 @@ function CourseDetail() {
 							</div>
 
 							{/* Imagen */}
-							<div className="aspect-video relative overflow-hidden rounded-xl shadow-lg">
+							<div className="aspect-video relative overflow-hidden dark:border-1 border-background-foreground rounded-xl shadow-lg">
 								<img
 									src={course.image}
 									alt={course.title}
@@ -126,14 +126,14 @@ function CourseDetail() {
 										{course.modules.map((module, index) => (
 											<div
 												key={module.id}
-												className="flex items-center justify-between p-4 rounded-lg border bg-muted/30 hover:bg-rose-50 hover:border-rose-200 transition-colors cursor-default"
+												className="flex items-center gap-2 flex-wrap p-4 rounded-lg border bg-muted/30 hover:bg-rose-50 hover:border-rose-200 dark:hover:bg-rose-950 dark:hover:border-gray-800 transition-colors cursor-default"
 											>
-												<div className="flex items-center gap-4">
-													<span className="flex items-center justify-center w-8 h-8 rounded-full bg-rose-100 text-rose-600 text-sm font-bold">
-														{index + 1}
-													</span>
-													<span className="font-medium">{module.title}</span>
-												</div>
+												{/* <div className="flex items-center gap-3"> */}
+												<span className="flex items-center justify-center w-8 h-8 rounded-full bg-rose-100 dark:bg-rose-900 text-rose-600 dark:text-rose-100 text-sm font-bold">
+													{index + 1}
+												</span>
+												<span className="font-medium">{module.title}</span>
+												{/* </div> */}
 												<span className="text-sm text-muted-foreground flex items-center gap-1">
 													<Clock className="w-3 h-3" />
 													{module.duration}
@@ -154,8 +154,8 @@ function CourseDetail() {
 								<CardContent className="space-y-4">
 									{/* Instructor */}
 									<div className="flex items-start gap-3">
-										<div className="flex items-center justify-center w-10 h-10 rounded-full bg-rose-100">
-											<User className="h-5 w-5 text-rose-600" />
+										<div className="flex items-center justify-center w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900">
+											<User className="h-5 w-5 text-rose-600 dark:text-rose-100" />
 										</div>
 										<div>
 											<p className="text-sm font-medium">Instructor</p>
@@ -165,8 +165,8 @@ function CourseDetail() {
 
 									{/* Duración */}
 									<div className="flex items-start gap-3">
-										<div className="flex items-center justify-center w-10 h-10 rounded-full bg-rose-100">
-											<Clock className="h-5 w-5 text-rose-600" />
+										<div className="flex items-center justify-center w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900">
+											<Clock className="h-5 w-5 text-rose-600 dark:text-rose-100" />
 										</div>
 										<div>
 											<p className="text-sm font-medium">Duración</p>
@@ -176,8 +176,8 @@ function CourseDetail() {
 
 									{/* Nivel */}
 									<div className="flex items-start gap-3">
-										<div className="flex items-center justify-center w-10 h-10 rounded-full bg-rose-100">
-											<BarChart className="h-5 w-5 text-rose-600" />
+										<div className="flex items-center justify-center w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900">
+											<BarChart className="h-5 w-5 text-rose-600 dark:text-rose-100" />
 										</div>
 										<div>
 											<p className="text-sm font-medium">Nivel</p>
@@ -187,8 +187,8 @@ function CourseDetail() {
 
 									{/* Fecha de inicio */}
 									<div className="flex items-start gap-3">
-										<div className="flex items-center justify-center w-10 h-10 rounded-full bg-rose-100">
-											<Calendar className="h-5 w-5 text-rose-600" />
+										<div className="flex items-center justify-center w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900">
+											<Calendar className="h-5 w-5 text-rose-600 dark:text-rose-100" />
 										</div>
 										<div>
 											<p className="text-sm font-medium">Fecha de inicio</p>
@@ -197,7 +197,7 @@ function CourseDetail() {
 									</div>
 
 									<div className="pt-4 border-t">
-										<Button className="w-full font-semibold bg-rose-600 hover:bg-rose-700" size="lg">
+										<Button className="w-full font-bold bg-rose-600 hover:bg-rose-700" size="lg">
 											Inscríbete Ahora
 										</Button>
 										<p className="text-xs text-center text-muted-foreground mt-2">
@@ -219,7 +219,7 @@ function CourseDetail() {
 									<ul className="space-y-3">
 										{course.requirements.map((req, index) => (
 											<li key={index} className="flex items-start gap-2 text-sm">
-												<span className="flex items-center justify-center w-5 h-5 rounded-full bg-rose-100 text-rose-600 text-xs font-bold shrink-0 mt-0.5">
+												<span className="flex items-center justify-center w-5 h-5 rounded-full bg-rose-100 dark:bg-rose-900 text-rose-600 dark:text-rose-100 text-xs font-bold shrink-0 mt-0.5">
 													{index + 1}
 												</span>
 												<span className="text-muted-foreground">{req}</span>

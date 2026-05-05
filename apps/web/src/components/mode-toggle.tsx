@@ -15,7 +15,7 @@ export function ModeToggle() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button className="bg-rose-600 dark:bg-rose-400 hover:bg-rose-700 dark:hover:bg-rose-500" size="icon">
+                <Button className="bg-rose-600 hover:bg-rose-700 dark:bg-rose-400 dark:text-rose-800 dark:hover:bg-rose-300" size="icon">
                     <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
                     <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
                     <span className="sr-only">Cambiar tema</span>

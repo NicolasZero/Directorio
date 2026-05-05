@@ -1,0 +1,24 @@
+.estado-path {
+    stroke: #fff;
+    stroke-width: 0.5px;
+    cursor: pointer;
+    transition: fill 0.3s ease;
+}
+
+html.dark .estado-path {
+    fill: #af5567ff;
+}
+
+html.light .estado-path {
+    fill: #ddaec1ff;
+}
+
+html.dark .estado-path:hover {
+    fill: #770e25ff !important;
+    /* Color al pasar el mouse */
+}
+
+html.light .estado-path:hover {
+    fill: #e28096 !important;
+    /* Color al pasar el mouse */
+}
