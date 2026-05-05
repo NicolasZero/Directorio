@@ -444,15 +444,15 @@ function Directory() {
 									<p className="text-muted-foreground mb-4">
 										Intenta seleccionar un estado o municipio diferente
 									</p>
-									<Button
+									{/* <Button
 										variant="outline"
 										onClick={() => {
 											setSelectedState('')
 											setSelectedMunicipality('')
 										}}
 									>
-										Ver todos los estados
-									</Button>
+										Deseleccionar Estado
+									</Button> */}
 								</CardContent>
 							</Card>
 						)}
@@ -468,20 +468,20 @@ function Directory() {
 						<p className="text-muted-foreground max-w-md mx-auto mb-4">
 							Elige un estado para ver los centros de atención disponibles en esa zona.
 						</p>
-						<div className="flex flex-wrap justify-center gap-2">
-							{directoriosData.map(d => d.estado).filter((v, i, a) => a.indexOf(v) === i).map(estado => (
-								<Badge
-									key={estado}
-									variant="outline"
-									className="cursor-pointer hover:bg-rose-50 hover:border-rose-300 hover:text-rose-700 dark:hover:text-rose-500 dark:hover:bg-background dark:hover:border-rose-500 transition-colors"
-									onClick={() => handleSelectState(estado)}
-								>
-									{estado}
-								</Badge>
-							))}
-						</div>
 					</div>
 				)}
+				<div className="flex flex-wrap justify-center mt-5 gap-2">
+					{directoriosData.map(d => d.estado).filter((v, i, a) => a.indexOf(v) === i).map(estado => (
+						<Badge
+							key={estado}
+							variant="outline"
+							className="cursor-pointer hover:bg-rose-50 hover:border-rose-300 hover:text-rose-700 dark:hover:text-rose-500 dark:hover:bg-background dark:hover:border-rose-500 transition-colors"
+							onClick={() => handleSelectState(estado)}
+						>
+							{estado}
+						</Badge>
+					))}
+				</div>
 			</section>
 		</div>
 	)
