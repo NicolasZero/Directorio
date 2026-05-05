@@ -1,11 +1,10 @@
-// const bcrypt = require('bcryptjs')
-import {bcrypt} from 'bcryptjs'
+import { compare, hashSync } from 'bcryptjs'
 
 export const encrypt = (text) => {
-    const hash = bcrypt.hashSync(text, 10);
+    const hash = hashSync(text, 10);
     return hash
 }
 
-export const compare = (password, hashPassword) =>{
-    return bcrypt.compare(password,hashPassword)
+export const compareEncrypt = (password, hashPassword) => {
+    return compare(password, hashPassword)
 }

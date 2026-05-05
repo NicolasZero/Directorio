@@ -1,4 +1,4 @@
-import { testController, testDb } from '../controllers/test.controller.js'
+import { testController, testDb, testEncrypt } from '../controllers/testController.js'
 
 const test = async (fastify) => {
     fastify.get("/", async (request, reply) => {
@@ -7,6 +7,7 @@ const test = async (fastify) => {
     })
     fastify.get("/controller", testController)
     fastify.get("/db", testDb)
+    fastify.post("/encrypt", testEncrypt)
 }
 
 export default test
