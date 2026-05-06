@@ -5,16 +5,14 @@ import Navbar from "@/components/navbar";
 
 const MainLayout = () => {
     return (
-        <>
-            <div className="h-screen flex flex-col justify-between">
-                <Header />
-                <Navbar />
-                <main className="flex-2">
-                    <Outlet />
-                </main>
-                <Footer />
-            </div>
-        </>
+        <div className="h-screen flex flex-col justify-between">
+            <Header />
+            <Navbar />
+            <main className="flex-2">
+                <Outlet />
+            </main>
+            <Footer />
+        </div>
     )
 }
 

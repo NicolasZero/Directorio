@@ -1,5 +1,6 @@
 import Fastify from 'fastify'
 import cors from '@fastify/cors'
+import cookie from '@fastify/cookie'
 import fs from 'fs'
 import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
@@ -29,6 +30,9 @@ const {
 fastify.register(cors, {
   origin: [HOST_URL]
 })
+
+// Registra el plugin de cookies
+fastify.register(cookie)
 
 // Obtiene la direccion de la ruta de este archivo
 const __filename = fileURLToPath(import.meta.url);

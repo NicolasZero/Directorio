@@ -2,6 +2,7 @@
 import { useNavigate } from 'react-router'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { useAuth } from '@/context/authContext.tsx'
 
 function Login() {
   const [user, setUser] = useState('')
@@ -10,6 +11,7 @@ function Login() {
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const navigate = useNavigate()
+  const { login } = useAuth();
 
   const handleSubmit = async (event: SubmitEvent) => {
     event.preventDefault()
@@ -18,27 +20,15 @@ function Login() {
     setLoading(true)
 
     try {
-      const response = await fetch('/api/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user, pass }),
-      })
-
-      const data = await response.json()
+      await login(user, pass);
       setLoading(false)
-
-      if (!response.ok) {
-        setError(data?.error || 'Ocurrió un error al iniciar sesión.')
-        return
-      }
-
       setMessage('Inicio de sesión exitoso. Redirigiendo...')
       setTimeout(() => {
-        navigate('/')
+        navigate('/admin', { replace: true });
       }, 800)
     } catch (err) {
       setLoading(false)
-      setError('No se pudo conectar con el servidor. Intenta de nuevo más tarde.')
+      setError('Usuario o contraseña incorrectos.')
     }
   }
 
