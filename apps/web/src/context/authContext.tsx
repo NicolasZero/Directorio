@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 } else {
                     setStatus('no-authenticated');
                 }
-            } catch (error) {
+            } catch {
                 setStatus('no-authenticated');
             }
         };
@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const logout = async () => {
         try {
             await fetch('/api/auth/logout', { method: 'POST' });
-        } catch (error) {
+        } catch {
             // Ignore errors on logout
         }
         setUser(null);
@@ -64,7 +64,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             if (data.error) throw new Error(data.error);
             setUser(data.data);
             setStatus('authenticated');
-        } catch (e) {
+        } catch {
             throw new Error('Usuario o contraseña incorrectos');
         }
     };

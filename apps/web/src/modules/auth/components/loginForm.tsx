@@ -26,7 +26,7 @@ function Login() {
       setTimeout(() => {
         navigate('/admin', { replace: true });
       }, 800)
-    } catch (err) {
+    } catch {
       setLoading(false)
       setError('Usuario o contraseña incorrectos.')
     }
@@ -38,15 +38,6 @@ function Login() {
         <label htmlFor="username" className="block text-sm font-medium text-foreground">
           Usuario
         </label>
-        {/* <input
-          id="username"
-          type="text"
-          value={user}
-          onChange={(event) => setUser(event.target.value)}
-          placeholder="Ingresa tu usuario"
-          className="w-full rounded-3xl border border-input bg-background px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20"
-          required
-        /> */}
         <Input
           id="username"
           type="text"
@@ -62,15 +53,6 @@ function Login() {
         <label htmlFor="password" className="block text-sm font-medium text-foreground">
           Contraseña
         </label>
-        {/* <input
-          id="password"
-          type="password"
-          value={pass}
-          onChange={(event) => setPass(event.target.value)}
-          placeholder="Ingresa tu contraseña"
-          className="w-full rounded-3xl border border-input !bg-background h-12 px-4 text-sm text-foreground outline-none transition-colors focus:!border-rose-500 focus:!ring-2 focus:!ring-rose-500/20"
-          required
-        /> */}
         <Input
           id="password"
           type="password"

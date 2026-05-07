@@ -14,7 +14,7 @@ function Auth() {
     if (status === 'authenticated') {
       navigate('/admin', { replace: true });
     }
-  }, []);
+  });
 
   return (
     <div className="min-h-screen bg-linear-to-br from-rose-100 dark:from-rose-950/50 via-white dark:via-black to-rose-100/50 dark:to-rose-950/50 py-6 px-4 md:px-6 md:py-12 mx-auto flex flex-col md:flex-row items-center md:gap-12">
