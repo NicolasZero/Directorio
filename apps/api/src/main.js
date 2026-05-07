@@ -8,7 +8,7 @@ import { dirname } from 'node:path';
 const fastify = Fastify({
   logger: {
     level: 'info',
-    file: '../server.log'
+    // file: '../server.log'
   } // Activa o desactiva los logger
 })
 
@@ -23,7 +23,7 @@ try {
 // extrae las variables de entorno o establece un valor por defecto
 const {
   PORT = 3000,
-  HOST_URL = 'http://localhost:5173'
+  HOST_URL = '*'
 } = process.env
 
 // Habilita el Cross-Origin Resource Sharing (CORS)
