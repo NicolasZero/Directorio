@@ -11,13 +11,13 @@ const AdminNavbar = () => {
     const { logout, user } = useAuth();
     const navigate = useNavigate();
 
-    const handleLogout = () => {
-        logout();
+    const handleLogout = async () => {
+        await logout();
         navigate('/auth/login');
     };
 
     const navLinks = [
-        { name: "Inicio", path: "/admin" },
+        { name: "Inicio", path: "/admin/inicio" },
         { name: "Directorio", path: "/admin/directorio" },
         // { name: "Mapa", path: "/admin/mapa" },
         { name: "Aprendizaje", path: "/admin/clases" }

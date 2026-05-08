@@ -31,6 +31,7 @@ export const auth = async (request, reply) => {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production', // Use secure in production
             sameSite: 'strict',
+            path: '/',
             maxAge: 3600 // 1 hour
         });
 
@@ -82,7 +83,11 @@ export const validateToken = async (request, reply) => {
 
 export const logout = async (request, reply) => {
     try {
-        reply.clearCookie('directorio-token');
+        reply.clearCookie('directorio-token', {
+            path: '/',
+            sameSite: 'strict',
+            secure: process.env.NODE_ENV === 'production',
+        });
         return reply.code(200).send({ status: "OK" });
     } catch (error) {
         reply.code(500).send({ error: "Error de servidor", status: "failed" });

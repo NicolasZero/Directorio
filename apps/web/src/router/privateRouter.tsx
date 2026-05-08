@@ -13,11 +13,13 @@ export default function PrivateRouter() {
 
     return (
         <Routes>
-            <Route path="/" element={<AdminLayout />}>
-                <Route index element={<h1>Home Admin</h1>} />
+            <Route element={<AdminLayout />}>
+                <Route path='inicio' element={<h1>Home Admin</h1>} />
                 <Route path="directorio" element={<EditDirectory />} />
+                <Route path='clases' element={<h1>Class Admin</h1>} />
+
             </Route>
-            <Route path="*" element={<Navigate to="/admin" replace />} />
+            <Route path="*" element={<Navigate to="/admin/inicio" replace />} />
         </Routes>
     )
 }

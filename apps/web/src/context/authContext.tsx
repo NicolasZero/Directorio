@@ -13,7 +13,7 @@ interface User {
 interface AuthContextType {
     status: Status;
     user: User | null;
-    logout: () => void;
+    logout: () => Promise<void>;
     login: (user: string, pass: string) => Promise<void>;
 }
 
@@ -22,12 +22,18 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [status, setStatus] = useState<Status>('checking');
     const [user, setUser] = useState<User | null>(null);
+    // const [date,setDate] = useState(new Date)
 
     useEffect(() => {
         // Al cargar la app, verificamos si hay un token válido
         const checkToken = async () => {
+            console.log("Se llamo a checkear") 
+            
             try {
-                const resp = await fetch('/api/auth/validate');
+                const resp = await fetch('/api/auth/validate', {
+                    method: 'GET',
+                    credentials: 'include',
+                });
                 if (resp.ok) {
                     const data = await resp.json();
                     setUser(data.data);
@@ -45,18 +51,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const logout = async () => {
         try {
-            await fetch('/api/auth/logout', { method: 'POST' });
-        } catch {
-            // Ignore errors on logout
+            const response = await fetch('/api/auth/logout', {
+                method: 'POST',
+                credentials: 'include',
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al cerrar sesión');
+            }
+        } catch (e) {
+            console.error('Logout error:', e);
+        } finally {
+            setUser(null);
+            setStatus('no-authenticated');
         }
-        setUser(null);
-        setStatus('no-authenticated');
     };
 
     const login = async (user: string, pass: string) => {
         try {
             const response = await fetch('/api/auth', {
                 method: 'POST',
+                credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ user, pass }),
             })

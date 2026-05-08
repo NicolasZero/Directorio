@@ -2,12 +2,16 @@ import { useState } from "react";
 import { NavLink } from "react-router";
 import { Menu, X } from "lucide-react";
 import { ModeToggle } from "./mode-toggle";
+// import { useAuth } from "@/context/authContext";
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleMenu = () => setIsOpen(!isOpen);
 
+    // const { user, status } = useAuth();
+    // console.log("User:",user,"Status:",status);
+    
     const navLinks = [
         { name: "Inicio", path: "/" },
         { name: "Directorio", path: "/directorio" },
