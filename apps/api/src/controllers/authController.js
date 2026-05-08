@@ -25,6 +25,7 @@ export const auth = async (request, reply) => {
         }
 
         const token = jwt.sign({ id: resp.rows[0].id, username: resp.rows[0].username }, JWT_SECRET, { expiresIn: '1h' });
+        const refreshToken = jwt.sign({ id: resp.rows[0].id }, JWT_SECRET, { expiresIn: '1h' });
 
         // Set HttpOnly cookie
         reply.setCookie('directorio-token', token, {
@@ -40,7 +41,8 @@ export const auth = async (request, reply) => {
             username: resp.rows[0].username,
             nombre: resp.rows[0].nombre,
             email: resp.rows[0].email,
-            role: resp.rows[0].rol
+            role: resp.rows[0].rol,
+            refreshToken
         }
 
         return reply.code(200).send({ data, status: "OK" });

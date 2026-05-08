@@ -24,7 +24,7 @@ function Login() {
       setLoading(false)
       setMessage('Inicio de sesión exitoso. Redirigiendo...')
       setTimeout(() => {
-        navigate('/admin', { replace: true });
+        navigate('/admin/inicio', { replace: true });
       }, 800)
     } catch {
       setLoading(false)

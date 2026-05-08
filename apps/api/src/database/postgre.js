@@ -24,7 +24,7 @@ const pool = new Pool({
   port: DB_PORT,
 })
 
-const query = (text, params, callback) => {
+const query = async (text, params, callback) => {
   return pool.query(text, params, callback);
 }
 
