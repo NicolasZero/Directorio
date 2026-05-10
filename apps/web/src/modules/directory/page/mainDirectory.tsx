@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -13,297 +13,42 @@ import {
 	SelectValue,
 } from "@/components/ui/select"
 import DirectoryCard from '../components/directoryCard'
-
-// Tipo para los datos del directorio
-interface DirectoryEntry {
-	id: number
-	nombre: string
-	direccion: string
-	telefono: string
-	foto?: string
-	municipio: string
-	estado: string
-}
-
-// Datos de prueba (simulando respuesta de base de datos)
-const directoriosData: DirectoryEntry[] = [
-	// Caracas
-	{
-		id: 1,
-		nombre: 'Centro de Atención Inamujer Caracas',
-		direccion: 'Av. Universidad, Edificio Centro, Piso 1, Caracas',
-		telefono: '(0212) 555-1234',
-		municipio: 'Libertador',
-		estado: 'Caracas',
-	},
-	{
-		id: 2,
-		nombre: 'Oficina Atención Mujer Libertador',
-		direccion: 'Plaza Bolívar, Caracas',
-		telefono: '(0212) 555-5678',
-		municipio: 'Libertador',
-		estado: 'Caracas',
-	},
-	// Miranda
-	{
-		id: 3,
-		nombre: 'Centro Inamujer Chacao',
-		direccion: 'Av. principal de Chacao, Caracas',
-		telefono: '(0212) 555-9012',
-		foto: './uh_eto_bleh.png',
-		municipio: 'Chacao',
-		estado: 'Miranda',
-	},
-	{
-		id: 4,
-		nombre: 'Atención a la Mujer Cristobal Rojas',
-		direccion: 'Calle principal, Charallave',
-		telefono: '(0212) 555-3456',
-		municipio: 'Cristobal Rojas',
-		estado: 'Miranda',
-	},
-	{
-		id: 5,
-		nombre: 'Centro de la Mujer Miranda',
-		direccion: 'Av. principal de Los Tilos, Miranda',
-		telefono: '(0212) 555-7890',
-		municipio: 'Chacao',
-		estado: 'Miranda',
-	},
-	// Aragua
-	{
-		id: 6,
-		nombre: 'Instituto Nacional de la Mujer Aragua',
-		direccion: 'Av. Bolívar, Maracay, Estado Aragua',
-		telefono: '(0243) 555-1111',
-		municipio: 'Girardot',
-		estado: 'Aragua',
-	},
-	{
-		id: 7,
-		nombre: 'Centro de Atención Aragua',
-		direccion: 'Centro de Maracay, Aragua',
-		telefono: '(0243) 555-2222',
-		municipio: 'Girardot',
-		estado: 'Aragua',
-	},
-	// Zulia
-	{
-		id: 8,
-		nombre: 'Inamujer Zulia',
-		direccion: 'Av. 5 de Julio, Maracaibo',
-		telefono: '(0261) 555-3333',
-		municipio: 'Maracaibo',
-		estado: 'Zulia',
-	},
-	{
-		id: 9,
-		nombre: 'Centro de la Mujer Zuliana',
-		direccion: 'Calle 72, Maracaibo',
-		telefono: '(0261) 555-4444',
-		municipio: 'Maracaibo',
-		estado: 'Zulia',
-	},
-	// Lara
-	{
-		id: 10,
-		nombre: 'Inamujer Lara',
-		direccion: 'Av. Lara, Barquisimeto',
-		telefono: '(0251) 555-5555',
-		municipio: 'Iribarren',
-		estado: 'Lara',
-	},
-]
-
-const listStates: string[] = [
-	"Caracas",
-	"Miranda",
-	"Aragua",
-	"Bolívar",
-	"Trujillo",
-	"Zulia",
-	"Falcón",
-	"Mérida",
-	"Apure",
-	"Táchira",
-	"Anzoátegui",
-	"Barinas",
-	"Cojedes",
-	"Delta Amacuro",
-	"Guárico",
-	"Lara",
-	"Monagas",
-	"Portuguesa",
-	"Sucre",
-	"Yaracuy",
-	"Amazonas",
-	"Nueva Esparta",
-	"Dependencias Federales"
-]
-
-const listMunicipalities: Record<string, string[]> = {
-	Caracas: [
-		"Libertador"
-	],
-	Miranda: [
-		"Cristobal Rojas",
-		"Chacao",
-		"Baruta",
-		"Sucre",
-		"El Hatillo"
-	],
-	Aragua: [
-		"Girardot",
-		"Mario Briceño Iragorry",
-		"Santiago Mariño",
-		"José Angel Lamas",
-		"San Sebastián"
-	],
-	Zulia: [
-		"Maracaibo",
-		"San Francisco",
-		"Cabimas",
-		"Lagunillas",
-		"Machiques"
-	],
-	Lara: [
-		"Iribarren",
-		"Morán",
-		"Jiménez",
-		"Torres",
-		"Carora"
-	],
-	Bolívar: [
-		"Caroní",
-		"Heres",
-		"Padre Pedro Chien",
-		"Angostura",
-		"El Callao"
-	],
-	Trujillo: [
-		"Trujillo",
-		"Boconó",
-		"Valera",
-		"Carache",
-		"Escuque"
-	],
-	Mérida: [
-		"Libertador",
-		"Campo Elias",
-		"Tovar",
-		"Santos Michelena",
-		"Alberto Adriani"
-	],
-	Táchira: [
-		"San Cristóbal",
-		"Rubio",
-		"Capacho Nuevo",
-		"Ayacucho",
-		"Córdoba"
-	],
-	Anzoátegui: [
-		"Barcelona",
-		"Puerto La Cruz",
-		"Anaco",
-		"Cantaura",
-		"Soledad"
-	],
-	Barinas: [
-		"Barinas",
-		"Alberto Arvelo Torrealba",
-		"Antonio José de Sucre",
-		"Cruz Paredes"
-	],
-	Falcón: [
-		"Coro",
-		"Punto Fijo",
-		"Carirubana",
-		"Silva",
-		"Los Taques"
-	],
-	Monagas: [
-		"Maturín",
-		"Acosta",
-		"Cedeño",
-		"Esequibo",
-		"Libertador"
-	],
-	Portuguesa: [
-		"Acarigua",
-		"Guanare",
-		"Araure",
-		"Ospino",
-		"Páez"
-	],
-	Sucre: [
-		"Cumaná",
-		"Cumanacoa",
-		"Carúpano",
-		"Güiria",
-		"Ribero"
-	],
-	Yaracuy: [
-		"San Felipe",
-		"Chivacoa",
-		"Aroa",
-		"Nirgua",
-		"Yaritagua"
-	],
-	Guárico: [
-		"San Juan de los Morros",
-		"Calabozo",
-		"Valle de la Pascua",
-		"Altagracia de Orituco",
-		"Tucupido"
-	],
-	Cojedes: [
-		"San Carlos",
-		"Tinaquillo",
-		"La Arena",
-		"Guanare",
-		"Paez"
-	],
-	Apure: [
-		"San Fernando de Apure",
-		"Achaguas",
-		"Biruaca",
-		"Guasdualito",
-		"Elorza"
-	],
-	Amazonas: [
-		"Puerto Ayacucho",
-		"Atures",
-		"Autana",
-		"Manapiare",
-		"Maroa"
-	],
-	"Delta Amacuro": [
-		"Tucupita",
-		"Antonio Díaz",
-		"Casacoima",
-		"Pedernales",
-		"Serranal"
-	],
-	"Nueva Esparta": [
-		"La Asunción",
-		"Margarita",
-		"Gómez",
-		"Maneiro",
-		"Peninsula de Macanao"
-	],
-	"Dependencias Federales": [
-		"Los Roques",
-		"Los Monjes",
-		"Isla La Tortuga",
-		"Islas Las Aves",
-		"Isla La Sola"
-	]
-}
-
+import { type DirectoryEntry } from '../schemas/directory'
 
 function Directory() {
+	const [directories, setDirectories] = useState<DirectoryEntry[]>([])
+	const [loading, setLoading] = useState<boolean>(true)
+	const [error, setError] = useState<string | null>(null)
 	const [selectedState, setSelectedState] = useState<string>('')
 	const [selectedMunicipality, setSelectedMunicipality] = useState<string>('')
+
+	const [listStates, setStates] = useState<string[]>([]);
+	const [listMunicipalities, setMunicipalities] = useState<Record<string, string[]>>({});
+
+	useEffect(() => {
+		const cachedStates = localStorage.getItem('states');
+		const cachedMunicipalities = localStorage.getItem('municipalities');
+
+		if (Array.isArray(cachedStates) && typeof cachedMunicipalities === 'object') {
+			setStates(JSON.parse(cachedStates))
+			setMunicipalities(JSON.parse(cachedMunicipalities))
+			return;
+		}
+
+		try {
+			fetch('/api/location')
+				.then(res => res.json())
+				.then(data => {
+					setStates(data.data.states);
+					setMunicipalities(data.data.municipalities);
+					localStorage.setItem('states', JSON.stringify(data.data.states));
+					localStorage.setItem('municipalities', JSON.stringify(data.data.municipalities));
+				});
+		} catch (error) {
+			// console.error(error);
+			setError('No se pudieron cargar los datos de ubicación. Intenta de nuevo más tarde.');
+		}
+	}, [])
 
 	const handleSelectState = (value: string) => {
 		setSelectedState(value)
@@ -314,8 +59,32 @@ function Directory() {
 		setSelectedMunicipality(value)
 	}
 
-	// Filtrar directorios según selección
-	const filteredDirectorios = directoriosData.filter((item) => {
+	useEffect(() => {
+		const fetchDirectories = async () => {
+			setLoading(true)
+			setError(null)
+
+			try {
+				const response = await fetch('/api/directory')
+				const data = await response.json()
+
+				if (!response.ok) {
+					throw new Error(data?.error || 'Error al cargar directorios')
+				}
+
+				setDirectories(data?.data || [])
+			} catch (fetchError) {
+				console.error(fetchError)
+				setError('No se pudieron cargar los directorios. Intenta de nuevo más tarde.')
+			} finally {
+				setLoading(false)
+			}
+		}
+
+		fetchDirectories()
+	}, [])
+
+	const filteredDirectorios = directories.filter((item) => {
 		const matchesState = selectedState ? item.estado === selectedState : true
 		const matchesMunicipality = selectedMunicipality ? item.municipio === selectedMunicipality : true
 		return matchesState && matchesMunicipality
@@ -340,18 +109,18 @@ function Directory() {
 					{/* Stats */}
 					<div className="flex justify-center gap-8 md:gap-12">
 						<div className="text-center">
-							<p className="text-3xl font-bold text-rose-600">{directoriosData.length}</p>
+							<p className="text-3xl font-bold text-rose-600">{directories.length}</p>
 							<h5 className="text-sm text-muted-foreground">Centros</h5>
 						</div>
 						<div className="text-center">
 							<p className="text-3xl font-bold text-rose-600">
-								{new Set(directoriosData.map(d => d.estado)).size}
+								{new Set(directories.map(d => d.estado)).size}
 							</p>
 							<h5 className="text-sm text-muted-foreground">Estados</h5>
 						</div>
 						<div className="text-center">
 							<p className="text-3xl font-bold text-rose-600">
-								{new Set(directoriosData.map(d => d.municipio)).size}
+								{new Set(directories.map(d => d.municipio)).size}
 							</p>
 							<h5 className="text-sm text-muted-foreground">Municipios</h5>
 						</div>
@@ -402,7 +171,17 @@ function Directory() {
 
 			{/* Results Section */}
 			<section className="p-4 md:px-8">
-				{selectedState ? (
+				{loading ? (
+					<div className="text-center py-10">
+						<p className="text-lg font-medium">Cargando directorios...</p>
+					</div>
+				) : error ? (
+					<Card className="max-w-md mx-auto mb-6">
+						<CardContent className="p-6 text-center">
+							<p className="text-foreground font-medium">{error}</p>
+						</CardContent>
+					</Card>
+				) : selectedState ? (
 					<>
 						<header className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-2">
 							<div>
@@ -471,7 +250,7 @@ function Directory() {
 					</div>
 				)}
 				<div className="flex flex-wrap justify-center mt-5 gap-2">
-					{directoriosData.map(d => d.estado).filter((v, i, a) => a.indexOf(v) === i).map(estado => (
+					{directories.map(d => d.estado).filter((v, i, a) => a.indexOf(v) === i).map(estado => (
 						<Badge
 							key={estado}
 							variant="outline"

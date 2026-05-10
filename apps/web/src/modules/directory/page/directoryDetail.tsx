@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -13,52 +15,86 @@ import {
   AlertCircle
 } from 'lucide-react'
 import { Link } from 'react-router'
+import {type DirectoryDetailData} from '../schemas/directory'
 
-// Datos de ejemplo (simulando respuesta de base de datos)
-// En producción, esto vendría de una API basada en el ID
-const directorioDetalle = {
-  id: 1,
-  nombre: 'Centro de Atención Inamujer Caracas',
-  descripcion: 'El Centro de Atención Inamujer Caracas es una institución dedicada a promover el empoderamiento y bienestar de las mujeres en la región capital. Brindamos servicios de orientación, asesoría legal, apoyo psicológico y programas de capacitación profesional.',
-  direccion: 'Av. Universidad, Edificio Centro, Piso 1, Caracas',
-  telefono: '(0212) 555-1234',
-  correo: 'caracas@inamujer.gob.ve',
-  municipio: 'Libertador',
-  estado: 'Caracas',
-  horario: 'Lunes a Viernes: 8:00 AM - 5:00 PM',
-  servicios: [
-    'Asesoría legal gratuita',
-    'Apoyo psicológico',
-    'Programas de capacitación',
-    'Orientación laboral',
-    'Atención a víctimas de violencia',
-    'Trámites de documentación'
-  ],
-  responsables: [
-    { nombre: 'Dra. María González', cargo: 'Directora del Centro' },
-    { nombre: 'Lic. Ana Pérez', cargo: 'Coordinadora de Programas' },
-    { nombre: 'Abg. Carlos Rodríguez', cargo: 'Asesor Legal' }
-  ],
-  requisitos: [
-    'Identificación oficial (cédula)',
-    'Ser mayor de edad o estar acompañada de tutor',
-    'Solicitud de atención previamente llamada telefónica'
-  ],
-  redes: [
-    { nombre: 'Instagram', url: '#', icono: 'instagram' },
-    { nombre: 'Facebook', url: '#', icono: 'facebook' },
-    { nombre: 'Twitter', url: '#', icono: 'twitter' }
-  ]
-}
+const requisitos = [
+  'Identificación oficial (cédula)',
+  'Ser mayor de edad o estar acompañada de tutor',
+  'Solicitud de atención previamente llamada telefónica'
+]
 
 function DirectoryDetail() {
-  // const { id } = useParams()
+  const { id } = useParams<{ id: string }>()
+  const [directorio, setDirectorio] = useState<DirectoryDetailData | null>(null)
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string | null>(null)
 
-  // En producción, aquí harías una llamada a la API
-  // const { data, loading } = useDirectoryDetail(id)
+  useEffect(() => {
+    if (!id) {
+      setLoading(false)
+      setError('No se encontró el identificador del directorio.')
+      return
+    }
 
-  // Por ahora usamos los datos de ejemplo
-  const directorio = directorioDetalle
+    const fetchDirectory = async () => {
+      setLoading(true)
+      setError(null)
+
+      try {
+        const response = await fetch(`/api/directory/${id}`)
+        const data = await response.json()
+
+        if (!response.ok) {
+          throw new Error(data?.error || 'Error al cargar el directorio')
+        }
+
+        setDirectorio(data?.data || null)
+      } catch (fetchError) {
+        console.error(fetchError)
+        setError('No se pudo cargar el directorio. Intenta nuevamente más tarde.')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchDirectory()
+  }, [id])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-8">
+        <div className="text-center">
+          <p className="text-lg font-medium">Cargando información del directorio...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-8">
+        <div className="text-center text-foreground">
+          <p className="text-lg font-medium mb-2">{error}</p>
+          <Button variant="outline" asChild>
+            <Link to="/directorio">Volver al directorio</Link>
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  if (!directorio) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-8">
+        <div className="text-center">
+          <p className="text-lg font-medium">No se encontró el directorio.</p>
+          <Button variant="outline" asChild>
+            <Link to="/directorio">Volver al directorio</Link>
+          </Button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen">
@@ -157,7 +193,7 @@ function DirectoryDetail() {
       <section className="py-12 px-4 bg-muted/30">
         <h2 className="text-2xl font-bold mb-6">Servicios Disponibles</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {directorio.servicios.map((servicio, index) => (
+          {directorio.servicios?.map((servicio, index) => (
             <Card key={index} className="hover:shadow-md transition-shadow">
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center shrink-0">
@@ -187,7 +223,7 @@ function DirectoryDetail() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {directorio.responsables.map((responsable, index) => (
+                  {directorio.responsables?.map((responsable, index) => (
                     <div key={index} className="flex items-center gap-4 p-3 rounded-lg bg-muted/50">
                       <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center">
                         <User className="w-6 h-6 text-rose-600 dark:text-rose-100" />
@@ -215,7 +251,7 @@ function DirectoryDetail() {
               </CardHeader>
               <CardContent>
                 <ul className="space-y-3">
-                  {directorio.requisitos.map((requisito, index) => (
+                  {requisitos.map((requisito, index) => (
                     <li key={index} className="flex items-start gap-3">
                       <div className="w-6 h-6 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center shrink-0 mt-0.5">
                         <span className="text-xs font-bold text-rose-600 dark:text-rose-100">{index + 1}</span>
