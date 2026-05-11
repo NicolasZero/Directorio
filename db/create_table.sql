@@ -40,6 +40,7 @@ CREATE TABLE directorios (
     telefono varchar NOT NULL,
     correo varchar,
     foto varchar,
+    estado_id integer NOT NULL REFERENCES estados(id),
     municipio_id integer NOT NULL REFERENCES municipios(id),
     horario varchar,
     created_at timestamp DEFAULT NOW()

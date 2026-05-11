@@ -93,3 +93,92 @@ export const getDirectoryById = async (request, reply) => {
     return reply.code(500).send({ status: 'failed', error: 'Error interno del servidor' })
   }
 }
+
+export const createDirectory = async (request, reply) => {
+  const {
+    nombre,
+    descripcion,
+    direccion,
+    telefono,
+    correo,
+    foto,
+    horario,
+    estado,
+    municipio,
+    servicios = [],
+    responsables = [],
+    redes = []
+  } = request.body
+
+  // Validación básica
+  if (!nombre || !direccion || !telefono || !estado || !municipio) {
+    return reply.code(400).send({ status: 'BAD_REQUEST', error: 'Campos obligatorios faltantes' })
+  }
+
+  try {
+    // Iniciar transacción
+    await query('BEGIN')
+
+    // Obtener municipio_id
+    const municipioResult = await query(
+      `SELECT m.id FROM municipios m
+       JOIN estados e ON e.id = m.estado_id
+       WHERE e.nombre = $1 AND m.nombre = $2`,
+      [estado, municipio]
+    )
+
+    if (municipioResult.rowCount === 0) {
+      await query('ROLLBACK')
+      return reply.code(400).send({ status: 'BAD_REQUEST', error: 'Estado o municipio no encontrado' })
+    }
+
+    const municipioId = municipioResult.rows[0].id
+
+    // Insertar directorio
+    const directorioResult = await query(
+      `INSERT INTO directorios (nombre, descripcion, direccion, telefono, correo, foto, municipio_id, horario)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+       RETURNING id`,
+      [nombre, descripcion, direccion, telefono, correo, foto, municipioId, horario]
+    )
+
+    const directorioId = directorioResult.rows[0].id
+
+    // Insertar servicios
+    if (servicios.length > 0) {
+      const servicioValues = servicios.map(servicio => `(${directorioId}, '${servicio.replace(/'/g, "''")}')`).join(', ')
+      await query(
+        `INSERT INTO servicios_directorio (directorio_id, servicio) VALUES ${servicioValues}`
+      )
+    }
+
+    // Insertar responsables
+    if (responsables.length > 0) {
+      const responsableValues = responsables.map(r =>
+        `(${directorioId}, '${r.nombre.replace(/'/g, "''")}', '${r.cargo.replace(/'/g, "''")}')`
+      ).join(', ')
+      await query(
+        `INSERT INTO responsables_directorio (directorio_id, nombre, cargo) VALUES ${responsableValues}`
+      )
+    }
+
+    // Insertar redes
+    if (redes.length > 0) {
+      const redValues = redes.map(r =>
+        `(${directorioId}, '${r.nombre.replace(/'/g, "''")}', '${r.url.replace(/'/g, "''")}', ${r.icono ? `'${r.icono.replace(/'/g, "''")}'` : 'NULL'})`
+      ).join(', ')
+      await query(
+        `INSERT INTO redes_directorio (directorio_id, nombre, url, icono) VALUES ${redValues}`
+      )
+    }
+
+    // Confirmar transacción
+    await query('COMMIT')
+
+    return reply.code(201).send({ status: 'CREATED', message: 'Directorio creado exitosamente', id: directorioId })
+  } catch (error) {
+    await query('ROLLBACK')
+    console.error(error)
+    return reply.code(500).send({ status: 'failed', error: 'Error interno del servidor' })
+  }
+}

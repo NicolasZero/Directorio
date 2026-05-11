@@ -12,7 +12,7 @@ export const auth = async (request, reply) => {
             return reply.code(401).send({ error: "Usuario o contraseña incorrecta", status: "failed" });
         }
 
-        const resp = await query(`SELECT id, cedula, nombre, email, username, rol, password FROM users where UPPER(username)=UPPER($1);`, [user])
+        const resp = await query(`SELECT id, cedula, nombre, email, username, rol, password FROM auth.users where UPPER(username)=UPPER($1);`, [user])
 
         if (resp.rowCount != 1) {
             return reply.code(401).send({ error: "Usuario o contraseña incorrecta", status: "failed" });
@@ -63,7 +63,7 @@ export const validateToken = async (request, reply) => {
         const decoded = jwt.verify(token, JWT_SECRET);
 
         // Fetch user data from DB
-        const resp = await query(`SELECT id, cedula, nombre, email, username, rol FROM users where id=$1;`, [decoded.id]);
+        const resp = await query(`SELECT id, cedula, nombre, email, username, rol FROM auth.users where id=$1;`, [decoded.id]);
 
         if (resp.rowCount != 1) {
             return reply.code(401).send({ error: "Usuario no encontrado", status: "failed" });

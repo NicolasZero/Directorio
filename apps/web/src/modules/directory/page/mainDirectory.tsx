@@ -29,10 +29,19 @@ function Directory() {
 		const cachedStates = localStorage.getItem('states');
 		const cachedMunicipalities = localStorage.getItem('municipalities');
 
-		if (Array.isArray(cachedStates) && typeof cachedMunicipalities === 'object') {
-			setStates(JSON.parse(cachedStates))
-			setMunicipalities(JSON.parse(cachedMunicipalities))
-			return;
+		if (cachedStates && cachedMunicipalities) {
+			try {
+				const parsedStates = JSON.parse(cachedStates);
+				const parsedMunicipalities = JSON.parse(cachedMunicipalities);
+
+				if (Array.isArray(parsedStates) && parsedMunicipalities && typeof parsedMunicipalities === 'object') {
+					setStates(parsedStates);
+					setMunicipalities(parsedMunicipalities as Record<string, string[]>);
+					return;
+				}
+			} catch {
+				// Ignore invalid cached data and refetch
+			}
 		}
 
 		try {
@@ -223,15 +232,6 @@ function Directory() {
 									<p className="text-muted-foreground mb-4">
 										Intenta seleccionar un estado o municipio diferente
 									</p>
-									{/* <Button
-										variant="outline"
-										onClick={() => {
-											setSelectedState('')
-											setSelectedMunicipality('')
-										}}
-									>
-										Deseleccionar Estado
-									</Button> */}
 								</CardContent>
 							</Card>
 						)}
