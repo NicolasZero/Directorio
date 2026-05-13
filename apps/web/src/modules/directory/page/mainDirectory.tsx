@@ -14,50 +14,17 @@ import {
 } from "@/components/ui/select"
 import DirectoryCard from '../components/directoryCard'
 import { type DirectoryEntry } from '../schemas/directory'
+import { useLocations } from '../hooks/useLocations'
 
 function Directory() {
 	const [directories, setDirectories] = useState<DirectoryEntry[]>([])
 	const [loading, setLoading] = useState<boolean>(true)
 	const [error, setError] = useState<string | null>(null)
+
+	const { listStates, listMunicipalities, loadingLocation, error: locationError } = useLocations()
+
 	const [selectedState, setSelectedState] = useState<string>('')
 	const [selectedMunicipality, setSelectedMunicipality] = useState<string>('')
-
-	const [listStates, setStates] = useState<string[]>([]);
-	const [listMunicipalities, setMunicipalities] = useState<Record<string, string[]>>({});
-
-	useEffect(() => {
-		const cachedStates = localStorage.getItem('states');
-		const cachedMunicipalities = localStorage.getItem('municipalities');
-
-		if (cachedStates && cachedMunicipalities) {
-			try {
-				const parsedStates = JSON.parse(cachedStates);
-				const parsedMunicipalities = JSON.parse(cachedMunicipalities);
-
-				if (Array.isArray(parsedStates) && parsedMunicipalities && typeof parsedMunicipalities === 'object') {
-					setStates(parsedStates);
-					setMunicipalities(parsedMunicipalities as Record<string, string[]>);
-					return;
-				}
-			} catch {
-				// Ignore invalid cached data and refetch
-			}
-		}
-
-		try {
-			fetch('/api/location')
-				.then(res => res.json())
-				.then(data => {
-					setStates(data.data.states);
-					setMunicipalities(data.data.municipalities);
-					localStorage.setItem('states', JSON.stringify(data.data.states));
-					localStorage.setItem('municipalities', JSON.stringify(data.data.municipalities));
-				});
-		} catch (error) {
-			// console.error(error);
-			setError('No se pudieron cargar los datos de ubicación. Intenta de nuevo más tarde.');
-		}
-	}, [])
 
 	const handleSelectState = (value: string) => {
 		setSelectedState(value)
@@ -140,9 +107,13 @@ function Directory() {
 
 			{/* Selecionadores de estado */}
 			<section className="flex justify-center gap-5 mt-6 flex-wrap p-2">
-				<Select value={selectedState} onValueChange={handleSelectState}>
+				<Select
+					value={selectedState}
+					onValueChange={handleSelectState}
+					disabled={loadingLocation}
+				>
 					<SelectTrigger className="w-full max-w-48">
-						<SelectValue placeholder="Seleccione un Estado" />
+						<SelectValue placeholder={loadingLocation ? "Cargando..." : "Seleccione un Estado"} />
 					</SelectTrigger>
 					<SelectContent>
 						<SelectGroup>
@@ -158,9 +129,13 @@ function Directory() {
 					</SelectContent>
 				</Select>
 
-				<Select value={selectedMunicipality} onValueChange={handleSelectMunicipality} disabled={!selectedState}>
+				<Select
+					value={selectedMunicipality}
+					onValueChange={handleSelectMunicipality}
+					disabled={!selectedState || loadingLocation}
+				>
 					<SelectTrigger className="w-full max-w-50">
-						<SelectValue placeholder="Seleccione un municipio" />
+						<SelectValue placeholder={loadingLocation ? "Cargando..." : "Seleccione un municipio"} />
 					</SelectTrigger>
 					<SelectContent>
 						<SelectGroup>

@@ -3,7 +3,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Search } from 'lucide-react'
+import { Plus, Search } from 'lucide-react'
 import {
   Table,
   TableBody,
@@ -14,6 +14,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { type DirectoryEntry } from '../schemas/directory'
+import { Link } from 'react-router'
 
 const PAGE_SIZE = 10
 
@@ -91,13 +92,21 @@ export default function EditDirectory() {
       </section>
 
       <section className="container mx-auto px-4">
-        <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end mb-4">
+        <div className="grid gap-4 md:grid-cols-[1fr_auto_auto] md:items-end mb-4">
           <div>
             <p className="text-sm text-muted-foreground">Total de directorios</p>
             <p className="text-3xl font-bold text-rose-600">{directories.length}</p>
             <p className="text-sm text-muted-foreground mt-1">
               {filteredDirectories.length} resultado{filteredDirectories.length !== 1 ? 's' : ''} encontrados
             </p>
+          </div>
+          <div>
+            <Link to="/admin/directorio/nuevo" className="block w-full">
+              <Button size="lg" className="text-base font-bold bg-rose-600 hover:bg-rose-700">
+                Agregar directorio
+                <Plus className="h-4 w-4" />
+              </Button>
+            </Link>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center justify-end">
             <label className="relative w-full max-w-sm">
