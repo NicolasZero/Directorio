@@ -16,7 +16,7 @@ CREATE TABLE auth.users (
     email varchar NOT NULL UNIQUE,
     username varchar NOT NULL UNIQUE,
     password varchar NOT NULL,
-    rol UUID NOT NULL REFERENCES roles(id),
+    rol UUID NOT NULL REFERENCES auth.roles(id),
     created_at timestamp DEFAULT NOW()
 );
 
@@ -29,7 +29,6 @@ CREATE TABLE municipios (
     id integer NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
     nombre varchar NOT NULL,
     estado_id integer NOT NULL REFERENCES estados(id)
-    UNIQUE (nombre, estado_id)
 );
 
 CREATE TABLE directorios (
