@@ -23,12 +23,12 @@ try {
 // extrae las variables de entorno o establece un valor por defecto
 const {
   PORT = 3000,
-  HOST_URL = '*'
+  CORS_URL = '*'
 } = process.env
 
 // Habilita el Cross-Origin Resource Sharing (CORS)
 fastify.register(cors, {
-  origin: [HOST_URL]
+  origin: [CORS_URL]
 })
 
 // Registra el plugin de cookies
