@@ -23,6 +23,10 @@ function Directory() {
 
 	const { listStates, listMunicipalities, loadingLocation, error: locationError } = useLocations()
 
+	if (locationError) {
+		setError('Error al cargar los datos')
+	}
+
 	const [selectedState, setSelectedState] = useState<string>('')
 	const [selectedMunicipality, setSelectedMunicipality] = useState<string>('')
 
