@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     useEffect(() => {
         // Al cargar la app, verificamos si hay un token válido
         const checkToken = async () => {
-            console.log("Se llamo a checkear") 
+            // console.log("Se llamo a checkear") 
             
             try {
                 const resp = await fetch('/api/auth/validate', {

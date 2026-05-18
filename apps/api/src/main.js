@@ -6,10 +6,11 @@ import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
 
 const fastify = Fastify({
-  logger: {
-    level: 'info',
-    // file: '../server.log'
-  } // Activa o desactiva los logger
+  // logger: {
+  //   level: 'info',
+  //   file: '../server.log'
+  // }
+  logger: false
 })
 
 // Trata de cargar el .env de forma segura

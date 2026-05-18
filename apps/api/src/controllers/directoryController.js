@@ -121,7 +121,7 @@ export const createDirectory = async (request, reply) => {
 
     // Obtener municipio_id
     const municipioResult = await query(
-      `SELECT m.id FROM municipios m
+      `SELECT m.id as "municipioId", e.id as "estadoId" FROM municipios m
        JOIN estados e ON e.id = m.estado_id
        WHERE e.nombre = $1 AND m.nombre = $2`,
       [estado, municipio]
@@ -132,14 +132,15 @@ export const createDirectory = async (request, reply) => {
       return reply.code(400).send({ status: 'BAD_REQUEST', error: 'Estado o municipio no encontrado' })
     }
 
-    const municipioId = municipioResult.rows[0].id
+    const municipioId = municipioResult.rows[0].municipioId
+    const estadoId = municipioResult.rows[0].estadoId
 
     // Insertar directorio
     const directorioResult = await query(
-      `INSERT INTO directorios (nombre, descripcion, direccion, telefono, correo, foto, municipio_id, horario)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      `INSERT INTO directorios (nombre, descripcion, direccion, telefono, correo, foto, estado_id, municipio_id, horario)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
        RETURNING id`,
-      [nombre, descripcion, direccion, telefono, correo, foto, municipioId, horario]
+      [nombre, descripcion, direccion, telefono, correo, foto, estadoId, municipioId, horario]
     )
 
     const directorioId = directorioResult.rows[0].id
