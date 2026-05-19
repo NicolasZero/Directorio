@@ -160,7 +160,7 @@ function Directory() {
 						<p className="text-lg font-medium">Cargando directorios...</p>
 					</div>
 				) : error ? (
-					<Card className="max-w-md mx-auto mb-6">
+					<Card className="w-fit mx-auto mb-6">
 						<CardContent className="p-6 text-center">
 							<p className="text-foreground font-medium">{error}</p>
 						</CardContent>

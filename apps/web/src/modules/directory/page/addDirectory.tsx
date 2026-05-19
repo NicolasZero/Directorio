@@ -24,10 +24,12 @@ import {
     Building2,
     FileText,
     AlertCircle,
+    ArrowLeft,
 } from 'lucide-react'
 import { useDirectoryForm } from '../hooks/useDirectoryForm'
 import { useLocations } from '../hooks/useLocations'
 import { FacebookLogoIcon, InstagramLogoIcon, TwitterLogoIcon, WhatsappLogoIcon, TiktokLogoIcon, LinkedinLogoIcon, YoutubeLogoIcon } from '@phosphor-icons/react'
+import { Link } from 'react-router'
 
 // ─── Sub-components ────────────────────────────────────────────────────────────
 
@@ -100,15 +102,22 @@ export default function AddDirectory() {
     return (
         <div className="min-h-screen">
             <form onSubmit={handleSubmit}>
-                {/* ── Hero / Header ─────────────────────────────────────────── */}
                 <section className="py-10 px-4 sm:px-8">
-                    <Badge
-                        variant="outline"
-                        className="mb-4 bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50"
-                    >
-                        <Building2 className="w-3 h-3 mr-1" />
-                        Registro de directorio
-                    </Badge>
+                    <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-8">
+                        <Badge
+                            variant="outline"
+                            className="mb-4 bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50"
+                        >
+                            <Building2 className="w-3 h-3 mr-1" />
+                            Registro de directorio
+                        </Badge>
+                        <Button variant="ghost" size="sm" asChild>
+                            <Link to="/admin/directorio">
+                                <ArrowLeft className="w-4 h-4 mr-2" />
+                                Volver al directorio
+                            </Link>
+                        </Button>
+                    </div>
                     <div className="flex flex-col lg:flex-row items-start gap-8">
                         {/* Left: Title + basic fields */}
                         <div className="flex-1 space-y-6">
@@ -258,6 +267,7 @@ export default function AddDirectory() {
                             </CardContent>
                         </Card>
                     </div>
+
                 </section>
 
                 {/* ── Description ───────────────────────────────────────────── */}
