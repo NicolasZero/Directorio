@@ -24,25 +24,52 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
     // const [date,setDate] = useState(new Date)
 
+    const refreshSession = async () => {
+        const refreshResp = await fetch('/api/auth/refresh', {
+            method: 'POST',
+            credentials: 'include',
+        });
+
+        if (!refreshResp.ok) {
+            throw new Error('No se pudo refrescar la sesión');
+        }
+
+        const data = await refreshResp.json();
+        if (data.error) {
+            throw new Error(data.error);
+        }
+
+        setUser(data.data);
+        setStatus('authenticated');
+    };
+
     useEffect(() => {
-        // Al cargar la app, verificamos si hay un token válido
         const checkToken = async () => {
-            // console.log("Se llamo a checkear") 
-            
             try {
                 const resp = await fetch('/api/auth/validate', {
                     method: 'GET',
                     credentials: 'include',
                 });
+
                 if (resp.ok) {
                     const data = await resp.json();
                     setUser(data.data);
                     setStatus('authenticated');
-                } else {
+                    return;
+                }
+
+                if (resp.status === 401) {
+                    await refreshSession();
+                    return;
+                }
+
+                setStatus('no-authenticated');
+            } catch {
+                try {
+                    await refreshSession();
+                } catch {
                     setStatus('no-authenticated');
                 }
-            } catch {
-                setStatus('no-authenticated');
             }
         };
 
