@@ -5,6 +5,8 @@ import { useAuth } from '@/context/authContext.tsx'
 
 const EditDirectory = React.lazy(() => import('@/modules/directory/page/editDirectory.tsx'))
 const AddDirectory = React.lazy(() => import('@/modules/directory/page/addDirectory.tsx'))
+const EditClass = React.lazy(() => import('@/modules/classes/page/editClass.tsx'))
+const AddClass = React.lazy(() => import('@/modules/classes/page/addClass.tsx'))
 const AdminLayout = React.lazy(() => import('@/layout/adminLayout.tsx'))
 
 export default function PrivateRouter() {
@@ -18,7 +20,8 @@ export default function PrivateRouter() {
                 <Route path='inicio' element={<h1>Welcome Admin</h1>} />
                 <Route path="directorio" element={<EditDirectory />} />
                 <Route path="directorio/nuevo" element={<AddDirectory />} />
-                <Route path='clases' element={<h1>Class Edit Page</h1>} />
+                <Route path='clases' element={<EditClass />} />
+                <Route path='clases/nuevo' element={<AddClass />} />
 
             </Route>
             <Route path="*" element={<Navigate to="/admin/inicio" replace />} />

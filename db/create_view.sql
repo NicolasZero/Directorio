@@ -1,4 +1,4 @@
-CREATE VIEW vw_directorios_list AS
+CREATE OR REPLACE VIEW vw_directorios_list AS
 SELECT
     d.id,
     d.nombre,
@@ -13,7 +13,7 @@ FROM directorios d
 JOIN municipios m ON m.id = d.municipio_id
 JOIN estados e ON e.id = m.estado_id;
 
-CREATE VIEW vw_directorio_detalle AS
+CREATE OR REPLACE VIEW vw_directorio_detalle AS
 SELECT
     d.id,
     d.nombre,
@@ -43,3 +43,44 @@ SELECT
 FROM directorios d
 JOIN municipios m ON m.id = d.municipio_id
 JOIN estados e ON e.id = m.estado_id;
+
+CREATE OR REPLACE VIEW vw_courses_list AS
+SELECT
+    id,
+    title,
+    description,
+    duration,
+    level,
+    image,
+    start_date
+FROM courses
+ORDER BY created_at DESC;
+
+CREATE OR REPLACE VIEW vw_course_detail AS
+SELECT
+    c.id,
+    c.title,
+    c.description,
+    c.full_description,
+    c.instructor,
+    c.instructor_bio,
+    c.duration,
+    c.level,
+    c.image,
+    c.start_date,
+    (
+        SELECT json_agg(jsonb_build_object('id', m.id, 'title', m.title, 'duration', m.duration, 'order', m.orden) ORDER BY m.orden)
+        FROM course_modules m
+        WHERE m.course_id = c.id
+    ) AS modules,
+    (
+        SELECT json_agg(jsonb_build_object('id', r.id, 'requirement', r.requirement, 'order', r.orden) ORDER BY r.orden)
+        FROM course_requirements r
+        WHERE r.course_id = c.id
+    ) AS requirements,
+    (
+        SELECT json_agg(jsonb_build_object('id', o.id, 'outcome', o.outcome, 'order', o.orden) ORDER BY o.orden)
+        FROM course_outcomes o
+        WHERE o.course_id = c.id
+    ) AS outcomes
+FROM courses c;
