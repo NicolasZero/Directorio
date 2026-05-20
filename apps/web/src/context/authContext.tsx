@@ -41,10 +41,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         setUser(data.data);
         setStatus('authenticated');
+        localStorage.setItem('directorio_logged_in', 'true');
     };
 
     useEffect(() => {
         const checkToken = async () => {
+            if (localStorage.getItem('directorio_logged_in') !== 'true') {
+                setStatus('no-authenticated');
+                return;
+            }
+
+            let shouldRefresh = false;
+
             try {
                 const resp = await fetch('/api/auth/validate', {
                     method: 'GET',
@@ -55,20 +63,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                     const data = await resp.json();
                     setUser(data.data);
                     setStatus('authenticated');
+                    localStorage.setItem('directorio_logged_in', 'true');
                     return;
                 }
 
+                // Si es 401, marcamos para intentar refrescar
                 if (resp.status === 401) {
-                    await refreshSession();
-                    return;
+                    shouldRefresh = true;
+                } else {
+                    setStatus('no-authenticated');
+                    localStorage.removeItem('directorio_logged_in');
                 }
 
-                setStatus('no-authenticated');
             } catch {
+                // Si hay un error de red u otro problema al validar, también intentamos refrescar
+                shouldRefresh = true;
+            }
+
+            if (shouldRefresh) {
                 try {
                     await refreshSession();
                 } catch {
                     setStatus('no-authenticated');
+                    localStorage.removeItem('directorio_logged_in');
                 }
             }
         };
@@ -91,6 +108,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         } finally {
             setUser(null);
             setStatus('no-authenticated');
+            localStorage.removeItem('directorio_logged_in');
         }
     };
 
@@ -106,6 +124,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             if (data.error) throw new Error(data.error);
             setUser(data.data);
             setStatus('authenticated');
+            localStorage.setItem('directorio_logged_in', 'true');
         } catch {
             throw new Error('Usuario o contraseña incorrectos');
         }

@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from "react-router";
 import { Menu, X } from "lucide-react";
 import { ModeToggle } from "./mode-toggle";
 import { useAuth } from "@/context/authContext";
+import { Button } from "./ui/button";
 
 const AdminNavbar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -52,13 +53,11 @@ const AdminNavbar = () => {
 
                 {/* Theme Toggle */}
                 <div className="ml-auto flex items-center gap-2">
-                    <span className="text-white text-sm">Hola, {user?.nombre}</span>
+                    <span className="text-white text-sm hidden md:block">Hola, {user?.nombre}</span>
                     <ModeToggle />
-                    <button
-                        onClick={handleLogout}
-                        className="bg-white text-rose-600 hover:bg-rose-50 px-4 py-2 rounded-lg font-medium">
+                    <Button onClick={handleLogout} variant="outline" className="text-accent-foreground">
                         Cerrar Sesión
-                    </button>
+                    </Button>
                 </div>
             </div>
 

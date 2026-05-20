@@ -44,7 +44,7 @@ function Login() {
           value={user}
           onChange={(event) => setUser(event.target.value)}
           placeholder="Ingresa tu usuario"
-          className="w-full rounded-3xl border border-input !bg-background h-12 px-4 text-sm text-foreground outline-none transition-colors focus:!border-rose-500 focus:!ring-2 focus:!ring-rose-500/20"
+          className="w-full rounded-3xl border border-input bg-background! h-12 px-4 text-sm text-foreground outline-none transition-colors focus:border-rose-500! focus:ring-2! focus:ring-rose-500/20!"
           required
         />
       </fieldset>
@@ -59,7 +59,7 @@ function Login() {
           value={pass}
           onChange={(event) => setPass(event.target.value)}
           placeholder="Ingresa tu contraseña"
-          className="w-full rounded-3xl border border-input !bg-background h-12 px-4 text-sm text-foreground outline-none transition-colors focus:!border-rose-500 focus:!ring-2 focus:!ring-rose-500/20"
+          className="w-full rounded-3xl border border-input bg-background! h-12 px-4 text-sm text-foreground outline-none transition-colors focus:border-rose-500! focus:ring-2! focus:ring-rose-500/20!"
           required
         />
       </fieldset>
@@ -68,13 +68,16 @@ function Login() {
         <Button type="submit" className="rounded-3xl bg-rose-600 dark:bg-rose-900 dark:hover:bg-rose-800 text-white hover:bg-rose-700" disabled={loading}>
           {loading ? 'Validando...' : 'Iniciar sesión'}
         </Button>
-        <button
+        {/* <button
           type="button"
           onClick={() => setMessage('Por favor ingresa tus credenciales para continuar.')}
           className="text-sm text-rose-600 hover:text-rose-700"
         >
           ¿Olvidaste tu contraseña?
-        </button>
+        </button> */}
+        <Button type="button" onClick={() => navigate('/')} variant="link" className="text-rose-600 dark:text-rose-400">
+          Volver a la página principal
+        </Button>
       </fieldset>
 
       {error ? (
