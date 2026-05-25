@@ -1,24 +1,41 @@
 import { useState } from "react";
-import { NavLink } from "react-router";
-import { Menu, X } from "lucide-react";
+import { NavLink, useNavigate } from "react-router";
+import { Menu, X, LogOut } from "lucide-react";
 import { ModeToggle } from "./mode-toggle";
-// import { useAuth } from "@/context/authContext";
+import { useAuth } from "@/context/authContext";
+import { Button } from "./ui/button";
 
-const Navbar = () => {
+interface NavbarProps {
+    isAdmin?: boolean;
+}
+
+const Navbar = ({ isAdmin = false }: NavbarProps) => {
     const [isOpen, setIsOpen] = useState(false);
-
     const toggleMenu = () => setIsOpen(!isOpen);
 
-    // const { user, status } = useAuth();
-    // console.log("User:",user,"Status:",status);
-    
-    const navLinks = [
+    const { logout, user } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        await logout();
+        navigate("/auth/login");
+    };
+
+    const publicLinks = [
         { name: "Inicio", path: "/" },
         { name: "Directorio", path: "/directorio" },
         { name: "Mapa", path: "/mapa" },
         { name: "Aprendizaje", path: "/clases" },
         { name: "Conócenos", path: "/conocenos" },
     ];
+
+    const adminLinks = [
+        { name: "Inicio", path: "/admin/inicio" },
+        { name: "Directorio", path: "/admin/directorio" },
+        { name: "Aprendizaje", path: "/admin/clases" },
+    ];
+
+    const navLinks = isAdmin ? adminLinks : publicLinks;
 
     return (
         <nav className="bg-linear-to-r from-rose-800 dark:from-rose-950 dark:to-rose-600 to-rose-400 text-white px-4 py-2 relative z-50">
@@ -37,7 +54,9 @@ const Navbar = () => {
                     {navLinks.map((link) => (
                         <li key={link.path} className="rounded-md overflow-hidden">
                             <NavLink
-                                className={({ isActive }) => `px-4 py-2 block transition-colors duration-200 hover:bg-black/20 ${isActive ? 'bg-black/20 font-medium' : ''}`}
+                                className={({ isActive }) =>
+                                    `px-4 py-2 block transition-colors duration-200 hover:bg-black/20 ${isActive ? "bg-black/20 font-medium" : ""}`
+                                }
                                 to={link.path}
                             >
                                 {link.name}
@@ -46,9 +65,24 @@ const Navbar = () => {
                     ))}
                 </ul>
 
-                {/* Theme Toggle */}
-                <div className="ml-auto">
+                {/* Right section: theme toggle + admin actions */}
+                <div className="ml-auto flex items-center gap-2">
+                    {isAdmin && (
+                        <p className="text-white text-sm hidden md:block">
+                            Hola, {user?.nombre}
+                        </p>
+                    )}
                     <ModeToggle />
+                    {isAdmin && (
+                        <Button
+                            onClick={handleLogout}
+                            variant="outline"
+                            className="text-accent-foreground border-none"
+                            title="Cerrar sesión"
+                        >
+                            <LogOut />
+                        </Button>
+                    )}
                 </div>
             </div>
 
@@ -59,7 +93,9 @@ const Navbar = () => {
                         {navLinks.map((link) => (
                             <li key={link.path} className="px-5">
                                 <NavLink
-                                    className={({ isActive }) => `px-6 py-4 block transition-colors duration-200 hover:bg-black/20 rounded-xl ${isActive ? 'bg-black/20 font-medium' : ''}`}
+                                    className={({ isActive }) =>
+                                        `px-6 py-4 block transition-colors duration-200 hover:bg-black/20 rounded-xl ${isActive ? "bg-black/20 font-medium" : ""}`
+                                    }
                                     to={link.path}
                                     onClick={() => setIsOpen(false)}
                                 >

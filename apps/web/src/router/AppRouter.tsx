@@ -25,12 +25,12 @@ function AppRouter() {
     <Suspense fallback={<Loading />}>
       <AuthProvider>
         <Routes>
-          <Route path='/' element={<MainLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/conocenos" element={<About />} />
-            <Route path="/clases" element={<Classes />} />
-            <Route path="/clases/curso/:id" element={<CourseDetail />} />
-            <Route path="/mapa" element={<Map />} />
+          <Route path="/" element={<MainLayout />}>
+            <Route index element={<Home />} />
+            <Route path="conocenos" element={<About />} />
+            <Route path="clases" element={<Classes />} />
+            <Route path="clases/curso/:id" element={<CourseDetail />} />
+            <Route path="mapa" element={<Map />} />
             <Route path="/directorio" element={<Directory />} />
             <Route path="/directorio/:id" element={<DirectoryDetail />} />
           </Route>
