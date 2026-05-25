@@ -183,3 +183,137 @@ export const createDirectory = async (request, reply) => {
     return reply.code(500).send({ status: 'failed', error: 'Error interno del servidor' })
   }
 }
+
+const getLocationIds = async (estado, municipio) => {
+  const response = await query(
+    `SELECT m.id as municipio_id, e.id as estado_id
+     FROM municipios m
+     JOIN estados e ON e.id = m.estado_id
+     WHERE e.nombre = $1 AND m.nombre = $2`,
+    [estado, municipio]
+  )
+
+  if (response.rowCount === 0) {
+    return null
+  }
+
+  return response.rows[0]
+}
+
+export const updateDirectory = async (request, reply) => {
+  const { id } = request.params
+  const {
+    nombre,
+    descripcion,
+    direccion,
+    telefono,
+    correo,
+    foto,
+    horario,
+    estado,
+    municipio,
+    servicios = [],
+    responsables = [],
+    redes = []
+  } = request.body
+
+  if (!nombre || !direccion || !telefono || !estado || !municipio) {
+    return reply.code(400).send({ status: 'BAD_REQUEST', error: 'Campos obligatorios faltantes' })
+  }
+
+  const locationIds = await getLocationIds(estado, municipio)
+  if (!locationIds) {
+    return reply.code(400).send({ status: 'BAD_REQUEST', error: 'Estado o municipio no encontrado' })
+  }
+
+  try {
+    await query('BEGIN')
+
+    const updateResult = await query(
+      `UPDATE directorios
+       SET nombre = $1,
+           descripcion = $2,
+           direccion = $3,
+           telefono = $4,
+           correo = $5,
+           foto = $6,
+           horario = $7,
+           estado_id = $8,
+           municipio_id = $9
+       WHERE id = $10`,
+      [nombre, descripcion, direccion, telefono, correo, foto, horario, locationIds.estado_id, locationIds.municipio_id, id]
+    )
+
+    if (updateResult.rowCount === 0) {
+      await query('ROLLBACK')
+      return reply.code(404).send({ status: 'NOT_FOUND', error: 'Directorio no encontrado' })
+    }
+
+    await query('DELETE FROM servicios_directorio WHERE directorio_id = $1', [id])
+    await query('DELETE FROM responsables_directorio WHERE directorio_id = $1', [id])
+    await query('DELETE FROM redes_directorio WHERE directorio_id = $1', [id])
+
+    for (const servicio of servicios) {
+      if (servicio?.trim()) {
+        await query(
+          `INSERT INTO servicios_directorio (directorio_id, servicio)
+           VALUES ($1, $2)`,
+          [id, servicio.trim()]
+        )
+      }
+    }
+
+    for (const responsable of responsables) {
+      if (responsable?.nombre && responsable?.cargo) {
+        await query(
+          `INSERT INTO responsables_directorio (directorio_id, nombre, cargo)
+           VALUES ($1, $2, $3)`,
+          [id, responsable.nombre.trim(), responsable.cargo.trim()]
+        )
+      }
+    }
+
+    for (const red of redes) {
+      if (red?.nombre && red?.url) {
+        await query(
+          `INSERT INTO redes_directorio (directorio_id, nombre, url, icono)
+           VALUES ($1, $2, $3, $4)`,
+          [id, red.nombre.trim(), red.url.trim(), red.icono || null]
+        )
+      }
+    }
+
+    await query('COMMIT')
+    return reply.code(200).send({ status: 'OK', message: 'Directorio actualizado exitosamente' })
+  } catch (error) {
+    await query('ROLLBACK')
+    console.error(error)
+    return reply.code(500).send({ status: 'failed', error: 'Error interno del servidor' })
+  }
+}
+
+export const deleteDirectory = async (request, reply) => {
+  const { id } = request.params
+
+  try {
+    await query('BEGIN')
+
+    await query('DELETE FROM servicios_directorio WHERE directorio_id = $1', [id])
+    await query('DELETE FROM responsables_directorio WHERE directorio_id = $1', [id])
+    await query('DELETE FROM redes_directorio WHERE directorio_id = $1', [id])
+
+    const deleteResult = await query('DELETE FROM directorios WHERE id = $1', [id])
+
+    if (deleteResult.rowCount === 0) {
+      await query('ROLLBACK')
+      return reply.code(404).send({ status: 'NOT_FOUND', error: 'Directorio no encontrado' })
+    }
+
+    await query('COMMIT')
+    return reply.code(200).send({ status: 'OK', message: 'Directorio eliminado exitosamente' })
+  } catch (error) {
+    await query('ROLLBACK')
+    console.error(error)
+    return reply.code(500).send({ status: 'failed', error: 'Error interno del servidor' })
+  }
+}
