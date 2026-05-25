@@ -30,6 +30,7 @@ import {
 } from 'lucide-react'
 import { useDirectoryForm } from '../hooks/useDirectoryForm'
 import { useLocations } from '../hooks/useLocations'
+import { FacebookLogoIcon, InstagramLogoIcon, TwitterLogoIcon, WhatsappLogoIcon, TiktokLogoIcon, LinkedinLogoIcon, YoutubeLogoIcon } from '@phosphor-icons/react'
 
 function FormField({ label, htmlFor, children }: { label: string; htmlFor?: string; children: ReactNode }) {
     return (
@@ -82,12 +83,15 @@ export default function EditDirectory() {
         message,
         error,
         servicios,
+        setServicios,
         nuevoServicio,
         setNuevoServicio,
         responsables,
+        setResponsables,
         nuevoResponsable,
         setNuevoResponsable,
         redes,
+        setRedes,
         nuevaRed,
         setNuevaRed,
         agregarServicio,
@@ -121,6 +125,9 @@ export default function EditDirectory() {
                 }
 
                 const directorio = data?.data
+
+                console.log(directorio)
+
                 setNombre(directorio.nombre || '')
                 setDescripcion(directorio.descripcion || '')
                 setDireccion(directorio.direccion || '')
@@ -553,13 +560,13 @@ export default function EditDirectory() {
                                 {redes.map((red, index) => (
                                     <div key={index} className="flex items-center gap-4 p-3 rounded-lg bg-background">
                                         <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center shrink-0">
-                                            {red.icono === 'facebook' && <span className="text-rose-600">F</span>}
-                                            {red.icono === 'instagram' && <span className="text-rose-600">I</span>}
-                                            {red.icono === 'twitter' && <span className="text-rose-600">T</span>}
-                                            {red.icono === 'whatsapp' && <span className="text-rose-600">W</span>}
-                                            {red.icono === 'tiktok' && <span className="text-rose-600">T</span>}
-                                            {red.icono === 'linkedin' && <span className="text-rose-600">L</span>}
-                                            {red.icono === 'youtube' && <span className="text-rose-600">Y</span>}
+                                            {red.icono === 'facebook' && <FacebookLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                                            {red.icono === 'instagram' && <InstagramLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                                            {red.icono === 'twitter' && <TwitterLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                                            {red.icono === 'whatsapp' && <WhatsappLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                                            {red.icono === 'tiktok' && <TiktokLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                                            {red.icono === 'linkedin' && <LinkedinLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                                            {red.icono === 'youtube' && <YoutubeLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
                                         </div>
                                         <div className="flex-1">
                                             <p className="font-medium">{red.nombre}</p>
