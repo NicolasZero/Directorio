@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { MapPin, Search } from 'lucide-react';
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import DirectoryCard from '@/modules/directory/components/directoryCard';
-import MapVenezuela from '../components/map';
+import MapVenezuela from '@/modules/map/components/map';
 
 // Importamos el CSS que acabamos de crear
 import '@/modules/map/assets/style.css';

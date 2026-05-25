@@ -5,27 +5,12 @@ import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Clock, User, BarChart, BookOpen, Calendar, CheckCircle2, AlertCircle, GraduationCap } from "lucide-react"
 import { Link, useParams } from "react-router"
 import { useAuth } from "@/context/authContext"
+import type { ClassDetailType } from "@/modules/classes/schemas/classDetailSchema"
 
-type CourseDetailType = {
-  id: number
-  title: string
-  description: string
-  full_description?: string
-  instructor: string
-  instructor_bio?: string
-  duration?: string
-  level?: string
-  image?: string
-  start_date?: string | null
-  modules?: { id: number; title: string; duration: string }[]
-  requirements?: string[]
-  outcomes?: string[]
-}
-
-function CourseDetail() {
+export default function ClassesDetail() {
   const { status } = useAuth()
   const { id } = useParams()
-  const [course, setCourse] = useState<CourseDetailType | null>(null)
+  const [course, setCourse] = useState<ClassDetailType | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -58,25 +43,25 @@ function CourseDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <section className="min-h-screen flex items-center justify-center">
         <p className="text-base text-muted-foreground">Cargando curso...</p>
-      </div>
+      </section>
     )
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <section className="min-h-screen flex items-center justify-center">
         <p className="text-base text-muted-foreground">{error}</p>
-      </div>
+      </section>
     )
   }
 
   if (!course) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <section className="min-h-screen flex items-center justify-center">
         <p className="text-base text-muted-foreground">Curso no encontrado.</p>
-      </div>
+      </section>
     )
   }
 
@@ -156,7 +141,7 @@ function CourseDetail() {
                     {outcomes.map((item, index) => (
                       <li key={index} className="flex items-start gap-2">
                         <CheckCircle2 className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
-                        <span className="text-sm">{item}</span>
+                        <span className="text-sm">{item.outcome}</span>
                       </li>
                     ))}
                   </ul>
@@ -273,7 +258,7 @@ function CourseDetail() {
                         <span className="flex items-center justify-center w-5 h-5 rounded-full bg-rose-100 dark:bg-rose-900 text-rose-600 dark:text-rose-100 text-xs font-bold shrink-0 mt-0.5">
                           {index + 1}
                         </span>
-                        <span className="text-muted-foreground">{req}</span>
+                        <span className="text-muted-foreground">{req.requirement}</span>
                       </li>
                     ))}
                   </ul>
@@ -298,5 +283,3 @@ function CourseDetail() {
     </div>
   )
 }
-
-export default CourseDetail

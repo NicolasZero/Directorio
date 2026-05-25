@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-// import { Button } from "@/components/ui/button"
 import {
   Heart,
   Users,
@@ -8,13 +7,8 @@ import {
   Globe,
   Scale,
   Calendar,
-  // MapPin,
-  // Phone,
-  // Mail,
-  // ArrowRight,
   Target,
-  Lightbulb,
-  // HandHeart
+  Lightbulb
 } from "lucide-react"
 
 const About = () => {
@@ -74,7 +68,7 @@ const About = () => {
           <p className="text-xl text-muted-foreground mb-6">
             {institucion.descripcion}
           </p>
-          <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
+          <div className="flex items-center flex-wrap justify-center gap-4 text-sm text-muted-foreground">
             <Calendar className="w-4 h-4" />
             <span>Creado el {institucion.fechaCreacion}</span>
             <span className="mx-2">•</span>

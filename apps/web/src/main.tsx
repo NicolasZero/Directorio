@@ -1,16 +1,19 @@
+import './index.css'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './index.css'
 import { BrowserRouter } from 'react-router';
-import AppRouter from './router/AppRouter'
-import { ThemeProvider } from "./context/theme-provider";
+import AppRouter from '@/router/AppRouter'
+import { ThemeProvider } from "@/context/theme-provider";
 
-createRoot(document.getElementById('root')!).render(
+const element = document.getElementById('root');
+if (!element) throw new Error("Failed to find the root element");
+
+createRoot(element).render(
   <StrictMode>
     <ThemeProvider defaultTheme="light" storageKey="directory-ui-theme">
       <BrowserRouter>
         <AppRouter />
       </BrowserRouter>
     </ThemeProvider>
-  </StrictMode>,
+  </StrictMode>
 )
