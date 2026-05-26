@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { MapPin, Phone, Building2, ArrowRight } from "lucide-react"
 import { Link } from 'react-router'
-import type { DirectoryEntry } from '../schemas/directory'
+import type { DirectoryEntry } from '../schemes/directory'
 
 
 function DirectoryCard({ directorio }: { directorio: DirectoryEntry }) {

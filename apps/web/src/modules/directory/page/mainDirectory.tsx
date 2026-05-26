@@ -13,7 +13,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select"
 import DirectoryCard from '../components/directoryCard'
-import { type DirectoryEntry } from '../schemas/directory'
+import { type DirectoryEntry } from '../schemes/directory'
 import { useLocations } from '../hooks/useLocations'
 
 function Directory() {

@@ -165,6 +165,7 @@ export default function EditClass() {
                   setSearch(event.target.value)
                   setPage(1)
                 }}
+                name='search'
                 placeholder="Buscar"
                 className="pl-9"
                 title="Buscar por título, descripción, nivel o duración"

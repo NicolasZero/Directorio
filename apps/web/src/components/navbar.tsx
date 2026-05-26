@@ -4,16 +4,13 @@ import { Menu, X, LogOut } from "lucide-react";
 import { ModeToggle } from "./mode-toggle";
 import { useAuth } from "@/context/authContext";
 import { Button } from "./ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 
-interface NavbarProps {
-    isAdmin?: boolean;
-}
-
-const Navbar = ({ isAdmin = false }: NavbarProps) => {
+const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const toggleMenu = () => setIsOpen(!isOpen);
 
-    const { logout, user } = useAuth();
+    const { logout, user, status } = useAuth();
     const navigate = useNavigate();
 
     const handleLogout = async () => {
@@ -30,12 +27,13 @@ const Navbar = ({ isAdmin = false }: NavbarProps) => {
     ];
 
     const adminLinks = [
-        { name: "Inicio", path: "/admin/inicio" },
+        { name: "Análisis", path: "/admin/inicio" },
         { name: "Directorio", path: "/admin/directorio" },
+        { name: "Usuarios", path: "/admin/usuarios" },
         { name: "Aprendizaje", path: "/admin/clases" },
     ];
 
-    const navLinks = isAdmin ? adminLinks : publicLinks;
+    const isAdmin = status === 'authenticated' ? true : false;
 
     return (
         <nav className="bg-linear-to-r from-rose-800 dark:from-rose-950 dark:to-rose-600 to-rose-400 text-white px-4 py-2 relative z-50">
@@ -51,7 +49,7 @@ const Navbar = ({ isAdmin = false }: NavbarProps) => {
 
                 {/* Desktop Menu */}
                 <ul className="hidden md:flex flex-row items-center gap-1">
-                    {navLinks.map((link) => (
+                    {publicLinks.map((link) => (
                         <li key={link.path} className="rounded-md overflow-hidden">
                             <NavLink
                                 className={({ isActive }) =>
@@ -63,6 +61,23 @@ const Navbar = ({ isAdmin = false }: NavbarProps) => {
                             </NavLink>
                         </li>
                     ))}
+                    {isAdmin && (
+
+                        <li>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger>
+                                    <span className="px-4 py-2 block transition-colors duration-200 hover:bg-black/20 rounded-md">Administrar</span>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent>
+                                    {adminLinks.map((link) => (
+                                        <DropdownMenuItem key={link.path} asChild>
+                                            <NavLink to={link.path}>{link.name}</NavLink>
+                                        </DropdownMenuItem>
+                                    ))}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </li>
+                    )}
                 </ul>
 
                 {/* Right section: theme toggle + admin actions */}
@@ -90,7 +105,7 @@ const Navbar = ({ isAdmin = false }: NavbarProps) => {
             {isOpen && (
                 <div className="md:hidden absolute top-full left-0 w-full bg-rose-700 dark:bg-rose-900 shadow-xl border-t border-white/10 flex flex-col">
                     <ul className="flex flex-col">
-                        {navLinks.map((link) => (
+                        {publicLinks.map((link) => (
                             <li key={link.path} className="px-5">
                                 <NavLink
                                     className={({ isActive }) =>
@@ -103,6 +118,22 @@ const Navbar = ({ isAdmin = false }: NavbarProps) => {
                                 </NavLink>
                             </li>
                         ))}
+                        {isAdmin && (
+                            <li className="px-5">
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger>
+                                        <span className="px-6 py-4 block transition-colors duration-200 hover:bg-black/20 rounded-xl">Administrar</span>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                        {adminLinks.map((link) => (
+                                            <DropdownMenuItem key={link.path} onClick={() => setIsOpen(false)}>
+                                                <NavLink to={link.path}>{link.name}</NavLink>
+                                            </DropdownMenuItem>
+                                        ))}
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </li>
+                        )}
                     </ul>
                 </div>
             )}

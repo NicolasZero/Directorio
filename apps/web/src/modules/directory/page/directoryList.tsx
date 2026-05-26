@@ -13,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { type DirectoryEntry } from '../schemas/directory'
+import { type DirectoryEntry } from '../schemes/directory'
 import { Link } from 'react-router'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 
@@ -159,6 +159,7 @@ export default function EditDirectory() {
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 value={search}
+                name='search'
                 onChange={(event) => {
                   setSearch(event.target.value)
                   setPage(1)

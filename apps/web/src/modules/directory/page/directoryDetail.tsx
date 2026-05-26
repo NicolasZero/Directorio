@@ -15,7 +15,7 @@ import {
   AlertCircle
 } from 'lucide-react'
 import { Link } from 'react-router'
-import {type DirectoryDetailData} from '../schemas/directory'
+import { type DirectoryDetailData } from '../schemes/directory'
 
 const requisitos = [
   'Identificación oficial (cédula)',
