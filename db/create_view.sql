@@ -1,3 +1,17 @@
+CREATE OR REPLACE VIEW vw_users_list AS
+SELECT
+    u.id,
+    u.cedula,
+    u.nombre,
+    u.email,
+    u.username,
+    r.nombre AS rol,
+    s.nombre AS status
+FROM auth.users u
+JOIN auth.roles r ON r.id = u.rol_id
+JOIN auth.status s ON s.id = u.status_id
+WHERE u.status_id <> 3;
+
 CREATE OR REPLACE VIEW vw_directorios_list AS
 SELECT
     d.id,

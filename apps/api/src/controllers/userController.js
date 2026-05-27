@@ -1,29 +1,32 @@
 import query from '../database/postgre.js'
 import { encrypt } from '../helpers/helperEncrypt.js'
 
+// Obtener todos los usuarios
 export const getAllUser = async (request, reply) => {
     try {
-        const textQuery = `SELECT id, cedula, nombre, email, username, rol FROM auth.users ORDER BY created_at DESC;`
+        const textQuery = `SELECT id, cedula, nombre, email, username, rol FROM vw_users_list;`
         const resp = await query(textQuery)
-        return reply.send({status: "ok", msg:`Se encontraron ${resp.rowCount} resultado(s)`, data: resp.rows});
+        return reply.send({ status: "ok", msg: `Se encontraron ${resp.rowCount} resultado(s)`, data: resp.rows });
     } catch (error) {
         console.log(error);
         return reply.code(500).send({ error: "error en la peticion", status: "failed" });
     }
 }
 
+// Obtener usuario por id
 export const getUserById = async (request, reply) => {
     try {
         const id = request.params.id
-        const textQuery = `SELECT id, cedula, nombre, email, username, rol FROM auth.users WHERE id = $1;`
-        const resp = await query(textQuery,[id])
-        return reply.send({status: "ok", msg:`Se encontro ${resp.rowCount} resultado`, data: resp.rows[0]});
+        const textQuery = `SELECT id, cedula, nombre, email, username, rol FROM vw_users_list WHERE id = $1;`
+        const resp = await query(textQuery, [id])
+        return reply.send({ status: "ok", msg: `Se encontro ${resp.rowCount} resultado`, data: resp.rows[0] });
     } catch (error) {
         console.log(error);
         return reply.code(500).send({ error: "error en la peticion", status: "failed" });
     }
 }
 
+// Actualizar usuario
 export const updatetUser = async (request, reply) => {
     try {
         if (!request.body) {
@@ -48,10 +51,10 @@ export const updatetUser = async (request, reply) => {
 
         if (typeof password === 'string' && password.trim()) {
             const encryptedPassword = encrypt(password.trim())
-            textQuery = `UPDATE auth.users SET cedula = $1, nombre = $2, email = $3, username = $4, password = $5, rol = $6 WHERE id = $7 RETURNING id, cedula, nombre, email, username, rol;`
+            textQuery = `UPDATE auth.users SET cedula = $1, nombre = $2, email = $3, username = $4, password = $5, rol_id = $6 WHERE id = $7 RETURNING id, cedula, nombre, email, username, rol_id;`
             values = [cedula, nombre.trim(), email.trim(), username.trim(), encryptedPassword, rol.trim(), id]
         } else {
-            textQuery = `UPDATE auth.users SET cedula = $1, nombre = $2, email = $3, username = $4, rol = $5 WHERE id = $6 RETURNING id, cedula, nombre, email, username, rol;`
+            textQuery = `UPDATE auth.users SET cedula = $1, nombre = $2, email = $3, username = $4, rol_id = $5 WHERE id = $6 RETURNING id, cedula, nombre, email, username, rol_id;`
             values = [cedula, nombre.trim(), email.trim(), username.trim(), rol.trim(), id]
         }
 
@@ -68,10 +71,11 @@ export const updatetUser = async (request, reply) => {
     }
 }
 
+// Eliminar usuario
 export const deleteUser = async (request, reply) => {
     try {
         const id = request.params.id
-        const textQuery = `DELETE FROM auth.users WHERE id = $1 RETURNING id;`
+        const textQuery = `UPDATE auth.users SET status_id = 3 WHERE id = $1 RETURNING id;`
         const resp = await query(textQuery, [id])
 
         if (resp.rowCount === 0) {
@@ -85,33 +89,35 @@ export const deleteUser = async (request, reply) => {
     }
 }
 
-export const changeUserStatus = async (request, reply) => {
-    try {
-        if (!request.body) {
-            return reply.code(400).send({ error: 'body not valid', status: 'failed' });
-        }
-        const {id,is_active} = request.body
+// Cambiar estado de usuario
+// export const changeUserStatus = async (request, reply) => {
+//     try {
+//         if (!request.body) {
+//             return reply.code(400).send({ error: 'body not valid', status: 'failed' });
+//         }
+//         const { id, is_active } = request.body
 
-        // Request body verification
-        if (typeof id !== 'number' || typeof is_active !== 'boolean') {
-            return reply.code(400).send({ error: 'body not valid', status: 'failed' })
-        }
-        
-        const textQuery = `UPDATE auth.users SET is_active = $1 WHERE id = $2;`
-        const resp = await query(textQuery,[is_active,id])
-        
-        // Comprueba si se actualizo con exito
-        if (resp.rowCount == 0) {
-            return reply.code(409).send({ error: 'error en la petición', status: 'failed' });
-        }
+//         // Request body verification
+//         if (typeof id !== 'number' || typeof is_active !== 'boolean') {
+//             return reply.code(400).send({ error: 'body not valid', status: 'failed' })
+//         }
 
-        return reply.send({ status: 'ok', msg: `Se actualizo con exito` });
-    } catch (error) {
-        console.log(error) ;
-        return reply.code(500).send({ error: 'error en la peticion', status: 'failed' });
-    }
-}
+//         const textQuery = `UPDATE auth.users SET is_active = $1 WHERE id = $2;`
+//         const resp = await query(textQuery, [is_active, id])
 
+//         // Comprueba si se actualizo con exito
+//         if (resp.rowCount == 0) {
+//             return reply.code(409).send({ error: 'error en la petición', status: 'failed' });
+//         }
+
+//         return reply.send({ status: 'ok', msg: `Se actualizo con exito` });
+//     } catch (error) {
+//         console.log(error);
+//         return reply.code(500).send({ error: 'error en la peticion', status: 'failed' });
+//     }
+// }
+
+// Crear usuario
 export const createUser = async (request, reply) => {
     try {
         if (!request.body) {
@@ -131,7 +137,7 @@ export const createUser = async (request, reply) => {
         }
 
         const pass = encrypt(password.trim());
-        textQuery = `INSERT INTO auth.users (cedula, nombre, email, username, password, rol) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, cedula, nombre, email, username, rol;`;
+        textQuery = `INSERT INTO auth.users (cedula, nombre, email, username, password, rol_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, cedula, nombre, email, username, rol_id;`;
         resp = await query(textQuery, [cedula, nombre.trim(), email.trim(), username.trim(), pass, rol.trim()]);
 
         if (resp.rowCount == 0) {
@@ -142,5 +148,16 @@ export const createUser = async (request, reply) => {
     } catch (error) {
         console.log(error);
         return reply.code(500).send({ error: 'internal server error', status: 'failed' });
+    }
+}
+
+export const getAllRol = async (request, reply) => {
+    try {
+        const textQuery = `SELECT id, nombre, descripcion FROM auth.roles;`
+        const resp = await query(textQuery)
+        return reply.send({ status: "ok", msg: `Se encontraron ${resp.rowCount} resultado(s)`, data: resp.rows });
+    } catch (error) {
+        console.log(error);
+        return reply.code(500).send({ error: "error en la peticion", status: "failed" });
     }
 }

@@ -2,6 +2,11 @@ INSERT INTO auth.roles (nombre, descripcion) VALUES
 ('Administrador', 'Administrador del sistema'),
 ('Usuario', 'Usuario del sistema');
 
+INSERT INTO auth.status (id, nombre, descripcion) VALUES 
+(1, 'Activo', 'Usuario activo'),
+(2, 'Inactivo', 'Usuario inactivo'),
+(3, 'Eliminado', 'Usuario eliminado');
+
 INSERT INTO auth.users (cedula, nombre, username, email, password, rol) SELECT 
 '12345678', 'Administrador', 'admin', 'admin@admin.com', '$2b$10$GUT8F20qqtJZkJo4m/ugpeMAvlQPwDJD.tipGSDPjXSNzB2p8FgSK', roles.id
 FROM auth.roles WHERE roles.nombre = 'Administrador';

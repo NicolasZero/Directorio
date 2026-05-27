@@ -10,7 +10,7 @@ const fastify = Fastify({
   //   level: 'info',
   //   file: '../server.log'
   // }
-  logger: false
+  logger: true
 })
 
 // Trata de cargar el .env de forma segura

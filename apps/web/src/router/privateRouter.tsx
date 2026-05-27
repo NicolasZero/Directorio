@@ -10,6 +10,7 @@ const EditDirectoryForm = React.lazy(() => import('@/modules/directory/page/edit
 const EditClass = React.lazy(() => import('@/modules/classes/page/classList'))
 const AddClass = React.lazy(() => import('@/modules/classes/page/addClass.tsx'))
 const EditCourse = React.lazy(() => import('@/modules/classes/page/editClass.tsx'))
+const UserList = React.lazy(() => import('@/modules/user/page/userList.tsx'))
 const AdminLayout = React.lazy(() => import('@/layout/adminLayout.tsx'))
 
 export default function PrivateRouter() {
@@ -27,6 +28,7 @@ export default function PrivateRouter() {
                 <Route path='clases' element={<EditClass />} />
                 <Route path='clases/nuevo' element={<AddClass />} />
                 <Route path='clases/editar/:id' element={<EditCourse />} />
+                <Route path='usuarios' element={<UserList />} />
 
             </Route>
             <Route path="*" element={<Navigate to="/admin/inicio" replace />} />

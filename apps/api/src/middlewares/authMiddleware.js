@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken'
 
-const JWT_SECRET = process.env.JWT_SECRET || 'default_secret';
-const ACCESS_COOKIE_NAME = 'directorio-token';
+const { JWT_SECRET, ACCESS_COOKIE_NAME } = process.env;
 
 export const authenticate = async (request, reply) => {
     try {

@@ -2,11 +2,7 @@
 import { encrypt, compareEncrypt } from '../helpers/helperEncrypt.js'
 import jwt from 'jsonwebtoken'
 
-const JWT_SECRET = process.env.JWT_SECRET || 'default_secret';
-const ACCESS_TOKEN_EXPIRATION = '1h';
-const REFRESH_TOKEN_EXPIRATION = '7d';
-const ACCESS_COOKIE_NAME = 'directorio-token';
-const REFRESH_COOKIE_NAME = 'directorio-refresh-token';
+const { JWT_SECRET, ACCESS_TOKEN_EXPIRATION, REFRESH_TOKEN_EXPIRATION, ACCESS_COOKIE_NAME, REFRESH_COOKIE_NAME } = process.env;
 
 const cookieOptions = {
   httpOnly: true,
@@ -61,7 +57,7 @@ const refreshAccessToken = async (request, reply) => {
 
   try {
     const decodedRefresh = verifyRefreshToken(refreshToken);
-    const resp = await query(`SELECT id, cedula, nombre, email, username, rol FROM auth.users where id=$1;`, [decodedRefresh.id]);
+    const resp = await query(`SELECT id, cedula, nombre, email, username, rol_id FROM auth.users where id=$1;`, [decodedRefresh.id]);
 
     if (resp.rowCount !== 1) {
       return reply.code(401).send({ error: 'Usuario no encontrado', status: 'failed' });
@@ -87,7 +83,7 @@ export const auth = async (request, reply) => {
       return reply.code(401).send({ error: 'Usuario o contraseña incorrecta', status: 'failed' });
     }
 
-    const resp = await query(`SELECT id, cedula, nombre, email, username, rol, password FROM auth.users where UPPER(username)=UPPER($1);`, [user]);
+    const resp = await query(`SELECT id, cedula, nombre, email, username, rol_id, password FROM auth.users where UPPER(username)=UPPER($1);`, [user]);
 
     if (resp.rowCount != 1) {
       return reply.code(401).send({ error: 'Usuario o contraseña incorrecta', status: 'failed' });
@@ -121,7 +117,7 @@ export const validateToken = async (request, reply) => {
 
     try {
       const decoded = verifyAccessToken(token);
-      const resp = await query(`SELECT id, cedula, nombre, email, username, rol FROM auth.users where id=$1;`, [decoded.id]);
+      const resp = await query(`SELECT id, cedula, nombre, email, username, rol_id FROM auth.users where id=$1;`, [decoded.id]);
 
       if (resp.rowCount != 1) {
         return reply.code(401).send({ error: 'Usuario no encontrado', status: 'failed' });
