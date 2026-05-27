@@ -5,7 +5,9 @@ import { Button } from '@/components/ui/button';
 import { MapPin, Search } from 'lucide-react';
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import DirectoryCard from '@/modules/directory/components/directoryCard';
-import MapVenezuela from '@/modules/map/components/map';
+// import MapVenezuela from '@/modules/map/components/map';
+import Map from '@/components/mapa';
+
 
 // Importamos el CSS que acabamos de crear
 import '@/modules/map/assets/style.css';
@@ -23,18 +25,18 @@ interface DirectoryEntry {
 
 const MapaInteractivo = () => {
 	const [selectedState, setSelectedState] = useState<string>('');
-	const [hoverState, setHoverState] = useState<string>('');
+	// const [hoverState, setHoverState] = useState<string>('');
 
 	const handleClick = (e: any) => {
 		const nombre = e.target.getAttribute('data-name');
-		console.log('nombre', nombre)
+		// console.log('nombre', nombre)
 		if (nombre) setSelectedState(nombre);
 	};
 
-	const handleHover = (e: any) => {
-		const nombre = e.target.getAttribute('data-name');
-		if (nombre) setHoverState(nombre);
-	}
+	// const handleHover = (e: any) => {
+	// 	const nombre = e.target.getAttribute('data-name');
+	// 	if (nombre) setHoverState(nombre);
+	// }
 
 	const [directoriosData, setDirectoriosData] = useState<DirectoryEntry[]>([])
 	const [loading, setLoading] = useState<boolean>(true)
@@ -49,7 +51,7 @@ const MapaInteractivo = () => {
 				const response = await fetch('/api/directory')
 				const data = await response.json()
 
-				console.log('data', data)
+				// console.log('data', data)
 				if (!response.ok) {
 					throw new Error(data?.error || 'Error al cargar directorios')
 				}
@@ -114,12 +116,12 @@ const MapaInteractivo = () => {
 				</div>
 
 				{/* Mapa de Venezuela */}
-				<div className="map-container w-[85%] h-[70vh] md:h-full relative max-w-162.5 mx-auto my-5 flex justify-center overflow-auto border rounded-xl shadow-lg">
+				<div className="map-container w-full md:w-[85%] h-[50vh] md:h-[90vh] max-w-[800px] relative mx-auto my-5 flex justify-center overflow-auto border rounded-xl shadow-lg">
 
 					{/* 1. El Wrapper maneja la lógica del zoom */}
 					<TransformWrapper
-						initialScale={1}
-						minScale={0.8}
+						initialScale={0.5}
+						minScale={0.5}
 						maxScale={3}
 					>
 						{(
@@ -133,14 +135,15 @@ const MapaInteractivo = () => {
 									<Button className='text-rose-300 dark:text-rose-800' onClick={() => resetTransform()}>Reset</Button>
 								</div>
 
-								<div className='absolute bottom-125 left-10 z-50 text-rose-800'>
+								{/* <div className='absolute bottom-125 left-10 z-50 text-rose-800'>
 									{hoverState}
-								</div>
+								</div> */}
 
 								{/* 2. El Component es el área visual donde ocurre el zoom */}
 
 								<TransformComponent wrapperStyle={{ width: "100%", height: "100%" }}>
-									<MapVenezuela handleClick={handleClick} handleHover={handleHover} />
+									{/* <MapVenezuela handleClick={handleClick} handleHover={handleHover} /> */}
+									<Map handleClick={handleClick} />
 								</TransformComponent>
 							</>
 						)}

@@ -5,14 +5,6 @@ import fs from 'fs'
 import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
 
-const fastify = Fastify({
-  // logger: {
-  //   level: 'info',
-  //   file: '../server.log'
-  // }
-  logger: true
-})
-
 // Trata de cargar el .env de forma segura
 try {
   // require('dotenv').config()
@@ -21,11 +13,21 @@ try {
   console.log('No se pudo cargar el archivo .env, asegúrate de que exista y tenga las variables de entorno necesarias.')
 }
 
+
 // extrae las variables de entorno o establece un valor por defecto
 const {
   PORT = 3000,
+  LOGGER = true,
   CORS_URL = '*'
 } = process.env
+
+const fastify = Fastify({
+  // logger: {
+  //   level: 'info',
+  //   file: '../server.log'
+  // }
+  logger: LOGGER
+})
 
 // Habilita el Cross-Origin Resource Sharing (CORS)
 fastify.register(cors, {

@@ -2,9 +2,20 @@ import { Dialog } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useEffect, useState } from "react"
-import { STATUS } from "../consts/consts.js"
+import { STATUS } from "../consts/consts"
 
-export default function AddUserModal({ showFormDialog, isEditing, closeFormDialog, handleFormSubmit, formError, submitting, userForm, setUserForm }) {
+type Props = {
+    showFormDialog: boolean
+    isEditing: boolean
+    closeFormDialog: () => void
+    handleFormSubmit: () => void
+    formError: string | null
+    submitting: boolean
+    userForm: any
+    setUserForm: (user: any) => void
+}
+
+export default function AddUserModal({ showFormDialog, isEditing, closeFormDialog, handleFormSubmit, formError, submitting, userForm, setUserForm }: Props) {
     const [roles, setRoles] = useState([])
     useEffect(() => {
         const fetchRoles = async () => {
@@ -44,7 +55,7 @@ export default function AddUserModal({ showFormDialog, isEditing, closeFormDialo
                         <Input
                             type="number"
                             value={userForm.cedula}
-                            onChange={(event) => setUserForm((prev) => ({ ...prev, cedula: event.target.value }))}
+                            onChange={(event) => setUserForm((prev: any) => ({ ...prev, cedula: event.target.value }))}
                             placeholder="Cédula"
                         />
                     </label>
@@ -53,7 +64,7 @@ export default function AddUserModal({ showFormDialog, isEditing, closeFormDialo
                         <Input
                             type="text"
                             value={userForm.nombre}
-                            onChange={(event) => setUserForm((prev) => ({ ...prev, nombre: event.target.value }))}
+                            onChange={(event) => setUserForm((prev: any) => ({ ...prev, nombre: event.target.value }))}
                             placeholder="Nombre completo"
                         />
                     </label>
@@ -62,7 +73,7 @@ export default function AddUserModal({ showFormDialog, isEditing, closeFormDialo
                         <Input
                             type="email"
                             value={userForm.email}
-                            onChange={(event) => setUserForm((prev) => ({ ...prev, email: event.target.value }))}
+                            onChange={(event) => setUserForm((prev: any) => ({ ...prev, email: event.target.value }))}
                             placeholder="correo@dominio.com"
                         />
                     </label>
@@ -71,7 +82,7 @@ export default function AddUserModal({ showFormDialog, isEditing, closeFormDialo
                         <Input
                             type="text"
                             value={userForm.username}
-                            onChange={(event) => setUserForm((prev) => ({ ...prev, username: event.target.value }))}
+                            onChange={(event) => setUserForm((prev: any) => ({ ...prev, username: event.target.value }))}
                             placeholder="Nombre de usuario"
                         />
                     </label>
@@ -79,13 +90,13 @@ export default function AddUserModal({ showFormDialog, isEditing, closeFormDialo
                         <span className="text-sm font-medium text-foreground">Rol</span>
                         <Select
                             value={userForm.rol}
-                            onValueChange={(value) => setUserForm((prev) => ({ ...prev, rol: value }))}
+                            onValueChange={(value) => setUserForm((prev: any) => ({ ...prev, rol: value }))}
                         >
                             <SelectTrigger>
                                 <SelectValue placeholder="Selecciona un rol" />
                             </SelectTrigger>
                             <SelectContent>
-                                {roles.map((role) => (
+                                {roles.map((role: { id: string, nombre: string }) => (
                                     <SelectItem key={role.id} value={role.id}>
                                         {role.nombre}
                                     </SelectItem>
@@ -97,7 +108,7 @@ export default function AddUserModal({ showFormDialog, isEditing, closeFormDialo
                         <span className="text-sm font-medium text-foreground">Status</span>
                         <Select
                             value={userForm.status}
-                            onValueChange={(value) => setUserForm((prev) => ({ ...prev, status: value }))}
+                            onValueChange={(value) => setUserForm((prev: any) => ({ ...prev, status: value }))}
                         >
                             <SelectTrigger>
                                 <SelectValue placeholder="Selecciona un status" />
@@ -116,7 +127,7 @@ export default function AddUserModal({ showFormDialog, isEditing, closeFormDialo
                         <Input
                             type="password"
                             value={userForm.password}
-                            onChange={(event) => setUserForm((prev) => ({ ...prev, password: event.target.value }))}
+                            onChange={(event) => setUserForm((prev: any) => ({ ...prev, password: event.target.value }))}
                             placeholder={isEditing ? 'Dejar vacío para mantener la contraseña actual' : 'Contraseña'}
                         />
                     </label>

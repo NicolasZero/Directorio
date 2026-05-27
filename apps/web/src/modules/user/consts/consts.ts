@@ -1,14 +1,14 @@
 export const STATUS = [
     {
-        id: 1,
+        id: '1',
         nombre: 'Activo',
     },
     {
-        id: 2,
+        id: '2',
         nombre: 'Inactivo',
     },
     {
-        id: 3,
+        id: '3',
         nombre: 'Eliminado',
     },
 ]
