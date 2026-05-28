@@ -17,7 +17,7 @@ try {
 // extrae las variables de entorno o establece un valor por defecto
 const {
   PORT = 3000,
-  LOGGER = true,
+  LOGGER = false,
   CORS_URL = '*'
 } = process.env
 

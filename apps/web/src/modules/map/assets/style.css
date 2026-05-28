@@ -1,24 +1,39 @@
-.estado-path {
-    stroke: #fff;
-    stroke-width: 0.5px;
-    cursor: pointer;
-    transition: fill 0.3s ease;
+.estado-svg path[data-name]:hover {
+    fill: #e5003d !important;
 }
 
-html.dark .estado-path {
-    fill: #af5567ff;
+.estado-svg rect {
+    opacity: 1;
+    fill: #9fdaeb;
+    fill-opacity: 1;
+    fill-rule: evenodd;
+    stroke: none;
+    stroke-width: 1.05599999;
+    stroke-linejoin: miter;
+    stroke-miterlimit: 4;
+    stroke-dasharray: none;
+    stroke-opacity: 1;
 }
 
-html.light .estado-path {
-    fill: #ddaec1ff;
+.estado-svg path {
+    stroke-width: 1px !important;
+    stroke-linecap: butt !important;
+    stroke-opacity: 1 !important;
+    fill-rule: evenodd !important;
+    fill-opacity: 1 !important;
+    stroke: #000000 !important;
+    stroke-linejoin: miter !important;
 }
 
-html.dark .estado-path:hover {
-    fill: #770e25ff !important;
-    /* Color al pasar el mouse */
-}
-
-html.light .estado-path:hover {
-    fill: #e28096 !important;
-    /* Color al pasar el mouse */
+.stado-svg text {
+    font-style: normal !important;
+    font-weight: normal !important;
+    fill: #000000 !important;
+    fill-opacity: 1 !important;
+    stroke: none !important;
+    stroke-width: 1px !important;
+    stroke-linecap: butt !important;
+    stroke-linejoin: miter !important;
+    stroke-opacity: 1 !important;
+    font-family: "Bitstream Vera Sans" !important;
 }

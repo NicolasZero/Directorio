@@ -7,7 +7,7 @@ INSERT INTO auth.status (id, nombre, descripcion) VALUES
 (2, 'Inactivo', 'Usuario inactivo'),
 (3, 'Eliminado', 'Usuario eliminado');
 
-INSERT INTO auth.users (cedula, nombre, username, email, password, rol) SELECT 
+INSERT INTO auth.users (cedula, nombre, username, email, password, rol_id) SELECT 
 '12345678', 'Administrador', 'admin', 'admin@admin.com', '$2b$10$GUT8F20qqtJZkJo4m/ugpeMAvlQPwDJD.tipGSDPjXSNzB2p8FgSK', roles.id
 FROM auth.roles WHERE roles.nombre = 'Administrador';
 
@@ -35,7 +35,8 @@ INSERT INTO estados (nombre) VALUES
 ('ZULIA'),
 ('AMAZONAS'),
 ('DELTA AMACURO'),
-('VARGAS');
+('VARGAS'),
+('GUYANA ESEQUIBA');
 
 INSERT INTO municipios (nombre, estado_id) VALUES 
 ('LIBERTADOR',1),

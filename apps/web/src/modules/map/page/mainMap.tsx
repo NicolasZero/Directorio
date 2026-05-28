@@ -5,9 +5,7 @@ import { Button } from '@/components/ui/button';
 import { MapPin, Search } from 'lucide-react';
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import DirectoryCard from '@/modules/directory/components/directoryCard';
-// import MapVenezuela from '@/modules/map/components/map';
-import Map from '@/components/mapa';
-
+import Map from '@/modules/map/components/map';
 
 // Importamos el CSS que acabamos de crear
 import '@/modules/map/assets/style.css';
@@ -25,18 +23,11 @@ interface DirectoryEntry {
 
 const MapaInteractivo = () => {
 	const [selectedState, setSelectedState] = useState<string>('');
-	// const [hoverState, setHoverState] = useState<string>('');
 
 	const handleClick = (e: any) => {
 		const nombre = e.target.getAttribute('data-name');
-		// console.log('nombre', nombre)
 		if (nombre) setSelectedState(nombre);
 	};
-
-	// const handleHover = (e: any) => {
-	// 	const nombre = e.target.getAttribute('data-name');
-	// 	if (nombre) setHoverState(nombre);
-	// }
 
 	const [directoriosData, setDirectoriosData] = useState<DirectoryEntry[]>([])
 	const [loading, setLoading] = useState<boolean>(true)
@@ -51,7 +42,6 @@ const MapaInteractivo = () => {
 				const response = await fetch('/api/directory')
 				const data = await response.json()
 
-				// console.log('data', data)
 				if (!response.ok) {
 					throw new Error(data?.error || 'Error al cargar directorios')
 				}
@@ -77,7 +67,6 @@ const MapaInteractivo = () => {
 
 	return (
 		<div className="min-h-screen">
-			{/* Hero Section */}
 			<section className="bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 py-4 md:py-10 px-4 overflow-hidden">
 				<div className="container mx-auto text-center max-w-2xl">
 					<Badge variant="outline" className="mb-4 bg-rose-100 dark:bg-rose-900 dark:text-rose-50 text-rose-700">
@@ -135,14 +124,8 @@ const MapaInteractivo = () => {
 									<Button className='text-rose-300 dark:text-rose-800' onClick={() => resetTransform()}>Reset</Button>
 								</div>
 
-								{/* <div className='absolute bottom-125 left-10 z-50 text-rose-800'>
-									{hoverState}
-								</div> */}
-
 								{/* 2. El Component es el área visual donde ocurre el zoom */}
-
 								<TransformComponent wrapperStyle={{ width: "100%", height: "100%" }}>
-									{/* <MapVenezuela handleClick={handleClick} handleHover={handleHover} /> */}
 									<Map handleClick={handleClick} />
 								</TransformComponent>
 							</>
