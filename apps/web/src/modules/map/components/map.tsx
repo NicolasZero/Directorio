@@ -155,7 +155,7 @@ export default function Mapa({ handleClick }: MapVenezuelaProps) {
                 style={{ fontSize: "36px" }}
                 transform="scale(0.9364552,1.0678567)"
             >
-                <tspan x={664.04596} y={772.85303}>
+                <tspan x={664.04596} y={772.85303} data-name="Apure">
                     {"Apure"}
                 </tspan>
             </text>
@@ -163,7 +163,7 @@ export default function Mapa({ handleClick }: MapVenezuelaProps) {
                 style={{ fontSize: "36px" }}
                 transform="scale(0.9364552,1.0678567)"
             >
-                <tspan x={959.35504} y={1178.9082}>
+                <tspan x={959.35504} y={1178.9082} data-name="Amazonas">
                     {"Amazonas"}
                 </tspan>
             </text>
@@ -171,7 +171,7 @@ export default function Mapa({ handleClick }: MapVenezuelaProps) {
                 style={{ fontSize: "36px" }}
                 transform="scale(0.9364552,1.0678567)"
             >
-                <tspan x={1330.8588} y={898.14655}>
+                <tspan x={1330.8588} y={898.14655} data-name="Bolivar">
                     {"Bol\xEDvar"}
                 </tspan>
             </text>
@@ -179,7 +179,7 @@ export default function Mapa({ handleClick }: MapVenezuelaProps) {
                 style={{ fontSize: "36px" }}
                 transform="scale(0.9364552,1.0678567)"
             >
-                <tspan x={941.23291} y={569.70844}>
+                <tspan x={941.23291} y={569.70844} data-name="Guarico">
                     {"Gu\xE1rico"}
                 </tspan>
             </text>
@@ -187,10 +187,10 @@ export default function Mapa({ handleClick }: MapVenezuelaProps) {
                 style={{ fontSize: "36px" }}
                 transform="scale(0.9364552,1.0678567)"
             >
-                <tspan x={1817.1359} y={837.22656}>
+                <tspan x={1817.1359} y={837.22656} data-name="Guyana Esequiba">
                     {"Guyana"}
                 </tspan>
-                <tspan x={1817.1359} y={893.1986}>
+                <tspan x={1817.1359} y={893.1986} data-name="Guyana Esequiba">
                     {"Esequiba"}
                 </tspan>
             </text>
@@ -198,10 +198,10 @@ export default function Mapa({ handleClick }: MapVenezuelaProps) {
                 style={{ fontSize: "36px" }}
                 transform="scale(0.9364552,1.0678567)"
             >
-                <tspan x={1634.5673} y={552.03247}>
+                <tspan x={1634.5673} y={552.03247} data-name="Delta Amacuro">
                     {"Delta"}
                 </tspan>
-                <tspan x={1634.5673} y={608.0045}>
+                <tspan x={1634.5673} y={608.0045} data-name="Delta Amacuro">
                     {"Amacuro"}
                 </tspan>
             </text>
@@ -209,7 +209,7 @@ export default function Mapa({ handleClick }: MapVenezuelaProps) {
                 style={{ fontSize: "36px" }}
                 transform="scale(0.9364552,1.0678567)"
             >
-                <tspan x={1200.9835} y={522.0318}>
+                <tspan x={1200.9835} y={522.0318} data-name="Anzoategui">
                     {"Anzo\xE1tegui"}
                 </tspan>
             </text>
@@ -217,7 +217,7 @@ export default function Mapa({ handleClick }: MapVenezuelaProps) {
                 style={{ fontSize: "36px" }}
                 transform="scale(0.9364552,1.0678567)"
             >
-                <tspan x={518.3833} y={294.24414}>
+                <tspan x={518.3833} y={294.24414} data-name="Falcon">
                     {"Falc\xF3n"}
                 </tspan>
             </text>
@@ -225,7 +225,7 @@ export default function Mapa({ handleClick }: MapVenezuelaProps) {
                 style={{ fontSize: "36px" }}
                 transform="scale(0.9364552,1.0678567)"
             >
-                <tspan x={521.40363} y={540.57269}>
+                <tspan x={521.40363} y={540.57269} data-name="Portuguesa">
                     {"Portuguesa"}
                 </tspan>
             </text>
@@ -233,7 +233,7 @@ export default function Mapa({ handleClick }: MapVenezuelaProps) {
                 style={{ fontSize: "36px" }}
                 transform="scale(0.9364552,1.0678567)"
             >
-                <tspan x={288.8363} y={585.60052}>
+                <tspan x={288.8363} y={585.60052} data-name="Merida">
                     {"M\xE9rida"}
                 </tspan>
             </text>
@@ -241,7 +241,7 @@ export default function Mapa({ handleClick }: MapVenezuelaProps) {
                 style={{ fontSize: "36px" }}
                 transform="scale(0.9364552,1.0678567)"
             >
-                <tspan x={436.83368} y={635.92566}>
+                <tspan x={436.83368} y={635.92566} data-name="Barinas">
                     {"Barinas"}
                 </tspan>
             </text>
@@ -249,7 +249,7 @@ export default function Mapa({ handleClick }: MapVenezuelaProps) {
                 style={{ fontSize: "36px" }}
                 transform="scale(0.9364552,1.0678567)"
             >
-                <tspan x={174.06284} y={670.35876}>
+                <tspan x={174.06284} y={670.35876} data-name="Tachira">
                     {"T\xE1chira"}
                 </tspan>
             </text>
@@ -257,7 +257,7 @@ export default function Mapa({ handleClick }: MapVenezuelaProps) {
                 style={{ fontSize: "36px" }}
                 transform="scale(0.9364552,1.0678567)"
             >
-                <tspan x={1388.2455} y={360.46146}>
+                <tspan x={1388.2455} y={360.46146} data-name="Sucre">
                     {"Sucre"}
                 </tspan>
             </text>
@@ -265,7 +265,7 @@ export default function Mapa({ handleClick }: MapVenezuelaProps) {
                 style={{ fontSize: "36px" }}
                 transform="scale(0.9364552,1.0678567)"
             >
-                <tspan x={1016.7418} y={392.24579}>
+                <tspan x={1016.7418} y={392.24579} data-name="Miranda">
                     {"Miranda"}
                 </tspan>
             </text>
@@ -273,7 +273,7 @@ export default function Mapa({ handleClick }: MapVenezuelaProps) {
                 style={{ fontSize: "36px" }}
                 transform="scale(0.9364552,1.0678567)"
             >
-                <tspan x={394.35995} y={482.71536}>
+                <tspan x={394.35995} y={482.71536} data-name="Trujillo">
                     {"Trujillo"}
                 </tspan>
             </text>
@@ -281,7 +281,7 @@ export default function Mapa({ handleClick }: MapVenezuelaProps) {
                 style={{ fontSize: "36px" }}
                 transform="scale(0.9364552,1.0678567)"
             >
-                <tspan x={258.63275} y={381.65103}>
+                <tspan x={258.63275} y={381.65103} data-name="Zulia">
                     {"Zulia"}
                 </tspan>
             </text>
@@ -289,7 +289,7 @@ export default function Mapa({ handleClick }: MapVenezuelaProps) {
                 style={{ fontSize: "36px" }}
                 transform="scale(0.9364552,1.0678567)"
             >
-                <tspan x={1318.7773} y={283.64926}>
+                <tspan x={1318.7773} y={283.64926} data-name="Nueva Esparta">
                     {"Nueva Esparta"}
                 </tspan>
             </text>
@@ -297,7 +297,7 @@ export default function Mapa({ handleClick }: MapVenezuelaProps) {
                 style={{ fontSize: "36px" }}
                 transform="scale(0.9364552,1.0678567)"
             >
-                <tspan x={521.40363} y={394.89453}>
+                <tspan x={521.40363} y={394.89453} data-name="Lara">
                     {"Lara"}
                 </tspan>
             </text>
@@ -305,7 +305,7 @@ export default function Mapa({ handleClick }: MapVenezuelaProps) {
                 style={{ fontSize: "36px" }}
                 transform="scale(0.9364552,1.0678567)"
             >
-                <tspan x={886.86652} y={320.73096}>
+                <tspan x={886.86652} y={320.73096} data-name="Vargas">
                     {"Vargas"}
                 </tspan>
             </text>
@@ -313,7 +313,7 @@ export default function Mapa({ handleClick }: MapVenezuelaProps) {
                 style={{ fontSize: "36px" }}
                 transform="scale(0.9364552,1.0678567)"
             >
-                <tspan x={1376.1641} y={469.05789}>
+                <tspan x={1376.1641} y={469.05789} data-name="Monagas">
                     {"Monagas"}
                 </tspan>
             </text>
@@ -321,7 +321,7 @@ export default function Mapa({ handleClick }: MapVenezuelaProps) {
                 style={{ fontSize: "36px" }}
                 transform="scale(0.9364552,1.0678567)"
             >
-                <tspan x={684.50281} y={477.00403}>
+                <tspan x={684.50281} y={477.00403} data-name="Cojedes">
                     {"Cojedes"}
                 </tspan>
             </text>
@@ -329,7 +329,7 @@ export default function Mapa({ handleClick }: MapVenezuelaProps) {
                 style={{ fontSize: "24px" }}
                 transform="scale(1.0353325,0.9658733)"
             >
-                <tspan x={878.63721} y={394.827}>
+                <tspan x={878.63721} y={394.827} data-name="Caracas">
                     {"Caracas"}
                 </tspan>
             </text>
@@ -337,7 +337,7 @@ export default function Mapa({ handleClick }: MapVenezuelaProps) {
                 style={{ fontSize: "24px" }}
                 transform="scale(1.0353325,0.9658733)"
             >
-                <tspan x={810.33966} y={453.39423}>
+                <tspan x={810.33966} y={453.39423} data-name="Aragua">
                     {"Aragua"}
                 </tspan>
             </text>
@@ -345,7 +345,7 @@ export default function Mapa({ handleClick }: MapVenezuelaProps) {
                 style={{ fontSize: "24px" }}
                 transform="scale(1.0353325,0.9658733)"
             >
-                <tspan x={687.40405} y={432.89572}>
+                <tspan x={687.40405} y={432.89572} data-name="Carabobo">
                     {"Carabobo"}
                 </tspan>
             </text>
@@ -353,7 +353,7 @@ export default function Mapa({ handleClick }: MapVenezuelaProps) {
                 style={{ fontSize: "24px" }}
                 transform="scale(1.0353325,0.9658733)"
             >
-                <tspan x={602.71509} y={409.46881}>
+                <tspan x={602.71509} y={409.46881} data-name="Yaracuy">
                     {"Yaracuy"}
                 </tspan>
             </text>

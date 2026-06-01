@@ -119,7 +119,7 @@ function HomeAdminPage() {
                   <h2 className="text-2xl font-bold text-rose-700 dark:text-rose-100">Resumen de servicio</h2>
                   <p className="text-sm text-muted-foreground">Una vista general de los modulos administrables.</p>
                 </div>
-                <Badge className="bg-white/90 text-rose-700 dark:bg-rose-950 dark:text-rose-50">Actualizado</Badge>
+                <Badge variant="outline" className="bg-white/90 text-rose-700 dark:bg-rose-950 dark:text-rose-50">Actualizado</Badge>
               </div>
             </CardHeader>
             <CardContent className="space-y-4 px-6 pb-6">

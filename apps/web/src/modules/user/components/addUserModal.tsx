@@ -86,7 +86,7 @@ export default function AddUserModal({ showFormDialog, isEditing, closeFormDialo
                             placeholder="Nombre de usuario"
                         />
                     </label>
-                    <label className="space-y-2 sm:col-span-2">
+                    <label className="space-y-2">
                         <span className="text-sm font-medium text-foreground">Rol</span>
                         <Select
                             value={userForm.rol}
@@ -104,7 +104,7 @@ export default function AddUserModal({ showFormDialog, isEditing, closeFormDialo
                             </SelectContent>
                         </Select>
                     </label>
-                    <label className="space-y-2 sm:col-span-2">
+                    <label className="space-y-2">
                         <span className="text-sm font-medium text-foreground">Status</span>
                         <Select
                             value={userForm.status}
@@ -129,6 +129,15 @@ export default function AddUserModal({ showFormDialog, isEditing, closeFormDialo
                             value={userForm.password}
                             onChange={(event) => setUserForm((prev: any) => ({ ...prev, password: event.target.value }))}
                             placeholder={isEditing ? 'Dejar vacío para mantener la contraseña actual' : 'Contraseña'}
+                        />
+                    </label>
+                    <label className="space-y-2 sm:col-span-2">
+                        <span className="text-sm font-medium text-foreground">Confirmar Contraseña</span>
+                        <Input
+                            type="password"
+                            value={userForm.password_confirmation}
+                            onChange={(event) => setUserForm((prev: any) => ({ ...prev, password_confirmation: event.target.value }))}
+                            placeholder="Confirmar contraseña"
                         />
                     </label>
                 </div>

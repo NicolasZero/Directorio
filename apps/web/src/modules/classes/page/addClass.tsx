@@ -175,9 +175,9 @@ export default function AddClass() {
                 <GraduationCap className="w-3 h-3 mr-1" />
                 Nuevo curso
               </Badge>
-              <h1 className="text-3xl font-bold text-foreground md:text-4xl">Agregar nueva clase</h1>
+              <h1 className="text-3xl font-bold text-foreground md:text-4xl">Agregar nuevo curso</h1>
               <p className="mt-2 text-sm text-muted-foreground">
-                Completa el formulario para crear una clase y guardarla en la API.
+                Completa el formulario para crear un nuevo curso.
               </p>
             </div>
             <Button variant="ghost" size="sm" asChild>
@@ -200,6 +200,7 @@ export default function AddClass() {
                     value={title}
                     onChange={(event) => setTitle(event.target.value)}
                     placeholder="Título del curso"
+                    className='focus:border-rose-500! focus:ring-2! focus:ring-rose-500/20!'
                     required
                   />
                 </FormField>
@@ -230,7 +231,6 @@ export default function AddClass() {
                 <div className="grid gap-4 md:grid-cols-2">
                   <FormField label="Duración" htmlFor="duration">
                     <Input
-                      id="duration"
                       value={duration}
                       onChange={(event) => setDuration(event.target.value)}
                       placeholder="Ej. 40 horas"
@@ -238,7 +238,7 @@ export default function AddClass() {
                     />
                   </FormField>
 
-                  <FormField label="Nivel" htmlFor="level">
+                  <FormField label="Nivel">
                     <Select value={level} onValueChange={setLevel}>
                       <SelectTrigger className="rounded-3xl px-4 py-3 text-sm">
                         <SelectValue placeholder="Selecciona un nivel" />
@@ -320,7 +320,7 @@ export default function AddClass() {
               placeholder="Duración del módulo"
               className="rounded-3xl px-4 py-3"
             />
-            <Button type="button" variant="outline" onClick={addModule} className="rounded-3xl">
+            <Button type="button" onClick={addModule} className="bg-rose-600 text-white rounded-3xl">
               <CirclePlus className="w-4 h-4 mr-2" />
               Agregar módulo
             </Button>
@@ -359,7 +359,8 @@ export default function AddClass() {
                     placeholder="Agregar requisito"
                     className="rounded-3xl px-4 py-3"
                   />
-                  <Button type="button" variant="outline" className="rounded-3xl" onClick={addRequirement}>
+                  <Button type="button" className="bg-rose-600 text-white rounded-3xl" onClick={addRequirement}>
+                    <CirclePlus className="w-4 h-4 mr-2" />
                     Agregar
                   </Button>
                 </div>
@@ -390,7 +391,8 @@ export default function AddClass() {
                     placeholder="Agregar aprendizaje"
                     className="rounded-3xl px-4 py-3"
                   />
-                  <Button type="button" variant="outline" className="rounded-3xl" onClick={addOutcome}>
+                  <Button type="button" className="bg-rose-600 text-white rounded-3xl" onClick={addOutcome}>
+                    <CirclePlus className="w-4 h-4 mr-2" />
                     Agregar
                   </Button>
                 </div>
