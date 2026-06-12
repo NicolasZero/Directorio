@@ -26,6 +26,10 @@ export default function AddUserModal({ showFormDialog, isEditing, closeFormDialo
         }
         fetchRoles()
     }, [])
+
+    useEffect(() => {
+        console.log(userForm);
+    }, [userForm])
     return (
         <Dialog
             open={showFormDialog}
@@ -60,12 +64,32 @@ export default function AddUserModal({ showFormDialog, isEditing, closeFormDialo
                         />
                     </label>
                     <label className="space-y-2">
+                        <span className="text-sm font-medium text-foreground">Teléfono</span>
+                        <Input
+                            type="number"
+                            value={userForm.telefono}
+                            maxLength={11}
+                            minLength={11}
+                            onChange={(event) => setUserForm((prev: any) => ({ ...prev, telefono: event.target.value }))}
+                            placeholder="Teléfono"
+                        />
+                    </label>
+                    <label className="space-y-2">
                         <span className="text-sm font-medium text-foreground">Nombre</span>
                         <Input
                             type="text"
                             value={userForm.nombre}
                             onChange={(event) => setUserForm((prev: any) => ({ ...prev, nombre: event.target.value }))}
                             placeholder="Nombre completo"
+                        />
+                    </label>
+                    <label className="space-y-2">
+                        <span className="text-sm font-medium text-foreground">Apellido</span>
+                        <Input
+                            type="text"
+                            value={userForm.apellido}
+                            onChange={(event) => setUserForm((prev: any) => ({ ...prev, apellido: event.target.value }))}
+                            placeholder="Apellido completo"
                         />
                     </label>
                     <label className="space-y-2">
@@ -123,7 +147,7 @@ export default function AddUserModal({ showFormDialog, isEditing, closeFormDialo
                         </Select>
                     </label>
                     <label className="space-y-2 sm:col-span-2">
-                        <span className="text-sm font-medium text-foreground">Contraseña</span>
+                        <span className="text-sm font-medium text-foreground">{isEditing ? 'Nueva contraseña' : 'Contraseña'}</span>
                         <Input
                             type="password"
                             value={userForm.password}
@@ -132,7 +156,7 @@ export default function AddUserModal({ showFormDialog, isEditing, closeFormDialo
                         />
                     </label>
                     <label className="space-y-2 sm:col-span-2">
-                        <span className="text-sm font-medium text-foreground">Confirmar Contraseña</span>
+                        <span className="text-sm font-medium text-foreground">{isEditing ? 'Confirmar nueva contraseña' : 'Confirmar contraseña'}</span>
                         <Input
                             type="password"
                             value={userForm.password_confirmation}

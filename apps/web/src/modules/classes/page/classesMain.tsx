@@ -55,7 +55,7 @@ function ClassesMain() {
   }, [courses])
 
   return (
-    <div className="min-h-screen">
+    <div className="py-5">
       {/* Hero Section */}
       <section className="bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 py-4 md:py-10 px-4">
         <div className="container mx-auto text-center max-w-2xl">
@@ -104,7 +104,7 @@ function ClassesMain() {
                 </CardContent>
               </Card>
             ) : courses.length === 0 ? (
-              <div className="col-span-full rounded-3xl border border-rose-200 bg-rose-50 dark:bg-rose-900 dark:border-rose-800 dark:text-rose-100 p-3 text-center text-muted-foreground">
+              <div className="col-span-full rounded-3xl bg-muted border p-3 text-center text-muted-foreground">
                 No hay cursos disponibles.
               </div>
             ) : (

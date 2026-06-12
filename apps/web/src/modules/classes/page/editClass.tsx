@@ -202,14 +202,16 @@ export default function EditClass() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-8">
-        <p className="text-lg font-medium">Cargando información del curso...</p>
+      <div className="pt-15 pb-10 flex items-center justify-center p-8">
+        <div className="bg-muted rounded-md p-4">
+          <p className="text-lg font-medium">Cargando información del curso...</p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="py-5">
       <form onSubmit={handleSubmit}>
         <section className="py-10 px-4 sm:px-8">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">

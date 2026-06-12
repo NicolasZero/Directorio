@@ -20,6 +20,8 @@ CREATE TABLE if NOT EXISTS auth.users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     cedula integer NOT NULL UNIQUE,
     nombre varchar NOT NULL,
+    apellido varchar NOT NULL,
+    telefono varchar NOT NULL,
     email varchar NOT NULL UNIQUE,
     username varchar NOT NULL UNIQUE,
     password varchar NOT NULL,

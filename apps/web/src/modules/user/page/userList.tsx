@@ -4,18 +4,11 @@ import { Badge } from '@/components/ui/badge'
 import { Dialog } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Plus, Search, Pencil, Trash2, MoreHorizontal } from 'lucide-react'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { type UserEntry, type UserForm } from '../schemes/userSchemes'
-import AddUserModal from '../components/addUserModal'
+import { Plus, Search } from 'lucide-react'
+import { type UserEntry, type UserForm } from '@/modules/user/schemes/userSchemes'
+import AddUserModal from '@/modules/user/components/addUserModal'
+import { validateForm } from '@/modules/user/hooks/useValidateForm'
+import UserTable from '../components/userTable'
 
 const PAGE_SIZE = 10
 
@@ -26,7 +19,9 @@ const initialFormState: UserForm = {
   email: '',
   username: '',
   password: '',
+  password_confirmation: '',
   rol: '',
+  status: '',
 }
 
 export default function UserList() {
@@ -57,9 +52,6 @@ export default function UserList() {
       if (!response.ok) {
         throw new Error(data?.error || 'Error al cargar usuarios')
       }
-
-      console.log();
-
 
       setUsers(data?.data || [])
     } catch (fetchError) {
@@ -110,7 +102,9 @@ export default function UserList() {
       email: user.email,
       username: user.username,
       password: '',
+      password_confirmation: '',
       rol: user.rol,
+      status: user.status,
     })
     setIsEditing(true)
     setFormError(null)
@@ -134,38 +128,9 @@ export default function UserList() {
     setUserToDelete(null)
   }
 
-  const validateForm = () => {
-    const cedula = Number(userForm.cedula)
-
-    if (!userForm.cedula || Number.isNaN(cedula) || cedula <= 0) {
-      return 'Ingresa una cédula válida.'
-    }
-
-    if (!userForm.nombre.trim()) {
-      return 'Ingresa el nombre del usuario.'
-    }
-
-    if (!userForm.email.trim()) {
-      return 'Ingresa el correo electrónico.'
-    }
-
-    if (!userForm.username.trim()) {
-      return 'Ingresa el nombre de usuario.'
-    }
-
-    if (!userForm.rol.trim()) {
-      return 'Ingresa el rol del usuario.'
-    }
-
-    if (!isEditing && !userForm.password.trim()) {
-      return 'Ingresa una contraseña para el nuevo usuario.'
-    }
-
-    return null
-  }
 
   const handleFormSubmit = async () => {
-    const validationError = validateForm()
+    const validationError = validateForm(userForm, isEditing)
     if (validationError) {
       setFormError(validationError)
       return
@@ -365,55 +330,12 @@ export default function UserList() {
         ) : (
           <Card className="shadow-sm">
             <CardContent className="p-0 overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Nombre</TableHead>
-                    <TableHead>Usuario</TableHead>
-                    <TableHead>Correo</TableHead>
-                    <TableHead>Rol</TableHead>
-                    <TableHead>Opciones</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {currentPageUsers.map((user) => (
-                    <TableRow key={user.id}>
-                      <TableCell>{user.nombre}</TableCell>
-                      <TableCell>{user.username}</TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell>
-                        <Badge className="bg-rose-50 text-rose-700 dark:bg-rose-900 dark:text-rose-100 hover:bg-rose-50">
-                          {user.rol}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent>
-                            <DropdownMenuItem
-                              className="gap-0"
-                              onClick={() => openEditDialog(user)}
-                            >
-                              <Pencil className="mr-2 h-4 w-4" />Editar
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              className="gap-0"
-                              onClick={() => openDeleteDialog(user)}
-                              disabled={deletingUserId === user.id}
-                            >
-                              <Trash2 className="mr-2 h-4 w-4" />Eliminar
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <UserTable
+                openEditDialog={openEditDialog}
+                openDeleteDialog={openDeleteDialog}
+                deletingUserId={deletingUserId}
+                currentPageUsers={currentPageUsers}
+              />
             </CardContent>
             <div className="flex flex-col gap-3 border-t bg-muted/50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-sm text-muted-foreground">

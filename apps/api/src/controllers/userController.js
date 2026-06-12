@@ -75,8 +75,10 @@ export const updatetUser = async (request, reply) => {
 export const deleteUser = async (request, reply) => {
     try {
         const id = request.params.id
-        const textQuery = `UPDATE auth.users SET status_id = 3 WHERE id = $1 RETURNING id;`
-        const resp = await query(textQuery, [id])
+        const user = request.user
+
+        const textQuery = `UPDATE auth.users SET status_id = 3 WHERE id = $1 AND username != $2 RETURNING id;`
+        const resp = await query(textQuery, [id, user.username])
 
         if (resp.rowCount === 0) {
             return reply.code(404).send({ error: 'Usuario no encontrado', status: 'failed' })
@@ -123,10 +125,10 @@ export const createUser = async (request, reply) => {
         if (!request.body) {
             return reply.code(400).send({ error: 'body not valid, datos incompletos', status: 'failed' });
         }
-        const { cedula, nombre, email, username, password, rol } = request.body;
+        const { cedula, nombre, apellido, email, username, telefono, password, rol } = request.body;
 
         // Request body verification
-        if (typeof cedula !== 'number' || typeof nombre !== 'string' || typeof email !== 'string' || typeof username !== 'string' || typeof password !== 'string' || typeof rol !== 'string') {
+        if (typeof cedula !== 'number' || typeof nombre !== 'string' || typeof apellido !== 'string' || typeof email !== 'string' || typeof username !== 'string' || typeof telefono !== 'number' || typeof password !== 'string' || typeof rol !== 'string') {
             return reply.code(400).send({ error: 'body not valid, error en tipo de dato', status: 'failed' });
         }
 
@@ -137,8 +139,8 @@ export const createUser = async (request, reply) => {
         }
 
         const pass = encrypt(password.trim());
-        textQuery = `INSERT INTO auth.users (cedula, nombre, email, username, password, rol_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, cedula, nombre, email, username, rol_id;`;
-        resp = await query(textQuery, [cedula, nombre.trim(), email.trim(), username.trim(), pass, rol.trim()]);
+        textQuery = `INSERT INTO auth.users (cedula, nombre, apellido, email, username, telefono, password, rol_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, cedula, nombre, apellido, email, username, rol_id;`;
+        resp = await query(textQuery, [cedula, nombre.trim(), apellido.trim(), email.trim(), username.trim(), telefono, pass, rol.trim()]);
 
         if (resp.rowCount == 0) {
             return reply.code(409).send({ error: 'error en la petición', status: 'failed' });

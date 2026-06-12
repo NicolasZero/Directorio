@@ -3,8 +3,10 @@ SELECT
     u.id,
     u.cedula,
     u.nombre,
+    u.apellido,
     u.email,
     u.username,
+    u.telefono,
     r.nombre AS rol,
     s.nombre AS status
 FROM auth.users u

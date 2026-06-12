@@ -27,7 +27,7 @@ const Navbar = () => {
     ];
 
     const adminLinks = [
-        { name: "Análisis", path: "/admin/inicio" },
+        { name: "Panel principal", path: "/admin/inicio" },
         { name: "Directorio", path: "/admin/directorio" },
         { name: "Usuarios", path: "/admin/usuarios" },
         { name: "Aprendizaje", path: "/admin/clases" },
@@ -106,7 +106,7 @@ const Navbar = () => {
                 <div className="md:hidden absolute top-full left-0 w-full bg-rose-700 dark:bg-rose-900 shadow-xl border-t border-white/10 flex flex-col">
                     <ul className="flex flex-col">
                         {publicLinks.map((link) => (
-                            <li key={link.path} className="px-5">
+                            <li key={link.path} className="px-3">
                                 <NavLink
                                     className={({ isActive }) =>
                                         `px-6 py-4 block transition-colors duration-200 hover:bg-black/20 rounded-xl ${isActive ? "bg-black/20 font-medium" : ""}`
@@ -119,7 +119,7 @@ const Navbar = () => {
                             </li>
                         ))}
                         {isAdmin && (
-                            <li className="px-5">
+                            <li className="px-3">
                                 <DropdownMenu>
                                     <DropdownMenuTrigger>
                                         <span className="px-6 py-4 block transition-colors duration-200 hover:bg-black/20 rounded-xl">Administrar</span>

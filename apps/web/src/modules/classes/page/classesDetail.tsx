@@ -43,24 +43,20 @@ export default function ClassesDetail() {
 
   if (loading) {
     return (
-      <section className="min-h-screen flex items-center justify-center">
-        <p className="text-base text-muted-foreground">Cargando curso...</p>
+      <section className="pt-15 pb-10 flex items-center justify-center">
+        <div className="bg-muted rounded-md p-4">
+          <p className="text-base text-muted-foreground">Cargando curso...</p>
+        </div>
       </section>
     )
   }
 
-  if (error) {
+  if (error || !course) {
     return (
-      <section className="min-h-screen flex items-center justify-center">
-        <p className="text-base text-muted-foreground">{error}</p>
-      </section>
-    )
-  }
-
-  if (!course) {
-    return (
-      <section className="min-h-screen flex items-center justify-center">
-        <p className="text-base text-muted-foreground">Curso no encontrado.</p>
+      <section className="pt-15 pb-10 flex items-center justify-center">
+        <div className="bg-muted rounded-md p-4">
+          <p className="text-base text-muted-foreground">{error || 'No se pudo cargar el curso'}</p>
+        </div>
       </section>
     )
   }
@@ -75,8 +71,7 @@ export default function ClassesDetail() {
   const fullDescription = course.full_description || course.description
 
   return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
+    <div className="py-5">
       <section className="py-4 md:py-10 px-4 overflow-hidden">
         <div className="container mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">

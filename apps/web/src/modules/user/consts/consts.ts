@@ -6,9 +6,5 @@ export const STATUS = [
     {
         id: '2',
         nombre: 'Inactivo',
-    },
-    {
-        id: '3',
-        nombre: 'Eliminado',
-    },
+    }
 ]
