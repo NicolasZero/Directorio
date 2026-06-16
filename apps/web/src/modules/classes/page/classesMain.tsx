@@ -55,9 +55,9 @@ function ClassesMain() {
   }, [courses])
 
   return (
-    <div className="py-5">
+    <>
       {/* Hero Section */}
-      <section className="bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 py-4 md:py-10 px-4">
+      <section className="bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 md:py-10 px-4">
         <div className="container mx-auto text-center max-w-2xl">
           <Badge variant="secondary" className="mb-4 bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50">
             <GraduationCap className="w-3 h-3 mr-1" />
@@ -116,8 +116,7 @@ function ClassesMain() {
           </div>
         </div>
       </section>
-    </div>
+    </>
   )
 }
-
 export default ClassesMain

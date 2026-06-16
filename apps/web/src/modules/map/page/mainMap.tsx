@@ -105,7 +105,7 @@ const MapaInteractivo = () => {
 				</div>
 
 				{/* Mapa de Venezuela */}
-				<div className="map-container w-full md:w-[85%] h-[50vh] md:h-[90vh] max-w-[800px] relative mx-auto my-5 flex justify-center overflow-auto border rounded-xl shadow-lg">
+				<div className="map-container w-full md:w-[85%] h-[50vh] md:h-[90vh] max-w-250 relative mx-auto my-5 flex justify-center overflow-auto border rounded-xl shadow-lg">
 
 					{/* 1. El Wrapper maneja la lógica del zoom */}
 					<TransformWrapper
@@ -166,12 +166,6 @@ const MapaInteractivo = () => {
 									<p className="text-muted-foreground mb-4">
 										Intenta seleccionar un estado diferente
 									</p>
-									<Button
-										variant="outline"
-										onClick={() => setSelectedState('')}
-									>
-										Ver todos los estados
-									</Button>
 								</CardContent>
 							</Card>
 						)}

@@ -124,7 +124,7 @@ export default function EditClass() {
   }
 
   return (
-    <div className="py-5">
+    <>
       <section className="bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 py-6 px-4 mb-6">
         <div className="container mx-auto max-w-4xl text-center">
           <Badge variant="outline" className="mb-4 bg-rose-100 dark:bg-rose-900 dark:text-rose-50 text-rose-700">
@@ -332,6 +332,6 @@ export default function EditClass() {
           </Card>
         )}
       </section>
-    </div>
+    </>
   )
 }
