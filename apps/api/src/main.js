@@ -17,7 +17,6 @@ try {
 // extrae las variables de entorno o establece un valor por defecto
 const {
   PORT = 3000,
-  LOGGER = false,
   CORS_URL = '*'
 } = process.env
 
@@ -26,7 +25,7 @@ const fastify = Fastify({
   //   level: 'info',
   //   file: '../server.log'
   // }
-  logger: LOGGER
+  logger: false
 })
 
 // Habilita el Cross-Origin Resource Sharing (CORS)

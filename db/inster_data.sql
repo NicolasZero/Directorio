@@ -374,3 +374,53 @@ INSERT INTO municipios (nombre, estado_id) VALUES
 ('ANTONIO DIAZ',23),
 ('CASACOIMA',23),
 ('VARGAS',24);
+
+-- Inserciones para la tabla institucion y relacionadas (datos de example en about.tsx)
+INSERT INTO institucion (id, nombre, nombre_corto, fecha_creacion, ley_creacion, descripcion, vision, mision)
+VALUES (
+    1,
+	'Instituto Nacional de la Mujer',
+	'Inamujer',
+	'25 de octubre de 1999',
+	'Ley de Igualdad de Oportunidades para la Mujer',
+	'El Instituto Nacional de la Mujer (Inamujer) fue creado para la defensa y materialización de los derechos de la población femenina y el incremento de su participación en las misiones, planes y programas sociales del Estado, como parte de un nuevo estado de derecho para este sector.',
+	'Ser el órgano rector de las políticas públicas para la igualdad de género, promoviendo el empoderamiento y bienestar de todas las mujeres en Venezuela.',
+	'Ejecutar políticas públicas para la defensa permanente de los derechos humanos de las mujeres, propiciando su acceso real y efectivo a todas las esferas de la vida social en igualdad de oportunidades.'
+);
+
+-- Valores
+INSERT INTO institucion_valores (institucion_id, titulo, descripcion, icono, orden)
+VALUES
+	(1, 'Igualdad', 'Promovemos la igualdad de oportunidades entre hombres y mujeres', 'Heart', 1),
+	(1, 'Protección', 'Defendemos los derechos de las mujeres contra toda forma de violencia', 'Shield', 2),
+	(1, 'Empoderamiento', 'Fomentamos la autonomía y desarrollo integral de las mujeres', 'Users', 3),
+	(1, 'Justicia', 'Garantizamos el acceso a la justicia y servicios legales', 'Scale', 4);
+
+-- Logros
+INSERT INTO institucion_logros (institucion_id, numero, titulo, descripcion, orden)
+VALUES
+	(1, '150+', 'Centros de Atención', 'Centros operativos a nivel nacional', 1),
+	(1, '500K+', 'Mujeres Atendidas', 'Atenciones directas realizadas', 2),
+	(1, '24', 'Estados Cubiertos', 'Presencia en todo el territorio nacional', 3),
+	(1, '98%', 'Satisfacción', 'Tasa de satisfacción de usuarias', 4);
+
+-- Aliados
+INSERT INTO institucion_aliados (institucion_id, nombre, tipo)
+VALUES
+	(1, 'Ministerio del Poder Popular para la Mujer', 'Gubernamental'),
+	(1, 'PNUD Venezuela', 'Organismo Internacional'),
+	(1, 'ONU Mujeres', 'Organismo Internacional'),
+	(1, 'Fundaciones Privadas', 'Sector Privado');
+
+-- Contacto
+INSERT INTO institucion_contacto (institucion_id, direccion, telefono, correo, horario)
+VALUES
+	(1, 'Av. Universidad, Edificio Inamujer, Caracas, Venezuela', '+58 212 555-1234', 'contacto@inamujer.gob.ve', 'Lunes a Viernes: 8:00 AM - 5:00 PM');
+
+-- Redes sociales
+INSERT INTO institucion_redes (institucion_id, nombre, url)
+VALUES
+	(1, 'Instagram', '#'),
+	(1, 'Facebook', '#'),
+	(1, 'Twitter', '#'),
+	(1, 'YouTube', '#');

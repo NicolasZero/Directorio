@@ -1,25 +1,24 @@
 import { ArrowRight, Calendar, HandHeart, Mail, MapPin, Phone } from "lucide-react"
 import { Button } from "./ui/button"
 import { Card, CardContent } from "./ui/card"
-
-const institucion = {
-    nombre: "Instituto Nacional de la Mujer",
-    nombreCorto: "Inamujer",
-    contacto: {
-        direccion: "Av. Universidad, Edificio Inamujer, Caracas, Venezuela",
-        telefono: "+58 212 555-1234",
-        correo: "contacto@inamujer.gob.ve",
-        horario: "Lunes a Viernes: 8:00 AM - 5:00 PM"
-    },
-    redesSociales: [
-        { nombre: "Instagram", url: "#" },
-        { nombre: "Facebook", url: "#" },
-        { nombre: "Twitter", url: "#" },
-        { nombre: "YouTube", url: "#" }
-    ]
-}
+import { useInstitution } from "@/modules/about/hooks/useInstitucion"
 
 const Footer = () => {
+
+    const { institucion, loadingInstitution } = useInstitution()
+
+    if (loadingInstitution) {
+        return <div className="flex items-center justify-center">Cargando...</div>
+    }
+
+    if (!institucion) {
+        return (
+            <div className="flex items-center justify-center">
+                <p className="text-red-500 dark:text-red-400 text-2xl">Ocurrio un error. Intenta nuevamente más tarde.</p>
+            </div>
+        )
+    }
+
     return (
         <footer className='p-4'>
             <Card className="bg-rose-600 dark:bg-rose-900 w-full sm:w-[90vw] m-auto">

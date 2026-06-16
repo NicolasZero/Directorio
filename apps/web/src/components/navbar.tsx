@@ -31,6 +31,7 @@ const Navbar = () => {
         { name: "Directorio", path: "/admin/directorio" },
         { name: "Usuarios", path: "/admin/usuarios" },
         { name: "Aprendizaje", path: "/admin/clases" },
+        { name: "Descripción", path: "/admin/about"}
     ];
 
     const isAdmin = status === 'authenticated' ? true : false;

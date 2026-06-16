@@ -151,6 +151,33 @@ function Directory() {
 						</SelectGroup>
 					</SelectContent>
 				</Select>
+
+				<Select
+					value={selectedMunicipality}
+					onValueChange={handleSelectMunicipality}
+				// disabled={!selectedState || loadingLocation}
+				>
+					<SelectTrigger className="w-full max-w-50">
+						<SelectValue placeholder={loadingLocation ? "Cargando..." : "Seleccione un centro"} />
+					</SelectTrigger>
+					<SelectContent>
+						<SelectGroup>
+							<SelectLabel>Centros</SelectLabel>
+							<SelectItem value='1'>
+								Centro 1
+							</SelectItem>
+							<SelectItem value='2'>
+								Centro 2
+							</SelectItem>
+							<SelectItem value='3'>
+								Centro 3
+							</SelectItem>
+							<SelectItem value='4'>
+								Centro 4
+							</SelectItem>
+						</SelectGroup>
+					</SelectContent>
+				</Select>
 			</section>
 
 			{/* Results Section */}

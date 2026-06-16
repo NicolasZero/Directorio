@@ -12,6 +12,7 @@ const AddClass = React.lazy(() => import('@/modules/classes/page/addClass.tsx'))
 const EditCourse = React.lazy(() => import('@/modules/classes/page/editClass.tsx'))
 const UserList = React.lazy(() => import('@/modules/user/page/userList.tsx'))
 const AdminLayout = React.lazy(() => import('@/layout/adminLayout.tsx'))
+const EditAbout = React.lazy(() => import('@/modules/about/page/editAbout.tsx'))
 
 export default function PrivateRouter() {
     const { status } = useAuth()
@@ -29,7 +30,7 @@ export default function PrivateRouter() {
                 <Route path='clases/nuevo' element={<AddClass />} />
                 <Route path='clases/editar/:id' element={<EditCourse />} />
                 <Route path='usuarios' element={<UserList />} />
-
+                <Route path='about' element={<EditAbout />} />
             </Route>
             <Route path="*" element={<Navigate to="/admin/inicio" replace />} />
         </Routes>
