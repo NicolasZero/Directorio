@@ -177,3 +177,6 @@ export function useDirectoryForm() {
         agregarResponsable, removerResponsable,
         agregarRed, removerRed,
         agregarRequisito, removerRequisito,
+        handleSubmit
+    }
+}
