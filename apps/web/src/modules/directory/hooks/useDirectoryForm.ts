@@ -32,6 +32,8 @@ export function useDirectoryForm() {
     const [nuevoResponsable, setNuevoResponsable] = useState<Responsable>({ nombre: '', cargo: '' })
     const [redes, setRedes] = useState<RedSocial[]>([])
     const [nuevaRed, setNuevaRed] = useState<RedSocial>({ nombre: '', url: '', icono: '' })
+    const [requisitos, setRequisitos] = useState<string[]>([])
+    const [nuevoRequisito, setNuevoRequisito] = useState('')
 
     const agregarServicio = () => {
         if (nuevoServicio.trim()) {
@@ -66,6 +68,17 @@ export function useDirectoryForm() {
         setRedes(redes.filter((_, i) => i !== index))
     }
 
+    const agregarRequisito = () => {
+        if (nuevoRequisito.trim()) {
+            setRequisitos([...requisitos, nuevoRequisito.trim()])
+            setNuevoRequisito('')
+        }
+    }
+
+    const removerRequisito = (index: number) => {
+        setRequisitos(requisitos.filter((_, i) => i !== index))
+    }
+
     const resetForm = () => {
         setNombre('')
         setDescripcion('')
@@ -82,6 +95,8 @@ export function useDirectoryForm() {
         setNuevoResponsable({ nombre: '', cargo: '' })
         setRedes([])
         setNuevaRed({ nombre: '', url: '', icono: '' })
+        setRequisitos([])
+        setNuevoRequisito('')
     }
 
     const handleSubmit = async (event: SubmitEvent) => {
@@ -115,6 +130,7 @@ export function useDirectoryForm() {
                     servicios,
                     responsables,
                     redes,
+                    requisitos,
                 }),
             })
 
@@ -145,7 +161,7 @@ export function useDirectoryForm() {
         horario, setHorario,
         selectedState, setSelectedState,
         selectedMunicipality, setSelectedMunicipality,
-        saving,
+        saving, setSaving,
         message, setMessage,
         error, setError,
         servicios, setServicios,
@@ -154,10 +170,10 @@ export function useDirectoryForm() {
         nuevoResponsable, setNuevoResponsable,
         redes, setRedes,
         nuevaRed, setNuevaRed,
+        requisitos, setRequisitos,
+        nuevoRequisito, setNuevoRequisito,
         // Handlers
         agregarServicio, removerServicio,
         agregarResponsable, removerResponsable,
         agregarRed, removerRed,
-        handleSubmit
-    }
-}
+        agregarRequisito, removerRequisito,

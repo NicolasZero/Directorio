@@ -12,7 +12,7 @@ export function useInstitution() {
                 const response = await fetch('/api/about')
                 const data = await response.json()
 
-                console.log(data);
+                // console.log(data);
 
                 setInstitucion(data)
             } catch (fetchError) {

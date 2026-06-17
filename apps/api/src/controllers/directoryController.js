@@ -75,7 +75,12 @@ export const getDirectoryById = async (request, reply) => {
             SELECT json_agg(jsonb_build_object('nombre', nombre, 'url', url, 'icono', icono) ORDER BY created_at)
             FROM redes_directorio rd
             WHERE rd.directorio_id = d.id
-          ) AS redes
+          ) AS redes,
+          (
+            SELECT json_agg(requisito ORDER BY created_at)
+            FROM requisitos_directorio rd
+            WHERE rd.directorio_id = d.id
+          ) AS requisitos
         FROM directorios d
         JOIN municipios m ON m.id = d.municipio_id
         JOIN estados e ON e.id = m.estado_id
@@ -107,7 +112,8 @@ export const createDirectory = async (request, reply) => {
     municipio,
     servicios = [],
     responsables = [],
-    redes = []
+    redes = [],
+    requisitos = []
   } = request.body
 
   // Validación básica
@@ -173,6 +179,14 @@ export const createDirectory = async (request, reply) => {
       )
     }
 
+    // Insertar requisitos
+    if (requisitos.length > 0) {
+      const requisitoValues = requisitos.map(req => `(${directorioId}, '${req.replace(/'/g, "''")}')`).join(', ')
+      await query(
+        `INSERT INTO requisitos_directorio (directorio_id, requisito) VALUES ${requisitoValues}`
+      )
+    }
+
     // Confirmar transacción
     await query('COMMIT')
 
@@ -214,7 +228,8 @@ export const updateDirectory = async (request, reply) => {
     municipio,
     servicios = [],
     responsables = [],
-    redes = []
+    redes = [],
+    requisitos = []
   } = request.body
 
   if (!nombre || !direccion || !telefono || !estado || !municipio) {
@@ -252,6 +267,7 @@ export const updateDirectory = async (request, reply) => {
     await query('DELETE FROM servicios_directorio WHERE directorio_id = $1', [id])
     await query('DELETE FROM responsables_directorio WHERE directorio_id = $1', [id])
     await query('DELETE FROM redes_directorio WHERE directorio_id = $1', [id])
+    await query('DELETE FROM requisitos_directorio WHERE directorio_id = $1', [id])
 
     for (const servicio of servicios) {
       if (servicio?.trim()) {
@@ -279,6 +295,16 @@ export const updateDirectory = async (request, reply) => {
           `INSERT INTO redes_directorio (directorio_id, nombre, url, icono)
            VALUES ($1, $2, $3, $4)`,
           [id, red.nombre.trim(), red.url.trim(), red.icono || null]
+        )
+      }
+    }
+
+    for (const requisito of requisitos) {
+      if (requisito?.trim()) {
+        await query(
+          `INSERT INTO requisitos_directorio (directorio_id, requisito)
+           VALUES ($1, $2)`,
+          [id, requisito.trim()]
         )
       }
     }

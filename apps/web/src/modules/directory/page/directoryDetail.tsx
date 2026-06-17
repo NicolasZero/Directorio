@@ -16,12 +16,13 @@ import {
 } from 'lucide-react'
 import { Link } from 'react-router'
 import { type DirectoryDetailData } from '../schemes/directory'
+import { FacebookLogoIcon, InstagramLogoIcon, LinkedinLogoIcon, TiktokLogoIcon, TwitterLogoIcon, WhatsappLogoIcon, YoutubeLogoIcon } from '@phosphor-icons/react'
 
-const requisitos = [
-  'Identificación oficial (cédula)',
-  'Ser mayor de edad o estar acompañada de tutor',
-  'Solicitud de atención previamente llamada telefónica'
-]
+// const requisitos = [
+//   'Identificación oficial (cédula)',
+//   'Ser mayor de edad o estar acompañada de tutor',
+//   'Solicitud de atención previamente llamada telefónica'
+// ]
 
 function DirectoryDetail() {
   const { id } = useParams<{ id: string }>()
@@ -49,6 +50,7 @@ function DirectoryDetail() {
         }
 
         setDirectorio(data?.data || null)
+        console.log(data?.data)
       } catch (fetchError) {
         console.error(fetchError)
         setError('No se pudo cargar el directorio. Intenta nuevamente más tarde.')
@@ -99,7 +101,7 @@ function DirectoryDetail() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="py-10 px-4 sm:px-8 mx-auto">
+      <section className="p-4 sm:p-8 mx-auto">
         {/* Back button */}
         <Button
           variant="ghost"
@@ -190,7 +192,7 @@ function DirectoryDetail() {
       </section>
 
       {/* Servicios */}
-      <section className="py-12 px-4 bg-muted/30">
+      <section className="p-4 sm:p-8 bg-muted/30">
         <h2 className="text-2xl font-bold mb-6">Servicios Disponibles</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {directorio.servicios?.map((servicio, index) => (
@@ -203,66 +205,100 @@ function DirectoryDetail() {
               </CardContent>
             </Card>
           ))}
+          {directorio.servicios?.length === 0 || !directorio.servicios && (
+            <Card>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center shrink-0">
+                  <FileText className="w-5 h-5 text-rose-600 dark:text-rose-100" />
+                </div>
+                <span className="font-medium">No hay servicios especificados</span>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </section>
 
       {/* Responsables y Requisitos */}
-      <section className="py-12 px-4">
-        <div className="container mx-auto">
-          <div className="grid lg:grid-cols-2 gap-8">
-            {/* Responsables */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <User className="w-5 h-5 text-rose-600" />
-                  Equipo Responsable
-                </CardTitle>
-                <CardDescription>
-                  Personas a cargo del centro
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {directorio.responsables?.map((responsable, index) => (
-                    <div key={index} className="flex items-center gap-4 p-3 rounded-lg bg-muted/50">
-                      <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center">
-                        <User className="w-6 h-6 text-rose-600 dark:text-rose-100" />
-                      </div>
-                      <div>
-                        <p className="font-medium">{responsable.nombre}</p>
-                        <p className="text-sm text-muted-foreground">{responsable.cargo}</p>
-                      </div>
-                    </div>
-                  ))}
+      <section className="p-4 md:p-8 grid lg:grid-cols-2 gap-8">
+        {/* Responsables */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <User className="w-5 h-5 text-rose-600" />
+              Equipo Responsable
+            </CardTitle>
+            <CardDescription>
+              Personas a cargo del centro
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {directorio.responsables?.map((responsable, index) => (
+                <div key={index} className="flex items-center gap-4 p-3 rounded-lg bg-muted/50">
+                  <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center">
+                    <User className="w-6 h-6 text-rose-600 dark:text-rose-100" />
+                  </div>
+                  <div>
+                    <p className="font-medium">{responsable.nombre}</p>
+                    <p className="text-sm text-muted-foreground">{responsable.cargo}</p>
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
-            {/* Requisitos */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <AlertCircle className="w-5 h-5 text-rose-600" />
-                  Requisitos de Atención
-                </CardTitle>
-                <CardDescription>
-                  Documentación necesaria para ser atendida
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-3">
-                  {requisitos.map((requisito, index) => (
-                    <li key={index} className="flex items-start gap-3">
-                      <div className="w-6 h-6 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center shrink-0 mt-0.5">
-                        <span className="text-xs font-bold text-rose-600 dark:text-rose-100">{index + 1}</span>
-                      </div>
-                      <span className="text-muted-foreground">{requisito}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          </div>
+        {/* Requisitos */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <AlertCircle className="w-5 h-5 text-rose-600" />
+              Requisitos de Atención
+            </CardTitle>
+            <CardDescription>
+              Documentación necesaria para ser atendida
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {directorio.requisitos?.length ? (
+              <ul className="space-y-3">
+                {directorio.requisitos.map((requisito, index) => (
+                  <li key={index} className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center shrink-0 mt-0.5">
+                      <span className="text-xs font-bold text-rose-600 dark:text-rose-100">{index + 1}</span>
+                    </div>
+                    <span className="text-muted-foreground">{requisito}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-muted-foreground">No hay requisitos especificados.</p>
+            )}
+          </CardContent>
+        </Card>
+      </section>
+
+      {/* Redes */}
+      <section className='p-4 md:p-8 bg-muted'>
+        <h2 className="text-2xl font-bold mb-6">Redes Sociales</h2>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {directorio.redes?.map((red, index) => (
+            <div key={index} className="flex items-center gap-4 p-3 rounded-lg border bg-card">
+              <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center">
+                {red.icono === 'Facebook' && <FacebookLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                {red.icono === 'Instagram' && <InstagramLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                {red.icono === 'Twitter' && <TwitterLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                {red.icono === 'Whatsapp' && <WhatsappLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                {red.icono === 'Tiktok' && <TiktokLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                {red.icono === 'Linkedin' && <LinkedinLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                {red.icono === 'Youtube' && <YoutubeLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+              </div>
+              <div>
+                <p className="font-medium">{red.nombre}</p>
+                <p className="text-sm text-muted-foreground">{red.url}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
     </div>

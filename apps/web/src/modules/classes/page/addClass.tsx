@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Link } from 'react-router'
+import { useEffect, useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -47,6 +47,10 @@ function SectionHeader({ title, description }: { title: string; description?: st
 }
 
 export default function AddClass() {
+  const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
+  const isEdit = Boolean(id)
+
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [fullDescription, setFullDescription] = useState('')
@@ -64,8 +68,48 @@ export default function AddClass() {
   const [outcomes, setOutcomes] = useState<string[]>([])
   const [outcomeText, setOutcomeText] = useState('')
   const [saving, setSaving] = useState(false)
+  const [loading, setLoading] = useState(isEdit)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    if (!id) return
+
+    const fetchCourse = async () => {
+      setLoading(true)
+      setError('')
+
+      try {
+        const response = await fetch(`/api/class/${id}`)
+        const data = await response.json()
+
+        if (!response.ok) {
+          throw new Error(data?.error || 'No se pudo cargar el curso')
+        }
+
+        const course = data?.data
+        setTitle(course.title || '')
+        setDescription(course.description || '')
+        setFullDescription(course.full_description || course.fullDescription || '')
+        setInstructor(course.instructor || '')
+        setInstructorBio(course.instructor_bio || course.instructorBio || '')
+        setDuration(course.duration || '')
+        setLevel(course.level || 'Principiante')
+        setImage(course.image || '')
+        setStartDate(course.start_date ? course.start_date.split('T')[0] : '')
+        setModules(course.modules || [])
+        setRequirements(course.requirements || [])
+        setOutcomes(course.outcomes || [])
+      } catch (fetchError) {
+        console.error(fetchError)
+        setError('No se pudo cargar el curso. Intenta de nuevo más tarde.')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchCourse()
+  }, [id])
 
   const addModule = () => {
     const titleValue = moduleTitle.trim()
@@ -114,11 +158,19 @@ export default function AddClass() {
       return
     }
 
+    if (isEdit && !id) {
+      setError('ID de curso inválido.')
+      return
+    }
+
     setSaving(true)
 
     try {
-      const response = await fetch('/api/class', {
-        method: 'POST',
+      const url = isEdit ? `/api/class/${id}` : '/api/class'
+      const method = isEdit ? 'PUT' : 'POST'
+
+      const response = await fetch(url, {
+        method,
         headers: {
           'Content-Type': 'application/json',
         },
@@ -141,21 +193,23 @@ export default function AddClass() {
       const result = await response.json()
 
       if (!response.ok) {
-        setError(result?.error || 'No se pudo guardar el curso.')
+        setError(result?.error || `No se pudo ${isEdit ? 'actualizar' : 'guardar'} el curso.`)
       } else {
-        setMessage('Curso guardado correctamente.')
-        setTitle('')
-        setDescription('')
-        setFullDescription('')
-        setInstructor('')
-        setInstructorBio('')
-        setDuration('')
-        setLevel('Principiante')
-        setImage('')
-        setStartDate('')
-        setModules([])
-        setRequirements([])
-        setOutcomes([])
+        setMessage(`Curso ${isEdit ? 'actualizado' : 'guardado'} correctamente.`)
+        if (!isEdit) {
+          setTitle('')
+          setDescription('')
+          setFullDescription('')
+          setInstructor('')
+          setInstructorBio('')
+          setDuration('')
+          setLevel('Principiante')
+          setImage('')
+          setStartDate('')
+          setModules([])
+          setRequirements([])
+          setOutcomes([])
+        }
       }
     } catch (err) {
       console.error(err)
@@ -163,6 +217,16 @@ export default function AddClass() {
     } finally {
       setSaving(false)
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="pt-15 pb-10 flex items-center justify-center p-8">
+        <div className="bg-muted rounded-md p-4">
+          <p className="text-lg font-medium">Cargando información del curso...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -173,15 +237,19 @@ export default function AddClass() {
             <div className="max-w-3xl">
               <Badge variant="outline" className="mb-4 bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50">
                 <GraduationCap className="w-3 h-3 mr-1" />
-                Nuevo curso
+                {isEdit ? 'Editar curso' : 'Nuevo curso'}
               </Badge>
-              <h1 className="text-3xl font-bold text-foreground md:text-4xl">Agregar nuevo curso</h1>
+              <h1 className="text-3xl font-bold text-foreground md:text-4xl">
+                {isEdit ? 'Editar clase' : 'Agregar nuevo curso'}
+              </h1>
               <p className="mt-2 text-sm text-muted-foreground">
-                Completa el formulario para crear un nuevo curso.
+                {isEdit
+                  ? 'Ajusta los datos del curso y guarda los cambios.'
+                  : 'Completa el formulario para crear un nuevo curso.'}
               </p>
             </div>
             <Button variant="ghost" size="sm" asChild>
-              <Link to="/clases">
+              <Link to="/admin/clases">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Volver a clases
               </Link>
@@ -200,7 +268,7 @@ export default function AddClass() {
                     value={title}
                     onChange={(event) => setTitle(event.target.value)}
                     placeholder="Título del curso"
-                    className='focus:border-rose-500! focus:ring-2! focus:ring-rose-500/20!'
+                    className="focus:border-rose-500! focus:ring-2! focus:ring-rose-500/20!"
                     required
                   />
                 </FormField>
@@ -231,6 +299,7 @@ export default function AddClass() {
                 <div className="grid gap-4 md:grid-cols-2">
                   <FormField label="Duración" htmlFor="duration">
                     <Input
+                      id="duration"
                       value={duration}
                       onChange={(event) => setDuration(event.target.value)}
                       placeholder="Ej. 40 horas"
@@ -306,7 +375,7 @@ export default function AddClass() {
         </section>
 
         <section className="py-8 px-4 sm:px-8 bg-muted/30">
-          <SectionHeader title="Módulos" description="Agrega los módulos del curso." />
+          <SectionHeader title="Módulos" description={isEdit ? 'Agrega o edita los módulos del curso.' : 'Agrega los módulos del curso.'} />
           <div className="grid gap-4 lg:grid-cols-3">
             <Input
               value={moduleTitle}
@@ -414,10 +483,17 @@ export default function AddClass() {
         </section>
 
         <section className="py-10 px-4 sm:px-8">
-          <div className="max-w-2xl space-y-4">
+          <div className="max-w-2xl flex flex-row items-center gap-4">
             <Button type="submit" className="rounded-3xl bg-rose-600 text-white hover:bg-rose-700" disabled={saving}>
-              {saving ? 'Guardando curso...' : 'Guardar curso'}
+              {saving ? 'Guardando...' : isEdit ? 'Guardar cambios' : 'Guardar curso'}
             </Button>
+            {isEdit && (
+              <Button type="button" variant="outline" className="rounded-3xl" onClick={() => navigate('/admin/clases')}>
+                Volver sin guardar
+              </Button>
+            )}
+          </div>
+          <div className="max-w-2xl mt-4 space-y-4">
             {error && (
               <div className="rounded-3xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                 {error}

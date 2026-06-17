@@ -22,6 +22,7 @@ export interface DirectoryDetailData {
   servicios?: string[]
   responsables?: Responsable[]
   redes?: RedSocial[]
+  requisitos?: string[]
 }
 
 export interface DirectoryEntry {

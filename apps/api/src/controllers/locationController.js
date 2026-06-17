@@ -4,7 +4,7 @@ export const stateById = async (request, reply) => {
     try {
         const id = request.params.id
 
-        const response = await query(`SELECT * FROM estados WHERE id = $1`, [id])
+        const response = await query(`SELECT * FROM estados WHERE id = $1 ORDER BY nombre ASC`, [id])
         return reply.code(200).send({ status: "OK", data: response.rows })
     } catch (error) {
         console.log(error);
@@ -57,7 +57,7 @@ export const allLocations = async (request, reply) => {
             GROUP BY e.nombre
         ) subconsulta`)
 
-        const resultStates = await query('SELECT nombre FROM estados')
+        const resultStates = await query('SELECT nombre FROM estados ORDER BY nombre ASC')
 
         const states = resultStates.rows.map((state) => state.nombre)
         const municipalities = resultMunicipality.rows[0].json_object_agg

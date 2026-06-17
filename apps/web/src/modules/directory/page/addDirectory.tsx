@@ -1,6 +1,7 @@
+import { useEffect, useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import {
     Select,
@@ -29,13 +30,15 @@ import {
 import { useDirectoryForm } from '../hooks/useDirectoryForm'
 import { useLocations } from '../hooks/useLocations'
 import { FacebookLogoIcon, InstagramLogoIcon, TwitterLogoIcon, WhatsappLogoIcon, TiktokLogoIcon, LinkedinLogoIcon, YoutubeLogoIcon } from '@phosphor-icons/react'
-import { Link } from 'react-router'
+import { Link, useNavigate, useParams } from 'react-router'
+import { Textarea } from '@/components/ui/textarea'
+import { cn } from '@/lib/utils'
 
 // ─── Sub-components ────────────────────────────────────────────────────────────
 
-function FormField({ label, htmlFor, children }: { label: string; htmlFor?: string; children: React.ReactNode }) {
+function FormField({ label, htmlFor, children, className }: { label: string; htmlFor?: string; children: React.ReactNode, className?: string }) {
     return (
-        <fieldset className="space-y-2">
+        <fieldset className={`space-y-2 ${className}`}>
             <label htmlFor={htmlFor} className="block text-sm font-medium text-foreground">
                 {label}
             </label>
@@ -53,9 +56,9 @@ function IconInput({ icon: Icon, ...props }: React.ComponentProps<typeof Input> 
     )
 }
 
-function SectionHeader({ icon: Icon, title, description }: { icon: React.ElementType; title: string; description?: string }) {
+function SectionHeader({ icon: Icon, title, description, className }: { icon: React.ElementType; title: string; description?: string, className?: string }) {
     return (
-        <div className="flex items-center gap-3 mb-6">
+        <div className={cn(`flex items-center gap-3 ${className}`)}>
             <div className="w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center shrink-0">
                 <Icon className="w-5 h-5 text-rose-600 dark:text-rose-100" />
             </div>
@@ -70,6 +73,10 @@ function SectionHeader({ icon: Icon, title, description }: { icon: React.Element
 // ─── Main Component ─────────────────────────────────────────────────────────────
 
 export default function AddDirectory() {
+    const { id } = useParams<{ id: string }>()
+    const navigate = useNavigate()
+    const isEdit = Boolean(id)
+
     const {
         nombre, setNombre,
         descripcion, setDescripcion,
@@ -80,36 +87,148 @@ export default function AddDirectory() {
         horario, setHorario,
         selectedState, setSelectedState,
         selectedMunicipality, setSelectedMunicipality,
-        saving,
-        message,
-        error,
-        servicios,
+        saving, setSaving,
+        message, setMessage,
+        error, setError,
+        servicios, setServicios,
         nuevoServicio, setNuevoServicio,
-        responsables,
+        responsables, setResponsables,
         nuevoResponsable, setNuevoResponsable,
-        redes,
+        redes, setRedes,
         nuevaRed, setNuevaRed,
+        requisitos, setRequisitos,
+        nuevoRequisito, setNuevoRequisito,
         agregarServicio, removerServicio,
         agregarResponsable, removerResponsable,
         agregarRed, removerRed,
+        agregarRequisito, removerRequisito,
         handleSubmit,
     } = useDirectoryForm()
 
     const { listStates, listMunicipalities, loadingLocation, error: locationError } = useLocations()
+    const [loading, setLoading] = useState(isEdit)
+
+    // Load data if in edit mode
+    useEffect(() => {
+        if (!id) return
+
+        const fetchDirectory = async () => {
+            setLoading(true)
+            setError('')
+            setMessage('')
+
+            try {
+                const response = await fetch(`/api/directory/${id}`)
+                const data = await response.json()
+
+                if (!response.ok) {
+                    throw new Error(data?.error || 'No se pudo cargar el directorio')
+                }
+
+                const directorio = data?.data
+
+                setNombre(directorio.nombre || '')
+                setDescripcion(directorio.descripcion || '')
+                setDireccion(directorio.direccion || '')
+                setTelefono(directorio.telefono || '')
+                setCorreo(directorio.correo || '')
+                setFoto(directorio.foto || '')
+                setHorario(directorio.horario || '')
+                setSelectedState(directorio.estado || '')
+                setSelectedMunicipality(directorio.municipio || '')
+                setServicios(directorio.servicios || [])
+                setResponsables(directorio.responsables || [])
+                setRedes(directorio.redes || [])
+                setRequisitos(directorio.requisitos || [])
+            } catch (fetchError) {
+                console.error(fetchError)
+                setError('No se pudo cargar el directorio. Intenta de nuevo más tarde.')
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchDirectory()
+    }, [id, setNombre, setDescripcion, setDireccion, setTelefono, setCorreo, setFoto, setHorario, setSelectedState, setSelectedMunicipality, setServicios, setResponsables, setRedes, setError, setMessage])
+
+    const handleFormSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {
+        event.preventDefault()
+        setError('')
+        setMessage('')
+
+        if (!isEdit) {
+            await handleSubmit(event)
+            return
+        }
+
+        if (!nombre || !direccion || !telefono || !selectedState || !selectedMunicipality) {
+            setError('Por favor completa todos los campos obligatorios.')
+            return
+        }
+
+        setSaving(true)
+
+        try {
+            const response = await fetch(`/api/directory/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    nombre,
+                    descripcion,
+                    direccion,
+                    telefono,
+                    correo,
+                    foto,
+                    horario,
+                    estado: selectedState,
+                    municipio: selectedMunicipality,
+                    servicios,
+                    responsables,
+                    redes,
+                    requisitos,
+                }),
+            })
+
+            const data = await response.json()
+
+            if (!response.ok) {
+                throw new Error(data?.error || 'Error al actualizar el directorio.')
+            }
+
+            setMessage('Directorio actualizado correctamente.')
+        } catch (submissionError) {
+            console.error(submissionError)
+            setError('No se pudo actualizar el directorio. Intenta nuevamente más tarde.')
+        } finally {
+            setSaving(false)
+        }
+    }
 
     const formError = error || locationError
 
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center p-8">
+                <div className="text-center">
+                    <p className="text-lg font-medium">Cargando información del directorio...</p>
+                </div>
+            </div>
+        )
+    }
+
     return (
         <div className="min-h-screen">
-            <form onSubmit={handleSubmit}>
-                <section className="py-10 px-4 sm:px-8">
-                    <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-8">
+            <form onSubmit={handleFormSubmit} className="py-4 sm:py-8">
+                <header className="px-4 sm:px-8 mb-6">
+                    <div className='flex flex-col lg:flex-row lg:justify-between lg:items-start gap-8'>
                         <Badge
                             variant="outline"
                             className="mb-4 bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50"
                         >
                             <Building2 className="w-3 h-3 mr-1" />
-                            Registro de directorio
+                            {isEdit ? 'Editar directorio' : 'Registro de directorio'}
                         </Badge>
                         <Button variant="ghost" size="sm" asChild>
                             <Link to="/admin/directorio">
@@ -118,175 +237,181 @@ export default function AddDirectory() {
                             </Link>
                         </Button>
                     </div>
-                    <div className="flex flex-col lg:flex-row items-start gap-8">
-                        {/* Left: Title + basic fields */}
-                        <div className="flex-1 space-y-6">
-                            <div>
-                                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-2">
-                                    Nuevo centro de atención
-                                </h1>
-                                <p className="text-muted-foreground">
-                                    Completa los datos para registrar el centro en el directorio.
-                                </p>
-                            </div>
 
-                            <div className="grid gap-4 md:grid-cols-2">
-                                <FormField label="Nombre del centro" htmlFor="nombre">
-                                    <Input
-                                        id="nombre"
-                                        type="text"
-                                        value={nombre}
-                                        onChange={(e) => setNombre(e.target.value)}
-                                        placeholder="Nombre del centro"
-                                        required
-                                        className="w-full rounded-3xl px-4 py-3"
-                                    />
-                                </FormField>
+                    <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-2">
+                        {isEdit ? 'Editar centro de atención' : 'Nuevo centro de atención'}
+                    </h1>
 
-                                <FormField label="Teléfono" htmlFor="telefono">
-                                    <IconInput
-                                        id="telefono"
-                                        icon={Phone}
-                                        type="tel"
-                                        value={telefono}
-                                        onChange={(e) => setTelefono(e.target.value)}
-                                        placeholder="Teléfono"
-                                        required
-                                    />
-                                </FormField>
+                    <p className="text-muted-foreground">
+                        {isEdit
+                            ? 'Modifica los datos y guarda los cambios para el directorio.'
+                            : 'Completa los datos para registrar el centro en el directorio.'}
+                    </p>
+                </header>
 
-                                <FormField label="Correo electrónico" htmlFor="correo">
-                                    <IconInput
-                                        id="correo"
-                                        icon={Mail}
-                                        type="email"
-                                        value={correo}
-                                        onChange={(e) => setCorreo(e.target.value)}
-                                        placeholder="Correo opcional"
-                                    />
-                                </FormField>
-
-                                <FormField label="Horario de atención" htmlFor="horario">
-                                    <IconInput
-                                        id="horario"
-                                        icon={Clock}
-                                        type="text"
-                                        value={horario}
-                                        onChange={(e) => setHorario(e.target.value)}
-                                        placeholder="Ej. Lun a Vie 08:00 - 16:00"
-                                    />
-                                </FormField>
-                            </div>
+                <fieldset className="px-4 sm:px-8 grid grid-cols-1 lg:grid-cols-2 items-start gap-8">
+                    {/* datos generales */}
+                    <div className="grid gap-4 md:grid-cols-2">
+                        <div className="col-span-2">
+                            <SectionHeader
+                                icon={Building2}
+                                title="Datos Generales"
+                                description="Información básica del centro"
+                            />
                         </div>
 
-                        {/* Right: Contact card preview (location + address) */}
-                        <Card className="w-full lg:w-80 shadow-lg">
-                            <CardHeader>
-                                <CardTitle className="text-lg">Ubicación</CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <FormField label="Estado">
-                                    <Select
-                                        value={selectedState}
-                                        onValueChange={(value) => {
-                                            setSelectedState(value)
-                                            setSelectedMunicipality('')
-                                        }}
-                                        disabled={loadingLocation}
-                                    >
-                                        <SelectTrigger className="w-full rounded-3xl border border-input bg-transparent px-4 py-3 text-left text-sm">
-                                            <SelectValue
-                                                placeholder={loadingLocation ? 'Cargando estados...' : 'Seleccione un estado'}
-                                            />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectGroup>
-                                                <SelectLabel>Estados</SelectLabel>
-                                                {listStates.map((state) => (
-                                                    <SelectItem key={state} value={state}>
-                                                        {state}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectGroup>
-                                        </SelectContent>
-                                    </Select>
-                                </FormField>
+                        <FormField label="Nombre del centro" htmlFor="nombre">
+                            <Input
+                                id="nombre"
+                                type="text"
+                                value={nombre}
+                                onChange={(e) => setNombre(e.target.value)}
+                                placeholder="Nombre del centro"
+                                required
+                                className="w-full rounded-3xl px-4 py-3"
+                            />
+                        </FormField>
 
-                                <FormField label="Municipio">
-                                    <Select
-                                        value={selectedMunicipality}
-                                        onValueChange={setSelectedMunicipality}
-                                        disabled={!selectedState || loadingLocation}
-                                    >
-                                        <SelectTrigger className="w-full rounded-3xl border border-input bg-transparent px-4 py-3 text-left text-sm">
-                                            <SelectValue
-                                                placeholder={selectedState ? 'Seleccione un municipio' : 'Selecciona un estado primero'}
-                                            />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectGroup>
-                                                <SelectLabel>Municipios</SelectLabel>
-                                                {selectedState && listMunicipalities[selectedState] ? (
-                                                    listMunicipalities[selectedState].map((municipio) => (
-                                                        <SelectItem key={municipio} value={municipio}>
-                                                            {municipio}
-                                                        </SelectItem>
-                                                    ))
-                                                ) : (
-                                                    <SelectItem value="loading-municipios" disabled>
-                                                        Cargando municipios...
-                                                    </SelectItem>
-                                                )}
-                                            </SelectGroup>
-                                        </SelectContent>
-                                    </Select>
-                                </FormField>
+                        <FormField label="Teléfono" htmlFor="telefono">
+                            <IconInput
+                                id="telefono"
+                                icon={Phone}
+                                type="tel"
+                                value={telefono}
+                                onChange={(e) => setTelefono(e.target.value)}
+                                placeholder="Teléfono"
+                                required
+                            />
+                        </FormField>
 
-                                <FormField label="Dirección completa" htmlFor="direccion">
-                                    <IconInput
-                                        id="direccion"
-                                        icon={MapPin}
-                                        type="text"
-                                        value={direccion}
-                                        onChange={(e) => setDireccion(e.target.value)}
-                                        placeholder="Calle, número, zona"
-                                        required
-                                    />
-                                </FormField>
+                        <FormField label="Correo electrónico" htmlFor="correo">
+                            <IconInput
+                                id="correo"
+                                icon={Mail}
+                                type="email"
+                                value={correo}
+                                onChange={(e) => setCorreo(e.target.value)}
+                                placeholder="Correo opcional"
+                            />
+                        </FormField>
 
-                                <FormField label="URL de imagen" htmlFor="foto">
-                                    <IconInput
-                                        id="foto"
-                                        icon={ImageIcon}
-                                        type="url"
-                                        value={foto}
-                                        onChange={(e) => setFoto(e.target.value)}
-                                        placeholder="https://"
-                                    />
-                                </FormField>
-                            </CardContent>
-                        </Card>
+                        <FormField label="Horario de atención" htmlFor="horario">
+                            <IconInput
+                                id="horario"
+                                icon={Clock}
+                                type="text"
+                                value={horario}
+                                onChange={(e) => setHorario(e.target.value)}
+                                placeholder="Ej. Lun a Vie 08:00 - 16:00"
+                            />
+                        </FormField>
+
+                        <FormField label="URL de imagen" htmlFor="foto" className='col-span-2'>
+                            <IconInput
+                                id="foto"
+                                icon={ImageIcon}
+                                type="url"
+                                value={foto}
+                                onChange={(e) => setFoto(e.target.value)}
+                                placeholder="https://"
+                            />
+                        </FormField>
                     </div>
 
-                </section>
+                    {/* Ubicación */}
+                    <div className='grid gap-4 md:grid-cols-2'>
+                        <SectionHeader
+                            className='col-span-2'
+                            icon={Building2}
+                            title="Ubicación"
+                            description="Información de la ubicación del centro"
+                        />
+
+                        <FormField label="Estado" htmlFor="estado">
+                            <Select
+                                value={selectedState}
+                                onValueChange={(value) => {
+                                    setSelectedState(value)
+                                    setSelectedMunicipality('')
+                                }}
+                                disabled={loadingLocation}
+                            >
+                                <SelectTrigger id="estado" className="w-full rounded-3xl border border-input bg-transparent px-4 py-3 text-left text-sm">
+                                    <SelectValue
+                                        placeholder={loadingLocation ? 'Cargando estados...' : 'Seleccione un estado'}
+                                    />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>Estados</SelectLabel>
+                                        {listStates.map((state) => (
+                                            <SelectItem key={state} value={state}>
+                                                {state}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        </FormField>
+
+                        <FormField label="Municipio" htmlFor="municipio">
+                            <Select
+                                value={selectedMunicipality}
+                                onValueChange={setSelectedMunicipality}
+                                disabled={!selectedState || loadingLocation}
+                            >
+                                <SelectTrigger id="municipio" className="w-full rounded-3xl border border-input bg-transparent px-4 py-3 text-left text-sm">
+                                    <SelectValue
+                                        placeholder={selectedState ? 'Seleccione un municipio' : 'Selecciona un estado primero'}
+                                    />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>Municipios</SelectLabel>
+                                        {selectedState && listMunicipalities[selectedState] ? (
+                                            listMunicipalities[selectedState].map((municipio) => (
+                                                <SelectItem key={municipio} value={municipio}>
+                                                    {municipio}
+                                                </SelectItem>
+                                            ))
+                                        ) : (
+                                            <SelectItem value="loading-municipios" disabled>
+                                                Cargando municipios...
+                                            </SelectItem>
+                                        )}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        </FormField>
+
+                        <FormField label="Dirección completa" htmlFor="direccion" className='col-span-2'>
+                            <IconInput
+                                id="direccion"
+                                name='direccion'
+                                icon={MapPin}
+                                type="text"
+                                value={direccion}
+                                onChange={(e) => setDireccion(e.target.value)}
+                                placeholder="Calle, número, zona"
+                                required
+                            />
+                        </FormField>
+                    </div>
+                </fieldset>
 
                 {/* ── Description ───────────────────────────────────────────── */}
-                <section className="py-8 px-4 sm:px-8 bg-muted/30">
-                    <div className="max-w-[90vw] mx-auto">
-                        <SectionHeader icon={FileText} title="Descripción" description="Información general del centro" />
-                        <textarea
-                            id="descripcion"
-                            value={descripcion}
-                            onChange={(e) => setDescripcion(e.target.value)}
-                            placeholder="Descripción breve del centro de atención"
-                            rows={4}
-                            className="min-h-[120px] w-full rounded-3xl border border-input bg-transparent px-4 py-3 text-sm text-foreground transition-colors outline-none focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 dark:bg-input/30"
-                        />
-                    </div>
-                </section>
+                <fieldset className="p-4 sm:p-8 bg-muted/30">
+                    <SectionHeader icon={FileText} title="Descripción" description="Información general del centro" />
+                    <Textarea
+                        name="descripcion"
+                        value={descripcion}
+                        onChange={(e) => setDescripcion(e.target.value)}
+                        placeholder="Descripción breve del centro de atención"
+                    />
+                </fieldset>
 
                 {/* ── Servicios ─────────────────────────────────────────────── */}
-                <section className="py-12 px-4 sm:px-8">
+                <section className="p-4 sm:p-8">
                     <SectionHeader
                         icon={FileText}
                         title="Servicios Disponibles"
@@ -327,6 +452,58 @@ export default function AddDirectory() {
                                         <button
                                             type="button"
                                             onClick={() => removerServicio(index)}
+                                            className="text-muted-foreground hover:text-red-500 transition-colors"
+                                        >
+                                            <X className="w-4 h-4" />
+                                        </button>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </div>
+                    )}
+                </section>
+
+                <section className="p-4 sm:p-8">
+                    <SectionHeader
+                        icon={AlertCircle}
+                        title="Requisitos de Atención"
+                        description="Agrega los requisitos necesarios para ser atendida"
+                    />
+
+                    <div className="flex gap-2 max-w-xl mb-4">
+                        <Input
+                            type="text"
+                            value={nuevoRequisito}
+                            onChange={(e) => setNuevoRequisito(e.target.value)}
+                            placeholder="Agregar requisito"
+                            className="flex-1 rounded-3xl px-4 py-3"
+                            onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), agregarRequisito())}
+                        />
+                        <Button
+                            type="button"
+                            onClick={agregarRequisito}
+                            variant="outline"
+                            size="sm"
+                            className="rounded-3xl"
+                        >
+                            <Plus className="w-4 h-4" />
+                        </Button>
+                    </div>
+
+                    {requisitos.length > 0 && (
+                        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {requisitos.map((requisito, index) => (
+                                <Card key={index} className="hover:shadow-md transition-shadow">
+                                    <CardContent className="p-4 flex items-center justify-between gap-3">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center shrink-0">
+                                                <AlertCircle className="w-5 h-5 text-rose-600 dark:text-rose-100" />
+                                            </div>
+                                            <span className="font-medium text-sm">{requisito}</span>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => removerRequisito(index)}
                                             className="text-muted-foreground hover:text-red-500 transition-colors"
                                         >
                                             <X className="w-4 h-4" />
@@ -408,13 +585,13 @@ export default function AddDirectory() {
                             />
 
                             <div className="grid gap-2 mb-4">
-                                <Input
+                                {/* <Input
                                     type="text"
                                     value={nuevaRed.nombre}
                                     onChange={(e) => setNuevaRed({ ...nuevaRed, nombre: e.target.value })}
                                     placeholder="Nombre (ej. Facebook)"
                                     className="rounded-3xl px-4 py-3"
-                                />
+                                /> */}
                                 <Input
                                     type="url"
                                     value={nuevaRed.url}
@@ -422,28 +599,21 @@ export default function AddDirectory() {
                                     placeholder="URL"
                                     className="rounded-3xl px-4 py-3"
                                 />
-                                {/* <Input
-                                    type="text"
-                                    value={nuevaRed.icono}
-                                    onChange={(e) => setNuevaRed({ ...nuevaRed, icono: e.target.value })}
-                                    placeholder="Ícono (opcional)"
-                                    className="rounded-3xl px-4 py-3"
-                                /> */}
                                 <Select
                                     value={nuevaRed.icono}
-                                    onValueChange={(value) => setNuevaRed({ ...nuevaRed, icono: value })}
+                                    onValueChange={(value) => setNuevaRed({ ...nuevaRed, nombre: value, icono: value })}
                                 >
                                     <SelectTrigger className="rounded-3xl px-4 py-3 w-full">
                                         <SelectValue placeholder="Nombre de la red social" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="facebook">Facebook</SelectItem>
-                                        <SelectItem value="instagram">Instagram</SelectItem>
-                                        <SelectItem value="twitter">Twitter</SelectItem>
-                                        <SelectItem value="whatsapp">WhatsApp</SelectItem>
-                                        <SelectItem value="tiktok">TikTok</SelectItem>
-                                        <SelectItem value="linkedin">LinkedIn</SelectItem>
-                                        <SelectItem value="youtube">YouTube</SelectItem>
+                                        <SelectItem value="Facebook"> <FacebookLogoIcon className="w-6 h-6" /> Facebook</SelectItem>
+                                        <SelectItem value="Instagram"> <InstagramLogoIcon className="w-6 h-6" /> Instagram</SelectItem>
+                                        <SelectItem value="Twitter"> <TwitterLogoIcon className="w-6 h-6" /> Twitter</SelectItem>
+                                        <SelectItem value="Whatsapp"> <WhatsappLogoIcon className="w-6 h-6" /> WhatsApp</SelectItem>
+                                        <SelectItem value="Tiktok"> <TiktokLogoIcon className="w-6 h-6" /> TikTok</SelectItem>
+                                        <SelectItem value="Linkedin"> <LinkedinLogoIcon className="w-6 h-6" /> LinkedIn</SelectItem>
+                                        <SelectItem value="Youtube"><YoutubeLogoIcon className="w-6 h-6" /> YouTube</SelectItem>
                                     </SelectContent>
                                 </Select>
                                 <Button
@@ -461,20 +631,17 @@ export default function AddDirectory() {
                                 {redes.map((red, index) => (
                                     <div key={index} className="flex items-center gap-4 p-3 rounded-lg bg-background">
                                         <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center shrink-0">
-                                            {red.icono === 'facebook' && <FacebookLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                                            {red.icono === 'instagram' && <InstagramLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                                            {red.icono === 'twitter' && <TwitterLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                                            {red.icono === 'whatsapp' && <WhatsappLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                                            {red.icono === 'tiktok' && <TiktokLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                                            {red.icono === 'linkedin' && <LinkedinLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                                            {red.icono === 'youtube' && <YoutubeLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                                            {red.icono === 'Facebook' && <FacebookLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                                            {red.icono === 'Instagram' && <InstagramLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                                            {red.icono === 'Twitter' && <TwitterLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                                            {red.icono === 'Whatsapp' && <WhatsappLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                                            {red.icono === 'Tiktok' && <TiktokLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                                            {red.icono === 'Linkedin' && <LinkedinLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                                            {red.icono === 'Youtube' && <YoutubeLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
                                         </div>
                                         <div className="flex-1">
                                             <p className="font-medium">{red.nombre}</p>
                                             <p className="text-sm text-muted-foreground truncate">{red.url}</p>
-                                            {/* {red.icono && (
-                                                <p className="text-xs text-muted-foreground">Ícono: {red.icono}</p>
-                                            )} */}
                                         </div>
                                         <Button
                                             type="button"
@@ -493,29 +660,38 @@ export default function AddDirectory() {
                 </section>
 
                 {/* ── Submit ────────────────────────────────────────────────── */}
-                <section className="py-10 px-4 sm:px-8">
-                    <div className="flex flex-col gap-4 max-w-md">
+                <section className="p-4 sm:p-8 space-y-4">
+                    <div className="flex flex-row gap-4 max-w-md">
                         <Button
                             type="submit"
                             className="rounded-3xl bg-rose-600 text-white hover:bg-rose-700"
                             disabled={saving || loadingLocation}
                         >
                             <AlertCircle className="w-4 h-4 mr-2" />
-                            {saving ? 'Guardando...' : 'Registrar directorio'}
+                            {saving ? 'Guardando...' : isEdit ? 'Actualizar directorio' : 'Registrar directorio'}
                         </Button>
 
-                        {formError && (
-                            <div className="rounded-3xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-400">
-                                {formError}
-                            </div>
-                        )}
-
-                        {message && (
-                            <div className="rounded-3xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200">
-                                {message}
-                            </div>
+                        {isEdit && (
+                            <Button type="button" variant="outline" onClick={() => navigate('/admin/directorio')}>
+                                <ArrowLeft className="w-4 h-4 mr-2" />
+                                Volver sin guardar
+                            </Button>
                         )}
                     </div>
+
+                    {formError && (
+                        <div className="flex justify-between items-center rounded-3xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-400">
+                            {formError}
+                            <Button type="button" size="sm" variant="ghost" className="ml-2" onClick={() => setError('')}>X</Button>
+                        </div>
+                    )}
+
+                    {message && (
+                        <div className="flex justify-between items-center rounded-3xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200">
+                            {message}
+                            <Button type="button" size="sm" variant="ghost" className="ml-2" onClick={() => setMessage('')}>X</Button>
+                        </div>
+                    )}
                 </section>
             </form>
         </div>

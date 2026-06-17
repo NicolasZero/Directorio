@@ -5,11 +5,9 @@ import { useAuth } from '@/context/authContext.tsx'
 
 const HomeAdminPage = React.lazy(() => import('@/modules/home/page/homeAdminPage.tsx'))
 const EditDirectory = React.lazy(() => import('@/modules/directory/page/directoryList'))
-const AddDirectory = React.lazy(() => import('@/modules/directory/page/addDirectory.tsx'))
-const EditDirectoryForm = React.lazy(() => import('@/modules/directory/page/editDirectory.tsx'))
+const DirectoryForm = React.lazy(() => import('@/modules/directory/page/addDirectory.tsx'))
 const EditClass = React.lazy(() => import('@/modules/classes/page/classList'))
-const AddClass = React.lazy(() => import('@/modules/classes/page/addClass.tsx'))
-const EditCourse = React.lazy(() => import('@/modules/classes/page/editClass.tsx'))
+const ClassForm = React.lazy(() => import('@/modules/classes/page/addClass.tsx'))
 const UserList = React.lazy(() => import('@/modules/user/page/userList.tsx'))
 const AdminLayout = React.lazy(() => import('@/layout/adminLayout.tsx'))
 const EditAbout = React.lazy(() => import('@/modules/about/page/editAbout.tsx'))
@@ -24,11 +22,11 @@ export default function PrivateRouter() {
             <Route element={<AdminLayout />}>
                 <Route path='inicio' element={<HomeAdminPage />} />
                 <Route path="directorio" element={<EditDirectory />} />
-                <Route path="directorio/nuevo" element={<AddDirectory />} />
-                <Route path="directorio/editar/:id" element={<EditDirectoryForm />} />
+                <Route path="directorio/nuevo" element={<DirectoryForm />} />
+                <Route path="directorio/editar/:id" element={<DirectoryForm />} />
                 <Route path='clases' element={<EditClass />} />
-                <Route path='clases/nuevo' element={<AddClass />} />
-                <Route path='clases/editar/:id' element={<EditCourse />} />
+                <Route path='clases/nuevo' element={<ClassForm />} />
+                <Route path='clases/editar/:id' element={<ClassForm />} />
                 <Route path='usuarios' element={<UserList />} />
                 <Route path='about' element={<EditAbout />} />
             </Route>
