@@ -7,8 +7,8 @@ INSERT INTO auth.status (id, nombre, descripcion) VALUES
 (2, 'Inactivo', 'Usuario inactivo'),
 (3, 'Eliminado', 'Usuario eliminado');
 
-INSERT INTO auth.users (cedula, nombre, username, email, password, rol_id) SELECT 
-'12345678', 'Administrador', 'admin', 'admin@admin.com', '$2b$10$GUT8F20qqtJZkJo4m/ugpeMAvlQPwDJD.tipGSDPjXSNzB2p8FgSK', roles.id
+INSERT INTO auth.users (cedula, nombre, apellido, username, email, telefono, password, rol_id) SELECT 
+'12345678', 'Administrador', 'Administrador', 'admin', 'admin@admin.com', '04120000000', '$2b$10$GUT8F20qqtJZkJo4m/ugpeMAvlQPwDJD.tipGSDPjXSNzB2p8FgSK', roles.id
 FROM auth.roles WHERE roles.nombre = 'Administrador';
 
 INSERT INTO estados (nombre) VALUES 
@@ -376,7 +376,16 @@ INSERT INTO municipios (nombre, estado_id) VALUES
 ('VARGAS',24);
 
 -- Inserciones para la tabla institucion y relacionadas (datos de example en about.tsx)
-INSERT INTO institucion (id, nombre, nombre_corto, fecha_creacion, ley_creacion, descripcion, vision, mision)
+INSERT INTO institucion (
+	id, 
+	nombre, 
+	nombre_corto, 
+	fecha_creacion, 
+	ley_creacion, 
+	descripcion, 
+	vision, 
+	mision
+)
 VALUES (
     1,
 	'Instituto Nacional de la Mujer',
@@ -384,8 +393,8 @@ VALUES (
 	'25 de octubre de 1999',
 	'Ley de Igualdad de Oportunidades para la Mujer',
 	'El Instituto Nacional de la Mujer (Inamujer) fue creado para la defensa y materialización de los derechos de la población femenina y el incremento de su participación en las misiones, planes y programas sociales del Estado, como parte de un nuevo estado de derecho para este sector.',
-	'Ser el órgano rector de las políticas públicas para la igualdad de género, promoviendo el empoderamiento y bienestar de todas las mujeres en Venezuela.',
-	'Ejecutar políticas públicas para la defensa permanente de los derechos humanos de las mujeres, propiciando su acceso real y efectivo a todas las esferas de la vida social en igualdad de oportunidades.'
+	'Ser garante de la igualdad jurídica y real de las mujeres como instancia rectora de las políticas públicas con perspectiva de género.',
+	'Ejercer, como ente rector, de las políticas públicas con perspectiva de género, emanadas del Ministerio Del Poder Popular Para La Mujer Y La Igualdad De Género, garantizando la igualdad de oportunidades de las mujeres y promoviendo su participación protagónica en los ámbitos político, económico, social, territorial e internacional en garantía de sus derechos.'
 );
 
 -- Valores
@@ -408,9 +417,9 @@ VALUES
 INSERT INTO institucion_aliados (institucion_id, nombre, tipo)
 VALUES
 	(1, 'Ministerio del Poder Popular para la Mujer', 'Gubernamental'),
-	(1, 'PNUD Venezuela', 'Organismo Internacional'),
-	(1, 'ONU Mujeres', 'Organismo Internacional'),
-	(1, 'Fundaciones Privadas', 'Sector Privado');
+	(1, 'Centros de Atención y Formación Integral de la Mujer', 'Organismo Nacional'),
+	(1, 'Banco de Desarrollo de la Mujer', 'Organismo Nacional');
+	(1, 'Escuela Feminista del Sur "Argelia Laya"', 'Organismo Nacional');
 
 -- Contacto
 INSERT INTO institucion_contacto (institucion_id, direccion, telefono, correo, horario)

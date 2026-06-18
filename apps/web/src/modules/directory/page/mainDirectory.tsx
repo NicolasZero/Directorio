@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, type ChangeEvent } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { MapPin, Search } from 'lucide-react'
+import { Search } from 'lucide-react'
 import {
 	Select,
 	SelectContent,
@@ -15,6 +15,7 @@ import {
 import DirectoryCard from '../components/directoryCard'
 import { type DirectoryEntry } from '../schemes/directory'
 import { useLocations } from '../hooks/useLocations'
+import { Input } from '@/components/ui/input'
 
 function Directory() {
 	const [directories, setDirectories] = useState<DirectoryEntry[]>([])
@@ -26,6 +27,12 @@ function Directory() {
 	const [selectedState, setSelectedState] = useState<string>('')
 	const [selectedMunicipality, setSelectedMunicipality] = useState<string>('')
 
+	const [searchQuery, setSearchQuery] = useState<string>('')
+
+	const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setSearchQuery(e.target.value)
+	}
+
 	const handleSelectState = (value: string) => {
 		setSelectedState(value)
 		setSelectedMunicipality('')
@@ -35,35 +42,45 @@ function Directory() {
 		setSelectedMunicipality(value)
 	}
 
-	useEffect(() => {
-		const fetchDirectories = async () => {
-			setLoading(true)
-			setError(null)
+	const fetchDirectories = async () => {
+		setLoading(true)
+		setError(null)
 
-			try {
-				const response = await fetch('/api/directory')
-				const data = await response.json()
+		try {
+			const response = await fetch('/api/directory')
+			const data = await response.json()
 
-				if (!response.ok) {
-					throw new Error(data?.error || 'Error al cargar directorios')
-				}
-
-				setDirectories(data?.data || [])
-			} catch (fetchError) {
-				console.error(fetchError)
-				setError('No se pudieron cargar los directorios. Intenta de nuevo más tarde.')
-			} finally {
-				setLoading(false)
+			if (!response.ok) {
+				throw new Error(data?.error || 'Error al cargar directorios')
 			}
-		}
 
+			setDirectories(data?.data || [])
+		} catch (fetchError) {
+			console.error(fetchError)
+			setError('No se pudieron cargar los directorios. Intenta de nuevo más tarde.')
+		} finally {
+			setLoading(false)
+		}
+	}
+
+	const handleFetchAllDirectories = async () => {
+		setSelectedState('')
+		setSelectedMunicipality('')
+		setSearchQuery('')
+		await fetchDirectories()
+	}
+
+	useEffect(() => {
 		fetchDirectories()
 	}, [])
 
 	const filteredDirectorios = directories.filter((item) => {
 		const matchesState = selectedState ? item.estado === selectedState : true
 		const matchesMunicipality = selectedMunicipality ? item.municipio === selectedMunicipality : true
-		return matchesState && matchesMunicipality
+		const matchesName = searchQuery
+			? item.nombre.toLowerCase().includes(searchQuery.toLowerCase())
+			: true
+		return matchesState && matchesMunicipality && matchesName
 	})
 
 	return (
@@ -106,7 +123,8 @@ function Directory() {
 			</section>
 
 			{/* Selecionadores de estado */}
-			<section className="flex justify-center gap-5 mt-6 flex-wrap p-2">
+			<section className="flex justify-center gap-5 flex-wrap p-4 md:px-8 bg-muted/50">
+				{/* filtrar por estado */}
 				<Select
 					value={selectedState}
 					onValueChange={handleSelectState}
@@ -129,6 +147,7 @@ function Directory() {
 					</SelectContent>
 				</Select>
 
+				{/* Filtrar por municipio */}
 				<Select
 					value={selectedMunicipality}
 					onValueChange={handleSelectMunicipality}
@@ -152,32 +171,24 @@ function Directory() {
 					</SelectContent>
 				</Select>
 
-				<Select
-					value={selectedMunicipality}
-					onValueChange={handleSelectMunicipality}
-				// disabled={!selectedState || loadingLocation}
+				{/* <div className="flex w-full max-w-3xl flex-wrap items-center gap-2"> */}
+				<Button
+					// variant="outline"
+					className='bg-rose-600 text-white hover:bg-rose-700 dark:hover:bg-rose-700 dark:bg-rose-900'
+					size="sm"
+					onClick={handleFetchAllDirectories}
 				>
-					<SelectTrigger className="w-full max-w-50">
-						<SelectValue placeholder={loadingLocation ? "Cargando..." : "Seleccione un centro"} />
-					</SelectTrigger>
-					<SelectContent>
-						<SelectGroup>
-							<SelectLabel>Centros</SelectLabel>
-							<SelectItem value='1'>
-								Centro 1
-							</SelectItem>
-							<SelectItem value='2'>
-								Centro 2
-							</SelectItem>
-							<SelectItem value='3'>
-								Centro 3
-							</SelectItem>
-							<SelectItem value='4'>
-								Centro 4
-							</SelectItem>
-						</SelectGroup>
-					</SelectContent>
-				</Select>
+					Todos los estados
+				</Button>
+
+				<Input
+					type="search"
+					value={searchQuery}
+					onChange={handleSearchChange}
+					placeholder="Buscar por nombre"
+					className="max-w-lg"
+				/>
+				{/* </div> */}
 			</section>
 
 			{/* Results Section */}
@@ -192,12 +203,12 @@ function Directory() {
 							<p className="text-foreground font-medium">{error}</p>
 						</CardContent>
 					</Card>
-				) : selectedState ? (
+				) : (
 					<>
 						<header className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-2">
 							<div>
 								<h2 className="text-2xl font-bold">
-									{`Directorios en ${selectedState} ${selectedMunicipality ? `- ${selectedMunicipality}` : ''}`}
+									{selectedState && `Directorios en ${selectedState} ${selectedMunicipality ? `- ${selectedMunicipality}` : ''}`}
 								</h2>
 								<p className="text-muted-foreground mt-1">
 									{filteredDirectorios.length} resultado
@@ -238,19 +249,21 @@ function Directory() {
 							</Card>
 						)}
 					</>
-				) : (
-					<div className="text-center py-5">
-						<div className="w-20 h-20 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center mx-auto mb-6">
-							<MapPin className="w-10 h-10 text-rose-600 dark:text-rose-100" />
-						</div>
-						<h3 className="text-xl font-semibold mb-2">
-							Selecciona un Estado
-						</h3>
-						<p className="text-muted-foreground max-w-md mx-auto mb-4">
-							Elige un estado para ver los centros de atención disponibles en esa zona.
-						</p>
-					</div>
-				)}
+				)
+					// : (
+					// 	<div className="text-center py-5">
+					// 		<div className="w-20 h-20 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center mx-auto mb-6">
+					// 			<MapPin className="w-10 h-10 text-rose-600 dark:text-rose-100" />
+					// 		</div>
+					// 		<h3 className="text-xl font-semibold mb-2">
+					// 			Selecciona un Estado
+					// 		</h3>
+					// 		<p className="text-muted-foreground max-w-md mx-auto mb-4">
+					// 			Elige un estado para ver los centros de atención disponibles en esa zona.
+					// 		</p>
+					// 	</div>
+					// )
+				}
 				<div className="flex flex-wrap justify-center mt-5 gap-2">
 					{directories.map(d => d.estado).filter((v, i, a) => a.indexOf(v) === i).map(estado => (
 						<Badge

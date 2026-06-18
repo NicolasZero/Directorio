@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router";
-import { Menu, X, LogOut } from "lucide-react";
+import { Menu, X, LogOut, ChevronDownIcon } from "lucide-react";
 import { ModeToggle } from "./mode-toggle";
 import { useAuth } from "@/context/authContext";
 import { Button } from "./ui/button";
@@ -31,7 +31,7 @@ const Navbar = () => {
         { name: "Directorio", path: "/admin/directorio" },
         { name: "Usuarios", path: "/admin/usuarios" },
         { name: "Aprendizaje", path: "/admin/clases" },
-        { name: "Descripción", path: "/admin/about"}
+        { name: "Descripción", path: "/admin/about" }
     ];
 
     const isAdmin = status === 'authenticated' ? true : false;
@@ -66,8 +66,10 @@ const Navbar = () => {
 
                         <li>
                             <DropdownMenu>
-                                <DropdownMenuTrigger>
-                                    <span className="px-4 py-2 block transition-colors duration-200 hover:bg-black/20 rounded-md">Administrar</span>
+                                <DropdownMenuTrigger asChild className="px-4 py-2 transition-colors duration-200 hover:bg-black/20 rounded-md">
+                                    <button className="flex items-center gap-1 focus:outline-none">
+                                        Administrar <ChevronDownIcon className="w-4 h-4" />
+                                    </button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent>
                                     {adminLinks.map((link) => (
@@ -122,8 +124,10 @@ const Navbar = () => {
                         {isAdmin && (
                             <li className="px-3">
                                 <DropdownMenu>
-                                    <DropdownMenuTrigger>
-                                        <span className="px-6 py-4 block transition-colors duration-200 hover:bg-black/20 rounded-xl">Administrar</span>
+                                    <DropdownMenuTrigger asChild className="px-4 py-2 transition-colors duration-200 hover:bg-black/20 rounded-md">
+                                        <button className="flex items-center gap-1 focus:outline-none">
+                                            Administrar <ChevronDownIcon className="w-4 h-4" />
+                                        </button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent>
                                         {adminLinks.map((link) => (

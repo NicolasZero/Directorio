@@ -45,7 +45,7 @@ CREATE TABLE if NOT EXISTS directorios (
     id integer PRIMARY KEY NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
     nombre varchar NOT NULL,
     descripcion text,
-    direccion varchar NOT NULL,
+    direccion varchar,
     telefono varchar NOT NULL,
     correo varchar,
     foto varchar,

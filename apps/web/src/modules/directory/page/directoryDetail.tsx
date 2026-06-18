@@ -18,11 +18,6 @@ import { Link } from 'react-router'
 import { type DirectoryDetailData } from '../schemes/directory'
 import { FacebookLogoIcon, InstagramLogoIcon, LinkedinLogoIcon, TiktokLogoIcon, TwitterLogoIcon, WhatsappLogoIcon, YoutubeLogoIcon } from '@phosphor-icons/react'
 
-// const requisitos = [
-//   'Identificación oficial (cédula)',
-//   'Ser mayor de edad o estar acompañada de tutor',
-//   'Solicitud de atención previamente llamada telefónica'
-// ]
 
 function DirectoryDetail() {
   const { id } = useParams<{ id: string }>()
@@ -99,96 +94,96 @@ function DirectoryDetail() {
   }
 
   return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="p-4 sm:p-8 mx-auto">
-        {/* Back button */}
-        <Button
-          variant="ghost"
-          size="sm"
-          className="mb-4 text-rose-600 hover:text-rose-700 hover:bg-rose-200"
-          asChild
-        >
-          <Link to="/directorio">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Volver al Directorio
-          </Link>
-        </Button>
+    <>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="m-4 text-rose-600 hover:text-rose-700 hover:bg-rose-200"
+        asChild
+      >
+        <Link to="/directorio">
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Volver al Directorio
+        </Link>
+      </Button>
 
-        <div className="flex flex-col lg:flex-row items-start gap-8">
-          {/* Info principal */}
-          <div className="flex-1">
-            <Badge variant="outline" className="mb-4 bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50">
-              <Building2 className="w-3 h-3 mr-1" />
-              Centro de Atención
-            </Badge>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-foreground">
-              {directorio.nombre}
-            </h1>
-            <div className="flex flex-wrap gap-2 mb-6">
-              <Badge variant="outline" className="bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50 border-rose-200 dark:border-0">
+      <section className="px-4 sm:px-8 pb-8 flex flex-col lg:flex-row items-start gap-8">
+        {/* Info principal */}
+        <div className="flex-1">
+          <Badge variant="outline" className="mb-4 bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50">
+            <Building2 className="w-3 h-3 mr-1" />
+            Detalles
+          </Badge>
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-foreground">
+            {directorio.nombre}
+          </h1>
+          <div className="flex flex-wrap gap-2 mb-6">
+            {directorio.estado && (
+              <Badge variant="outline" title='Estado' className="bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50 border-rose-200 dark:border-0">
                 {directorio.estado}
               </Badge>
-              <Badge variant="outline" className="bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50 border-rose-200 dark:border-0">
+            )}
+            {directorio.municipio && (
+              <Badge variant="outline" title='Municipio' className="bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50 border-rose-200 dark:border-0">
                 {directorio.municipio}
               </Badge>
-            </div>
-            <p className="text-lg text-muted-foreground">
-              {directorio.descripcion}
-            </p>
+            )}
           </div>
-
-          {/* Card de contacto rápido */}
-          <Card className="w-full lg:w-80 shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-lg">Información de Contacto</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-rose-500 mt-0.5" />
-                <div>
-                  <p className="font-medium text-sm">Dirección</p>
-                  <p className="text-sm text-muted-foreground">{directorio.direccion}</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <Phone className="w-5 h-5 text-rose-500 mt-0.5" />
-                <div>
-                  <p className="font-medium text-sm">Teléfono</p>
-                  <a
-                    href={`tel:${directorio.telefono}`}
-                    className="text-sm text-rose-600 hover:text-rose-700"
-                  >
-                    {directorio.telefono}
-                  </a>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <Mail className="w-5 h-5 text-rose-500 mt-0.5" />
-                <div>
-                  <p className="font-medium text-sm">Correo</p>
-                  <a
-                    href={`mailto:${directorio.correo}`}
-                    className="text-sm text-rose-600 hover:text-rose-700"
-                  >
-                    {directorio.correo}
-                  </a>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <Clock className="w-5 h-5 text-rose-500 mt-0.5" />
-                <div>
-                  <p className="font-medium text-sm">Horario</p>
-                  <p className="text-sm text-muted-foreground">{directorio.horario}</p>
-                </div>
-              </div>
-              <Button className="w-full font-bold bg-rose-600 hover:bg-rose-700 mt-2">
-                <Phone className="w-4 h-4 mr-2" />
-                Llamar Ahora
-              </Button>
-            </CardContent>
-          </Card>
+          <p className="text-lg text-muted-foreground">
+            {directorio.descripcion || 'No hay descripción disponible'}
+          </p>
         </div>
+
+        {/* Card de contacto rápido */}
+        <Card className="w-full lg:w-80 shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-lg">Información de Contacto</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-start gap-3">
+              <MapPin className="w-5 h-5 text-rose-500 mt-0.5" />
+              <div>
+                <p className="font-medium text-sm">Dirección</p>
+                <p className="text-sm text-muted-foreground">{directorio.direccion || 'No hay dirección disponible'}</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <Phone className="w-5 h-5 text-rose-500 mt-0.5" />
+              <div>
+                <p className="font-medium text-sm">Teléfono</p>
+                <a
+                  href={`tel:${directorio.telefono}`}
+                  className="text-sm text-rose-600 hover:text-rose-700"
+                >
+                  {directorio.telefono || 'No hay teléfono disponible'}
+                </a>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <Mail className="w-5 h-5 text-rose-500 mt-0.5" />
+              <div>
+                <p className="font-medium text-sm">Correo</p>
+                <a
+                  href={`mailto:${directorio.correo}`}
+                  className="text-sm text-rose-600 hover:text-rose-700"
+                >
+                  {directorio.correo || 'No hay correo disponible'}
+                </a>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <Clock className="w-5 h-5 text-rose-500 mt-0.5" />
+              <div>
+                <p className="font-medium text-sm">Horario</p>
+                <p className="text-sm text-muted-foreground">{directorio.horario || 'No hay horario disponible'}</p>
+              </div>
+            </div>
+            <Button className="w-full font-bold bg-rose-600 hover:bg-rose-700 mt-2">
+              <Phone className="w-4 h-4 mr-2" />
+              Llamar Ahora
+            </Button>
+          </CardContent>
+        </Card>
       </section>
 
       {/* Servicios */}
@@ -233,17 +228,20 @@ function DirectoryDetail() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {directorio.responsables?.map((responsable, index) => (
-                <div key={index} className="flex items-center gap-4 p-3 rounded-lg bg-muted/50">
-                  <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center">
-                    <User className="w-6 h-6 text-rose-600 dark:text-rose-100" />
+              {directorio.responsables?.length ? (
+                directorio.responsables.map((responsable, index) => (
+                  <div key={index} className="flex items-center gap-4 p-3 rounded-lg bg-muted/50">
+                    <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center">
+                      <User className="w-6 h-6 text-rose-600 dark:text-rose-100" />
+                    </div>
+                    <div>
+                      <p className="font-medium">{responsable.nombre}</p>
+                      <p className="text-sm text-muted-foreground">{responsable.cargo}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-medium">{responsable.nombre}</p>
-                    <p className="text-sm text-muted-foreground">{responsable.cargo}</p>
-                  </div>
-                </div>
-              ))}
+                ))) : (
+                <p className="text-sm text-muted-foreground">No hay responsables especificados.</p>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -282,26 +280,29 @@ function DirectoryDetail() {
       <section className='p-4 md:p-8 bg-muted'>
         <h2 className="text-2xl font-bold mb-6">Redes Sociales</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {directorio.redes?.map((red, index) => (
-            <div key={index} className="flex items-center gap-4 p-3 rounded-lg border bg-card">
-              <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center">
-                {red.icono === 'Facebook' && <FacebookLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                {red.icono === 'Instagram' && <InstagramLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                {red.icono === 'Twitter' && <TwitterLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                {red.icono === 'Whatsapp' && <WhatsappLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                {red.icono === 'Tiktok' && <TiktokLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                {red.icono === 'Linkedin' && <LinkedinLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                {red.icono === 'Youtube' && <YoutubeLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+          {directorio.redes?.length ? (
+            directorio.redes.map((red, index) => (
+              <div key={index} className="flex items-center gap-4 p-3 rounded-lg border bg-card">
+                <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center">
+                  {red.icono === 'Facebook' && <FacebookLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                  {red.icono === 'Instagram' && <InstagramLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                  {red.icono === 'Twitter' && <TwitterLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                  {red.icono === 'Whatsapp' && <WhatsappLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                  {red.icono === 'Tiktok' && <TiktokLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                  {red.icono === 'Linkedin' && <LinkedinLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                  {red.icono === 'Youtube' && <YoutubeLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                </div>
+                <div>
+                  <p className="font-medium">{red.nombre}</p>
+                  <p className="text-sm text-muted-foreground">{red.url}</p>
+                </div>
               </div>
-              <div>
-                <p className="font-medium">{red.nombre}</p>
-                <p className="text-sm text-muted-foreground">{red.url}</p>
-              </div>
-            </div>
-          ))}
+            ))) : (
+            <p className="text-sm text-muted-foreground">No hay redes sociales especificadas.</p>
+          )}
         </div>
       </section>
-    </div>
+    </>
   )
 }
 

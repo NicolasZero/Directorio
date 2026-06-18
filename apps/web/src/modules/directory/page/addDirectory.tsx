@@ -32,45 +32,9 @@ import { useLocations } from '../hooks/useLocations'
 import { FacebookLogoIcon, InstagramLogoIcon, TwitterLogoIcon, WhatsappLogoIcon, TiktokLogoIcon, LinkedinLogoIcon, YoutubeLogoIcon } from '@phosphor-icons/react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { Textarea } from '@/components/ui/textarea'
-import { cn } from '@/lib/utils'
-
-// ─── Sub-components ────────────────────────────────────────────────────────────
-
-function FormField({ label, htmlFor, children, className }: { label: string; htmlFor?: string; children: React.ReactNode, className?: string }) {
-    return (
-        <fieldset className={`space-y-2 ${className}`}>
-            <label htmlFor={htmlFor} className="block text-sm font-medium text-foreground">
-                {label}
-            </label>
-            {children}
-        </fieldset>
-    )
-}
-
-function IconInput({ icon: Icon, ...props }: React.ComponentProps<typeof Input> & { icon: React.ElementType }) {
-    return (
-        <div className="relative">
-            <Icon className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-rose-500" />
-            <Input {...props} className="w-full rounded-3xl pl-11 pr-4" />
-        </div>
-    )
-}
-
-function SectionHeader({ icon: Icon, title, description, className }: { icon: React.ElementType; title: string; description?: string, className?: string }) {
-    return (
-        <div className={cn(`flex items-center gap-3 ${className}`)}>
-            <div className="w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center shrink-0">
-                <Icon className="w-5 h-5 text-rose-600 dark:text-rose-100" />
-            </div>
-            <div>
-                <h2 className="text-xl font-bold text-foreground">{title}</h2>
-                {description && <p className="text-sm text-muted-foreground">{description}</p>}
-            </div>
-        </div>
-    )
-}
-
-// ─── Main Component ─────────────────────────────────────────────────────────────
+import FormField from '@/components/formField'
+import SectionHeader from '@/components/sectionHeader'
+import IconInput from '@/components/iconinput'
 
 export default function AddDirectory() {
     const { id } = useParams<{ id: string }>()
@@ -149,7 +113,7 @@ export default function AddDirectory() {
         }
 
         fetchDirectory()
-    }, [id, setNombre, setDescripcion, setDireccion, setTelefono, setCorreo, setFoto, setHorario, setSelectedState, setSelectedMunicipality, setServicios, setResponsables, setRedes, setError, setMessage])
+    }, [id])
 
     const handleFormSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -219,7 +183,7 @@ export default function AddDirectory() {
     }
 
     return (
-        <div className="min-h-screen">
+        <>
             <form onSubmit={handleFormSubmit} className="py-4 sm:py-8">
                 <header className="px-4 sm:px-8 mb-6">
                     <div className='flex flex-col lg:flex-row lg:justify-between lg:items-start gap-8'>
@@ -267,7 +231,7 @@ export default function AddDirectory() {
                                 value={nombre}
                                 onChange={(e) => setNombre(e.target.value)}
                                 placeholder="Nombre del centro"
-                                required
+                                // required
                                 className="w-full rounded-3xl px-4 py-3"
                             />
                         </FormField>
@@ -280,7 +244,7 @@ export default function AddDirectory() {
                                 value={telefono}
                                 onChange={(e) => setTelefono(e.target.value)}
                                 placeholder="Teléfono"
-                                required
+                            // required
                             />
                         </FormField>
 
@@ -400,8 +364,8 @@ export default function AddDirectory() {
                 </fieldset>
 
                 {/* ── Description ───────────────────────────────────────────── */}
-                <fieldset className="p-4 sm:p-8 bg-muted/30">
-                    <SectionHeader icon={FileText} title="Descripción" description="Información general del centro" />
+                <fieldset className="p-4 sm:p-8 bg-muted/30 space-y-4">
+                    <SectionHeader icon={FileText} title="Descripción" />
                     <Textarea
                         name="descripcion"
                         value={descripcion}
@@ -410,254 +374,252 @@ export default function AddDirectory() {
                     />
                 </fieldset>
 
-                {/* ── Servicios ─────────────────────────────────────────────── */}
-                <section className="p-4 sm:p-8">
-                    <SectionHeader
-                        icon={FileText}
-                        title="Servicios Disponibles"
-                        description="Agrega los servicios que ofrece el centro"
-                    />
-
-                    <div className="flex gap-2 max-w-xl mb-4">
-                        <Input
-                            type="text"
-                            value={nuevoServicio}
-                            onChange={(e) => setNuevoServicio(e.target.value)}
-                            placeholder="Agregar servicio"
-                            className="flex-1 rounded-3xl px-4 py-3"
-                            onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), agregarServicio())}
+                <fieldset className='grid grid-cols-1 sm:grid-cols-2 gap-8'>
+                    {/* ── Servicios ─────────────────────────────────────────────── */}
+                    <section className="p-4 sm:p-8">
+                        <SectionHeader
+                            icon={FileText}
+                            title="Servicios Disponibles"
+                            description="Agrega los servicios que ofrece el centro"
+                            className='mb-3'
                         />
-                        <Button
-                            type="button"
-                            onClick={agregarServicio}
-                            variant="outline"
-                            size="sm"
-                            className="rounded-3xl"
-                        >
-                            <Plus className="w-4 h-4" />
-                        </Button>
-                    </div>
 
-                    {servicios.length > 0 && (
-                        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {servicios.map((servicio, index) => (
-                                <Card key={index} className="hover:shadow-md transition-shadow">
-                                    <CardContent className="p-4 flex items-center justify-between gap-3">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center shrink-0">
-                                                <FileText className="w-5 h-5 text-rose-600 dark:text-rose-100" />
-                                            </div>
-                                            <span className="font-medium text-sm">{servicio}</span>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            onClick={() => removerServicio(index)}
-                                            className="text-muted-foreground hover:text-red-500 transition-colors"
-                                        >
-                                            <X className="w-4 h-4" />
-                                        </button>
-                                    </CardContent>
-                                </Card>
-                            ))}
+                        <div className="flex gap-2 max-w-xl mb-4">
+                            <Input
+                                type="text"
+                                value={nuevoServicio}
+                                onChange={(e) => setNuevoServicio(e.target.value)}
+                                placeholder="Agregar servicio"
+                                className="flex-1 rounded-3xl px-4 py-3"
+                                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), agregarServicio())}
+                            />
+                            <Button
+                                type="button"
+                                onClick={agregarServicio}
+                                variant="outline"
+                                size="sm"
+                                className="rounded-3xl"
+                            >
+                                <Plus className="w-4 h-4" />
+                            </Button>
                         </div>
-                    )}
-                </section>
 
-                <section className="p-4 sm:p-8">
-                    <SectionHeader
-                        icon={AlertCircle}
-                        title="Requisitos de Atención"
-                        description="Agrega los requisitos necesarios para ser atendida"
-                    />
+                        {servicios.length > 0 && (
+                            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {servicios.map((servicio, index) => (
+                                    <Card key={index} className="hover:shadow-md transition-shadow">
+                                        <CardContent className="p-4 flex items-center justify-between gap-3">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center shrink-0">
+                                                    <FileText className="w-5 h-5 text-rose-600 dark:text-rose-100" />
+                                                </div>
+                                                <span className="font-medium text-sm">{servicio}</span>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => removerServicio(index)}
+                                                className="text-muted-foreground hover:text-red-500 transition-colors"
+                                            >
+                                                <X className="w-4 h-4" />
+                                            </button>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                            </div>
+                        )}
+                    </section>
 
-                    <div className="flex gap-2 max-w-xl mb-4">
-                        <Input
-                            type="text"
-                            value={nuevoRequisito}
-                            onChange={(e) => setNuevoRequisito(e.target.value)}
-                            placeholder="Agregar requisito"
-                            className="flex-1 rounded-3xl px-4 py-3"
-                            onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), agregarRequisito())}
+                    {/* Requisitos de atencion */}
+                    <section className="p-4 sm:p-8">
+                        <SectionHeader
+                            icon={AlertCircle}
+                            title="Requisitos de Atención"
+                            description="Agrega los requisitos necesarios para ser atendida"
+                            className='mb-3'
                         />
-                        <Button
-                            type="button"
-                            onClick={agregarRequisito}
-                            variant="outline"
-                            size="sm"
-                            className="rounded-3xl"
-                        >
-                            <Plus className="w-4 h-4" />
-                        </Button>
-                    </div>
 
-                    {requisitos.length > 0 && (
-                        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {requisitos.map((requisito, index) => (
-                                <Card key={index} className="hover:shadow-md transition-shadow">
-                                    <CardContent className="p-4 flex items-center justify-between gap-3">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center shrink-0">
-                                                <AlertCircle className="w-5 h-5 text-rose-600 dark:text-rose-100" />
-                                            </div>
-                                            <span className="font-medium text-sm">{requisito}</span>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            onClick={() => removerRequisito(index)}
-                                            className="text-muted-foreground hover:text-red-500 transition-colors"
-                                        >
-                                            <X className="w-4 h-4" />
-                                        </button>
-                                    </CardContent>
-                                </Card>
-                            ))}
+                        <div className="flex gap-2 max-w-xl mb-4">
+                            <Input
+                                type="text"
+                                value={nuevoRequisito}
+                                onChange={(e) => setNuevoRequisito(e.target.value)}
+                                placeholder="Agregar requisito"
+                                className="flex-1 rounded-3xl px-4 py-3"
+                                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), agregarRequisito())}
+                            />
+                            <Button
+                                type="button"
+                                onClick={agregarRequisito}
+                                variant="outline"
+                                size="sm"
+                                className="rounded-3xl"
+                            >
+                                <Plus className="w-4 h-4" />
+                            </Button>
                         </div>
-                    )}
-                </section>
+
+                        {requisitos.length > 0 && (
+                            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {requisitos.map((requisito, index) => (
+                                    <Card key={index} className="hover:shadow-md transition-shadow">
+                                        <CardContent className="p-4 flex items-center justify-between gap-3">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center shrink-0">
+                                                    <AlertCircle className="w-5 h-5 text-rose-600 dark:text-rose-100" />
+                                                </div>
+                                                <span className="font-medium text-sm">{requisito}</span>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => removerRequisito(index)}
+                                                className="text-muted-foreground hover:text-red-500 transition-colors"
+                                            >
+                                                <X className="w-4 h-4" />
+                                            </button>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                            </div>
+                        )}
+                    </section>
+                </fieldset>
 
                 {/* ── Responsables y Redes ──────────────────────────────────── */}
-                <section className="py-12 px-4 sm:px-8 bg-muted/30">
-                    <div className="grid lg:grid-cols-2 gap-8">
-                        {/* Responsables */}
-                        <div>
-                            <SectionHeader
-                                icon={Users}
-                                title="Equipo Responsable"
-                                description="Personas a cargo del centro"
+                <fieldset className="py-12 px-4 sm:px-8 bg-muted grid lg:grid-cols-2 gap-8">
+                    {/* Responsables */}
+                    <section>
+                        <SectionHeader
+                            icon={Users}
+                            title="Equipo Responsable"
+                            description="Personas a cargo del centro"
+                            className='mb-3'
+                        />
+
+                        <div className="grid gap-2 sm:grid-cols-2 mb-4">
+                            <Input
+                                type="text"
+                                value={nuevoResponsable.nombre}
+                                onChange={(e) => setNuevoResponsable({ ...nuevoResponsable, nombre: e.target.value })}
+                                placeholder="Nombre"
+                                className="rounded-3xl px-4 py-3"
                             />
-
-                            <div className="grid gap-2 sm:grid-cols-2 mb-4">
-                                <Input
-                                    type="text"
-                                    value={nuevoResponsable.nombre}
-                                    onChange={(e) => setNuevoResponsable({ ...nuevoResponsable, nombre: e.target.value })}
-                                    placeholder="Nombre"
-                                    className="rounded-3xl px-4 py-3"
-                                />
-                                <Input
-                                    type="text"
-                                    value={nuevoResponsable.cargo}
-                                    onChange={(e) => setNuevoResponsable({ ...nuevoResponsable, cargo: e.target.value })}
-                                    placeholder="Cargo"
-                                    className="rounded-3xl px-4 py-3"
-                                />
-                                <Button
-                                    type="button"
-                                    onClick={agregarResponsable}
-                                    variant="outline"
-                                    className="rounded-3xl sm:col-span-2"
-                                >
-                                    <Plus className="w-4 h-4 mr-2" />
-                                    Agregar responsable
-                                </Button>
-                            </div>
-
-                            <div className="space-y-3">
-                                {responsables.map((responsable, index) => (
-                                    <div key={index} className="flex items-center gap-4 p-3 rounded-lg bg-background">
-                                        <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center shrink-0">
-                                            <Users className="w-6 h-6 text-rose-600 dark:text-rose-100" />
-                                        </div>
-                                        <div className="flex-1">
-                                            <p className="font-medium">{responsable.nombre}</p>
-                                            <p className="text-sm text-muted-foreground">{responsable.cargo}</p>
-                                        </div>
-                                        <Button
-                                            type="button"
-                                            onClick={() => removerResponsable(index)}
-                                            variant="ghost"
-                                            size="sm"
-                                            className="text-red-500 hover:text-red-700"
-                                        >
-                                            <X className="w-4 h-4" />
-                                        </Button>
-                                    </div>
-                                ))}
-                            </div>
+                            <Input
+                                type="text"
+                                value={nuevoResponsable.cargo}
+                                onChange={(e) => setNuevoResponsable({ ...nuevoResponsable, cargo: e.target.value })}
+                                placeholder="Cargo"
+                                className="rounded-3xl px-4 py-3"
+                            />
+                            <Button
+                                type="button"
+                                onClick={agregarResponsable}
+                                variant="outline"
+                                className="rounded-3xl sm:col-span-2"
+                            >
+                                <Plus className="w-4 h-4 mr-2" />
+                                Agregar responsable
+                            </Button>
                         </div>
 
-                        {/* Redes Sociales */}
-                        <div>
-                            <SectionHeader
-                                icon={Globe}
-                                title="Redes Sociales"
-                                description="Perfiles y sitios web del centro"
-                            />
-
-                            <div className="grid gap-2 mb-4">
-                                {/* <Input
-                                    type="text"
-                                    value={nuevaRed.nombre}
-                                    onChange={(e) => setNuevaRed({ ...nuevaRed, nombre: e.target.value })}
-                                    placeholder="Nombre (ej. Facebook)"
-                                    className="rounded-3xl px-4 py-3"
-                                /> */}
-                                <Input
-                                    type="url"
-                                    value={nuevaRed.url}
-                                    onChange={(e) => setNuevaRed({ ...nuevaRed, url: e.target.value })}
-                                    placeholder="URL"
-                                    className="rounded-3xl px-4 py-3"
-                                />
-                                <Select
-                                    value={nuevaRed.icono}
-                                    onValueChange={(value) => setNuevaRed({ ...nuevaRed, nombre: value, icono: value })}
-                                >
-                                    <SelectTrigger className="rounded-3xl px-4 py-3 w-full">
-                                        <SelectValue placeholder="Nombre de la red social" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="Facebook"> <FacebookLogoIcon className="w-6 h-6" /> Facebook</SelectItem>
-                                        <SelectItem value="Instagram"> <InstagramLogoIcon className="w-6 h-6" /> Instagram</SelectItem>
-                                        <SelectItem value="Twitter"> <TwitterLogoIcon className="w-6 h-6" /> Twitter</SelectItem>
-                                        <SelectItem value="Whatsapp"> <WhatsappLogoIcon className="w-6 h-6" /> WhatsApp</SelectItem>
-                                        <SelectItem value="Tiktok"> <TiktokLogoIcon className="w-6 h-6" /> TikTok</SelectItem>
-                                        <SelectItem value="Linkedin"> <LinkedinLogoIcon className="w-6 h-6" /> LinkedIn</SelectItem>
-                                        <SelectItem value="Youtube"><YoutubeLogoIcon className="w-6 h-6" /> YouTube</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <Button
-                                    type="button"
-                                    onClick={agregarRed}
-                                    variant="outline"
-                                    className="rounded-3xl"
-                                >
-                                    <Plus className="w-4 h-4 mr-2" />
-                                    Agregar red social
-                                </Button>
-                            </div>
-
-                            <div className="space-y-3">
-                                {redes.map((red, index) => (
-                                    <div key={index} className="flex items-center gap-4 p-3 rounded-lg bg-background">
-                                        <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center shrink-0">
-                                            {red.icono === 'Facebook' && <FacebookLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                                            {red.icono === 'Instagram' && <InstagramLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                                            {red.icono === 'Twitter' && <TwitterLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                                            {red.icono === 'Whatsapp' && <WhatsappLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                                            {red.icono === 'Tiktok' && <TiktokLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                                            {red.icono === 'Linkedin' && <LinkedinLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                                            {red.icono === 'Youtube' && <YoutubeLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                                        </div>
-                                        <div className="flex-1">
-                                            <p className="font-medium">{red.nombre}</p>
-                                            <p className="text-sm text-muted-foreground truncate">{red.url}</p>
-                                        </div>
-                                        <Button
-                                            type="button"
-                                            onClick={() => removerRed(index)}
-                                            variant="ghost"
-                                            size="sm"
-                                            className="text-red-500 hover:text-red-700"
-                                        >
-                                            <X className="w-4 h-4" />
-                                        </Button>
+                        <div className="space-y-3">
+                            {responsables.map((responsable, index) => (
+                                <div key={index} className="flex items-center gap-4 p-3 rounded-lg bg-background">
+                                    <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center shrink-0">
+                                        <Users className="w-6 h-6 text-rose-600 dark:text-rose-100" />
                                     </div>
-                                ))}
-                            </div>
+                                    <div className="flex-1">
+                                        <p className="font-medium">{responsable.nombre}</p>
+                                        <p className="text-sm text-muted-foreground">{responsable.cargo}</p>
+                                    </div>
+                                    <Button
+                                        type="button"
+                                        onClick={() => removerResponsable(index)}
+                                        variant="ghost"
+                                        size="sm"
+                                        className="text-red-500 hover:text-red-700"
+                                    >
+                                        <X className="w-4 h-4" />
+                                    </Button>
+                                </div>
+                            ))}
                         </div>
-                    </div>
-                </section>
+                    </section>
+
+                    {/* Redes Sociales */}
+                    <section>
+                        <SectionHeader
+                            icon={Globe}
+                            title="Redes Sociales"
+                            description="Perfiles y sitios web del centro"
+                            className='mb-3'
+                        />
+
+                        <div className="grid gap-2 mb-4">
+                            <Input
+                                type="url"
+                                value={nuevaRed.url}
+                                onChange={(e) => setNuevaRed({ ...nuevaRed, url: e.target.value })}
+                                placeholder="URL"
+                                className="rounded-3xl px-4 py-3"
+                            />
+                            <Select
+                                value={nuevaRed.icono}
+                                onValueChange={(value) => setNuevaRed({ ...nuevaRed, nombre: value, icono: value })}
+                            >
+                                <SelectTrigger className="rounded-3xl px-4 py-3 w-full">
+                                    <SelectValue placeholder="Nombre de la red social" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="Facebook"> <FacebookLogoIcon className="w-6 h-6" /> Facebook</SelectItem>
+                                    <SelectItem value="Instagram"> <InstagramLogoIcon className="w-6 h-6" /> Instagram</SelectItem>
+                                    <SelectItem value="Twitter"> <TwitterLogoIcon className="w-6 h-6" /> Twitter</SelectItem>
+                                    <SelectItem value="Whatsapp"> <WhatsappLogoIcon className="w-6 h-6" /> WhatsApp</SelectItem>
+                                    <SelectItem value="Tiktok"> <TiktokLogoIcon className="w-6 h-6" /> TikTok</SelectItem>
+                                    <SelectItem value="Linkedin"> <LinkedinLogoIcon className="w-6 h-6" /> LinkedIn</SelectItem>
+                                    <SelectItem value="Youtube"><YoutubeLogoIcon className="w-6 h-6" /> YouTube</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <Button
+                                type="button"
+                                onClick={agregarRed}
+                                variant="outline"
+                                className="rounded-3xl"
+                            >
+                                <Plus className="w-4 h-4 mr-2" />
+                                Agregar red social
+                            </Button>
+                        </div>
+
+                        <div className="space-y-3">
+                            {redes.map((red, index) => (
+                                <div key={index} className="flex items-center gap-4 p-3 rounded-lg bg-background">
+                                    <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center shrink-0">
+                                        {red.icono === 'Facebook' && <FacebookLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                                        {red.icono === 'Instagram' && <InstagramLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                                        {red.icono === 'Twitter' && <TwitterLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                                        {red.icono === 'Whatsapp' && <WhatsappLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                                        {red.icono === 'Tiktok' && <TiktokLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                                        {red.icono === 'Linkedin' && <LinkedinLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                                        {red.icono === 'Youtube' && <YoutubeLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="font-medium">{red.nombre}</p>
+                                        <p className="text-sm text-muted-foreground truncate">{red.url}</p>
+                                    </div>
+                                    <Button
+                                        type="button"
+                                        onClick={() => removerRed(index)}
+                                        variant="ghost"
+                                        size="sm"
+                                        className="text-red-500 hover:text-red-700"
+                                    >
+                                        <X className="w-4 h-4" />
+                                    </Button>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                </fieldset>
 
                 {/* ── Submit ────────────────────────────────────────────────── */}
                 <section className="p-4 sm:p-8 space-y-4">
@@ -679,21 +641,14 @@ export default function AddDirectory() {
                         )}
                     </div>
 
-                    {formError && (
-                        <div className="flex justify-between items-center rounded-3xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-400">
-                            {formError}
-                            <Button type="button" size="sm" variant="ghost" className="ml-2" onClick={() => setError('')}>X</Button>
-                        </div>
-                    )}
-
-                    {message && (
-                        <div className="flex justify-between items-center rounded-3xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200">
-                            {message}
-                            <Button type="button" size="sm" variant="ghost" className="ml-2" onClick={() => setMessage('')}>X</Button>
+                    {(formError || message) && (
+                        <div className={`flex justify-between items-center rounded-3xl border px-4 py-3 text-sm ${formError ? 'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950 dark:text-red-400' : 'border-emerald-200 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200'}`}>
+                            {formError ? formError : message}
+                            <Button type="button" size="sm" variant="ghost" className="ml-2" onClick={() => { setError(''), setMessage('') }}><X /></Button>
                         </div>
                     )}
                 </section>
             </form>
-        </div>
+        </>
     )
 }
