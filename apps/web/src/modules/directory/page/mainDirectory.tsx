@@ -1,4 +1,4 @@
-import { useState, useEffect, type ChangeEvent } from 'react'
+import { useState, useEffect, useRef, useCallback, type ChangeEvent } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -20,6 +20,9 @@ import { Input } from '@/components/ui/input'
 function Directory() {
 	const [directories, setDirectories] = useState<DirectoryEntry[]>([])
 	const [loading, setLoading] = useState<boolean>(true)
+	const [loadingMore, setLoadingMore] = useState<boolean>(false)
+	const [page, setPage] = useState<number>(1)
+	const [hasMore, setHasMore] = useState<boolean>(true)
 	const [error, setError] = useState<string | null>(null)
 
 	const { listStates, listMunicipalities, loadingLocation } = useLocations()
@@ -27,7 +30,11 @@ function Directory() {
 	const [selectedState, setSelectedState] = useState<string>('')
 	const [selectedMunicipality, setSelectedMunicipality] = useState<string>('')
 
+	const [count, setCount] = useState<{ total_centros: number; total_estados: number; total_municipios: number } | null>(null)
+
 	const [searchQuery, setSearchQuery] = useState<string>('')
+
+	const observer = useRef<IntersectionObserver | null>(null)
 
 	const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setSearchQuery(e.target.value)
@@ -42,46 +49,97 @@ function Directory() {
 		setSelectedMunicipality(value)
 	}
 
-	const fetchDirectories = async () => {
-		setLoading(true)
+	const fetchCount = async () => {
+		const response = await fetch(`/api/directory/count`)
+		const data = await response.json()
+		setCount(data.data)
+	}
+
+	useEffect(() => {
+		fetchCount()
+	}, [])
+
+	const fetchDirectories = useCallback(async (pageNumber: number, resetList = false) => {
+		if (pageNumber === 1) {
+			setLoading(true)
+		} else {
+			setLoadingMore(true)
+		}
 		setError(null)
 
 		try {
-			const response = await fetch('/api/directory')
+			const queryParams = new URLSearchParams()
+			if (selectedState) queryParams.append('estado', selectedState)
+			if (selectedMunicipality) queryParams.append('municipio', selectedMunicipality)
+			if (searchQuery) queryParams.append('search', searchQuery)
+			queryParams.append('page', pageNumber.toString())
+			queryParams.append('limit', '9')
+
+			const response = await fetch(`/api/directory?${queryParams.toString()}`)
 			const data = await response.json()
+			// console.log(data)
 
 			if (!response.ok) {
 				throw new Error(data?.error || 'Error al cargar directorios')
 			}
 
-			setDirectories(data?.data || [])
+			const newDirectories = data?.data || []
+			if (newDirectories.length < 9) {
+				setHasMore(false)
+			} else {
+				setHasMore(true)
+			}
+
+			setDirectories((prev: DirectoryEntry[]) => {
+				if (resetList) return newDirectories
+				const existingIds = new Set(prev.map((d: DirectoryEntry) => d.id))
+				const filteredNew = newDirectories.filter((d: DirectoryEntry) => !existingIds.has(d.id))
+				return [...prev, ...filteredNew]
+			})
 		} catch (fetchError) {
 			console.error(fetchError)
 			setError('No se pudieron cargar los directorios. Intenta de nuevo más tarde.')
 		} finally {
 			setLoading(false)
+			setLoadingMore(false)
 		}
-	}
+	}, [selectedState, selectedMunicipality, searchQuery])
 
-	const handleFetchAllDirectories = async () => {
+	const handleFetchAllDirectories = () => {
 		setSelectedState('')
 		setSelectedMunicipality('')
 		setSearchQuery('')
-		await fetchDirectories()
 	}
 
 	useEffect(() => {
-		fetchDirectories()
-	}, [])
+		setPage(1)
+		setHasMore(true)
+		fetchDirectories(1, true)
+	}, [selectedState, selectedMunicipality, searchQuery, fetchDirectories])
 
-	const filteredDirectorios = directories.filter((item) => {
-		const matchesState = selectedState ? item.estado === selectedState : true
-		const matchesMunicipality = selectedMunicipality ? item.municipio === selectedMunicipality : true
-		const matchesName = searchQuery
-			? item.nombre.toLowerCase().includes(searchQuery.toLowerCase())
-			: true
-		return matchesState && matchesMunicipality && matchesName
-	})
+	useEffect(() => {
+		if (page > 1) {
+			fetchDirectories(page, false)
+		}
+	}, [page, fetchDirectories])
+
+	const lastElementRef = useCallback(
+		(node: HTMLDivElement | null) => {
+			if (loading || loadingMore) return
+			if (observer.current) observer.current.disconnect()
+
+			observer.current = new IntersectionObserver((entries) => {
+				if (entries[0].isIntersecting && hasMore) {
+					setPage((prevPage) => prevPage + 1)
+				}
+			})
+
+			if (node) observer.current.observe(node)
+		},
+		[loading, loadingMore, hasMore]
+	)
+
+	const filteredDirectorios = directories
 
 	return (
 		<div className="min-h-screen">
@@ -102,18 +160,18 @@ function Directory() {
 					{/* Stats */}
 					<div className="flex justify-center gap-8 md:gap-12">
 						<div className="text-center">
-							<p className="text-3xl font-bold text-rose-600">{directories.length}</p>
+							<p className="text-3xl font-bold text-rose-600">{count?.total_centros}</p>
 							<h5 className="text-sm text-muted-foreground">Centros</h5>
 						</div>
 						<div className="text-center">
 							<p className="text-3xl font-bold text-rose-600">
-								{new Set(directories.map(d => d.estado)).size}
+								{count?.total_estados}
 							</p>
 							<h5 className="text-sm text-muted-foreground">Estados</h5>
 						</div>
 						<div className="text-center">
 							<p className="text-3xl font-bold text-rose-600">
-								{new Set(directories.map(d => d.municipio)).size}
+								{count?.total_municipios}
 							</p>
 							<h5 className="text-sm text-muted-foreground">Municipios</h5>
 						</div>
@@ -228,11 +286,16 @@ function Directory() {
 						</header>
 
 						{filteredDirectorios.length > 0 ? (
-							<main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-								{filteredDirectorios.map((directorio) => (
-									<DirectoryCard key={directorio.id} directorio={directorio} />
-								))}
-							</main>
+							<>
+								<main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+									{filteredDirectorios.map((directorio) => (
+										<DirectoryCard key={directorio.id} directorio={directorio} />
+									))}
+								</main>
+								<div ref={lastElementRef} className="h-10 w-full flex justify-center items-center mt-6">
+									{loadingMore && <p className="text-sm text-muted-foreground animate-pulse">Cargando más centros...</p>}
+								</div>
+							</>
 						) : (
 							<Card className="max-w-md mx-auto">
 								<CardContent className="p-8 text-center">

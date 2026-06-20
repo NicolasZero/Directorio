@@ -11,6 +11,9 @@ INSERT INTO auth.users (cedula, nombre, apellido, username, email, telefono, pas
 '12345678', 'Administrador', 'Administrador', 'admin', 'admin@admin.com', '04120000000', '$2b$10$GUT8F20qqtJZkJo4m/ugpeMAvlQPwDJD.tipGSDPjXSNzB2p8FgSK', roles.id
 FROM auth.roles WHERE roles.nombre = 'Administrador';
 
+INSERT INTO estados (id, nombre) VALUES (0, 'SIN ESPECIFICAR');
+INSERT INTO municipios (id, nombre, estado_id) VALUES (0, 'SIN ESPECIFICAR', 0);
+
 INSERT INTO estados (nombre) VALUES 
 ('CARACAS'),
 ('ANZOATEGUI'),
@@ -35,14 +38,14 @@ INSERT INTO estados (nombre) VALUES
 ('ZULIA'),
 ('AMAZONAS'),
 ('DELTA AMACURO'),
-('VARGAS'),
+('LA GUAIRA (VARGAS)'),
 ('GUYANA ESEQUIBA');
 
 INSERT INTO municipios (nombre, estado_id) VALUES 
 ('LIBERTADOR',1),
 ('ANACO',2),
 ('ARAGUA',2),
-('BOLIVAR',2),
+('SIMON BOLIVAR',2),
 ('BRUZUAL',2),
 ('CAJIGAL',2),
 ('FREITES',2),
@@ -68,7 +71,7 @@ INSERT INTO municipios (nombre, estado_id) VALUES
 ('ROMULO GALLEGOS',3),
 ('SAN FERNANDO',3),
 ('BIRUACA',3),
-('GIRARDOT',4),
+('GIRARDOT (MARACAY)',4),
 ('SANTIAGO MARIÑO',4),
 ('JOSE FELIX RIVAS',4),
 ('SAN CASIMIRO',4),
@@ -100,7 +103,7 @@ INSERT INTO municipios (nombre, estado_id) VALUES
 ('ANDRES E. BLANCO',5),
 ('CARONI',6),
 ('CEDEÑO',6),
-('HERES',6),
+('ANGOSTURA DEL ORINOCO (HERES)',6),
 ('PIAR',6),
 ('ROSCIO',6),
 ('SUCRE',6),
@@ -162,7 +165,7 @@ INSERT INTO municipios (nombre, estado_id) VALUES
 ('MIRANDA',10),
 ('MONAGAS',10),
 ('RIBAS',10),
-('ROSCIO',10),
+('JUAN GERMAN ROSCIO',10),
 ('ZARAZA',10),
 ('CAMAGUAN',10),
 ('S JOSE DE GUARIBE',10),
@@ -208,7 +211,7 @@ INSERT INTO municipios (nombre, estado_id) VALUES
 ('BRION',13),
 ('GUAICAIPURO',13),
 ('INDEPENDENCIA',13),
-('LANDER',13),
+('TOMAS LANDER',13),
 ('PAEZ',13),
 ('PAZ CASTILLO',13),
 ('PLAZA',13),
@@ -418,7 +421,7 @@ INSERT INTO institucion_aliados (institucion_id, nombre, tipo)
 VALUES
 	(1, 'Ministerio del Poder Popular para la Mujer', 'Gubernamental'),
 	(1, 'Centros de Atención y Formación Integral de la Mujer', 'Organismo Nacional'),
-	(1, 'Banco de Desarrollo de la Mujer', 'Organismo Nacional');
+	(1, 'Banco de Desarrollo de la Mujer', 'Organismo Nacional'),
 	(1, 'Escuela Feminista del Sur "Argelia Laya"', 'Organismo Nacional');
 
 -- Contacto

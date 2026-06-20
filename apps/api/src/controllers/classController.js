@@ -1,14 +1,37 @@
 import query from '../database/postgre.js'
 
 export const getClasses = async (request, reply) => {
+  const { page, limit } = request.query || {}
+  const parsedPage = parseInt(page, 10) || 1
+  const parsedLimit = parseInt(limit, 10) || 9
+  const offset = (parsedPage - 1) * parsedLimit
+
   try {
     const response = await query(
       `SELECT id, title, description, duration, level, image, start_date, instructor
        FROM courses
-       ORDER BY created_at DESC`
+       ORDER BY created_at DESC
+       LIMIT $1 OFFSET $2`,
+      [parsedLimit, offset]
     )
 
     return reply.code(200).send({ status: 'OK', data: response.rows })
+  } catch (error) {
+    console.error(error)
+    return reply.code(500).send({ status: 'failed', error: 'Error interno del servidor' })
+  }
+}
+
+export const getCountClasses = async (request, reply) => {
+  try {
+    const response = await query(
+      `SELECT 
+        COUNT(*) as total_cursos,
+        COALESCE(SUM(NULLIF(regexp_replace(duration, '\\D', '', 'g'), '')::integer), 0) as total_horas,
+        COUNT(DISTINCT level) as total_niveles
+      FROM courses`
+    )
+    return reply.code(200).send({ status: 'OK', data: response.rows[0] })
   } catch (error) {
     console.error(error)
     return reply.code(500).send({ status: 'failed', error: 'Error interno del servidor' })

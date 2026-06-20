@@ -1,7 +1,7 @@
 import query from '../database/postgre.js'
 
 export const getDirectories = async (request, reply) => {
-  const { estado, municipio } = request.query || {}
+  const { estado, municipio, search, page, limit } = request.query || {}
 
   const conditions = []
   const values = []
@@ -16,7 +16,22 @@ export const getDirectories = async (request, reply) => {
     conditions.push(`m.nombre = $${values.length}`)
   }
 
+  if (search) {
+    values.push(`%${search}%`)
+    conditions.push(`d.nombre ILIKE $${values.length}`)
+  }
+
+  const parsedPage = parseInt(page, 10) || 1
+  const parsedLimit = parseInt(limit, 10) || 9
+  const offset = (parsedPage - 1) * parsedLimit
+
   const whereClause = conditions.length ? `WHERE ${conditions.join(' AND ')}` : ''
+
+  // Add limit and offset as parameters
+  values.push(parsedLimit)
+  const limitPlaceholder = `$${values.length}`
+  values.push(offset)
+  const offsetPlaceholder = `$${values.length}`
 
   try {
     const response = await query(
@@ -34,11 +49,60 @@ export const getDirectories = async (request, reply) => {
         JOIN municipios m ON m.id = d.municipio_id
         JOIN estados e ON e.id = m.estado_id
         ${whereClause}
-        ORDER BY d.nombre`,
+        ORDER BY d.nombre
+        LIMIT ${limitPlaceholder} OFFSET ${offsetPlaceholder}`,
       values
     )
 
     return reply.code(200).send({ status: 'OK', data: response.rows })
+  } catch (error) {
+    console.error(error)
+    return reply.code(500).send({ status: 'failed', error: 'Error interno del servidor' })
+  }
+}
+
+export const getCountDirectory = async (request, reply) => {
+  try {
+    const response = await query(
+      `SELECT 
+        count(*) as total_centros,
+        COUNT(distinct estado_id) as total_estados,
+        count(distinct municipio_id) as total_municipios
+      FROM directorios`
+    )
+    return reply.code(200).send({ status: 'OK', data: response.rows[0] })
+  } catch (error) {
+    console.error(error)
+    return reply.code(500).send({ status: 'failed', error: 'Error interno del servidor' })
+  }
+}
+
+export const getAllDirectories = async (request, reply) => {
+  try {
+    const count = await query(
+      `SELECT
+          COUNT(*) as total_centros
+        FROM directorios`
+    )
+
+    const response = await query(
+      `SELECT
+          d.id,
+          d.nombre,
+          d.descripcion,
+          d.direccion,
+          d.telefono,
+          d.foto,
+          d.correo,
+          d.horario,
+          m.nombre AS municipio,
+          e.nombre AS estado
+        FROM directorios d
+        JOIN municipios m ON m.id = d.municipio_id
+        JOIN estados e ON e.id = m.estado_id
+        ORDER BY d.nombre`
+    )
+    return reply.code(200).send({ status: 'OK', data: response.rows, count: count.rows[0].total_centros })
   } catch (error) {
     console.error(error)
     return reply.code(500).send({ status: 'failed', error: 'Error interno del servidor' })

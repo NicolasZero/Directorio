@@ -30,16 +30,15 @@ const MapaInteractivo = () => {
 	};
 
 	const [directoriosData, setDirectoriosData] = useState<DirectoryEntry[]>([])
-	const [loading, setLoading] = useState<boolean>(true)
+	const [count, setCount] = useState<number>(0)
 	const [error, setError] = useState<string | null>(null)
 
 	useEffect(() => {
 		const fetchDirectorios = async () => {
-			setLoading(true)
 			setError(null)
 
 			try {
-				const response = await fetch('/api/directory')
+				const response = await fetch('/api/directory/all')
 				const data = await response.json()
 
 				if (!response.ok) {
@@ -47,12 +46,11 @@ const MapaInteractivo = () => {
 				}
 
 				setDirectoriosData(data?.data || [])
+				setCount(data?.count)
 			} catch (fetchError) {
 				console.error(fetchError)
 				setError('No se pudieron cargar los directorios. Intenta de nuevo más tarde.')
 				setDirectoriosData([])
-			} finally {
-				setLoading(false)
 			}
 		}
 
@@ -79,7 +77,7 @@ const MapaInteractivo = () => {
 
 					{/* Stats */}
 					<div className="text-center">
-						<span className="text-3xl font-bold text-rose-600">{loading ? '...' : directoriosData.length}</span>
+						<span className="text-3xl font-bold text-rose-600">{count}</span>
 						<p className="text-sm text-muted-foreground">Centros</p>
 					</div>
 				</div>
