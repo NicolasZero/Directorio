@@ -5,14 +5,17 @@ import {
   BookOpen,
   MapPin,
   Users,
-  Calendar,
+  // Calendar,
   ArrowRight,
   GraduationCap,
-  Heart
+  Heart,
+  X
 } from "lucide-react"
 import { Link } from "react-router";
+import { useState } from "react";
 
 function Home() {
+  const [showAviso, setShowAviso] = useState(true)
   const servicios = [
     {
       icon: <BookOpen className="h-8 w-8" />,
@@ -34,27 +37,27 @@ function Home() {
     }
   ]
 
-  const ultimasClases = [
-    {
-      titulo: "Taller de Empoderamiento",
-      descripcion: "Programa integral de desarrollo personal y profesional para mujeres.",
-      categoria: "Desarrollo Personal",
-      fecha: "15 Abr 2026",
-      id: 1
-    },
-    {
-      titulo: "Curso de Derechos de la Mujer",
-      descripcion: "Conocimiento sobre tus derechos legales y recursos disponibles.",
-      categoria: "Educación Legal",
-      fecha: "10 Abr 2026",
-      id: 1
-    }
-  ]
+  // const ultimasClases = [
+  // {
+  //   titulo: "Taller de Empoderamiento",
+  //   descripcion: "Programa integral de desarrollo personal y profesional para mujeres.",
+  //   categoria: "Desarrollo Personal",
+  //   fecha: "15 Abr 2026",
+  //   id: 1
+  // },
+  // {
+  //   titulo: "Curso de Derechos de la Mujer",
+  //   descripcion: "Conocimiento sobre tus derechos legales y recursos disponibles.",
+  //   categoria: "Educación Legal",
+  //   fecha: "10 Abr 2026",
+  //   id: 1
+  // }
+  // ]
 
   const preguntasFrecuentes = [
     {
       pregunta: "¿Cómo puedo acceder a los servicios?",
-      respuesta: "Puedes registrarte en nuestra plataforma o visitar nuestras oficinas durante horario laboral."
+      respuesta: "Puedes visitar nuestras oficinas durante horario laboral."
     },
     {
       pregunta: "¿Los servicios son gratuitos?",
@@ -167,7 +170,7 @@ function Home() {
       </section>
 
       {/* Últimas Clases */}
-      <section className="py-10 md:py-14 px-4 md:px-6">
+      {/* <section className="py-10 md:py-14 px-4 md:px-6">
         <div className="container mx-auto">
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -193,7 +196,6 @@ function Home() {
                     </div>
                   </div>
 
-                  {/* <div className=""> */}
                   <h3 className="text-xl font-semibold mb-2">{clase.titulo}</h3>
                   <p className="text-muted-foreground">{clase.descripcion}</p>
                   <Link to={`/clases/curso/${clase.id}`}>
@@ -201,13 +203,12 @@ function Home() {
                       Ver más <ArrowRight className="ml-1 h-4 w-4" />
                     </Button>
                   </Link>
-                  {/* </div> */}
                 </CardContent>
               </Card>
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Preguntas Frecuentes */}
       <section className="py-10 md:py-14 px-4 md:px-6 bg-muted/30">
@@ -236,6 +237,36 @@ function Home() {
           </div>
         </div>
       </section>
+
+      {/* Aviso */}
+      {showAviso && (
+        <section className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 px-4 py-6 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="relative w-fit overflow-hidden animate-in zoom-in-95 duration-200">
+            <button
+              onClick={() => setShowAviso(false)}
+              className="absolute top-4 right-4 z-10 bg-black/60 hover:bg-black/80 text-white rounded-full p-2 transition-all hover:scale-105 shadow-md focus:outline-hidden"
+              aria-label="Cerrar aviso"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            {/* <div className="overflow-hidden rounded-2xl flex justify-center items-center"> */}
+            <img
+              src="/aviso.jpeg"
+              alt="Aviso Importante"
+              className="w-full h-auto object-contain max-h-[90vh]"
+            />
+            {/* </div> */}
+            {/* <div className="p-2 pt-3 text-center">
+              <Button
+                onClick={() => setShowAviso(false)}
+                className="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-2 rounded-xl transition-all"
+              >
+                Cerrar Aviso
+              </Button>
+            </div> */}
+          </div>
+        </section>
+      )}
     </div>
   )
 }
