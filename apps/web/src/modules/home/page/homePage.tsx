@@ -5,17 +5,122 @@ import {
   BookOpen,
   MapPin,
   Users,
-  // Calendar,
+  Calendar,
   ArrowRight,
   GraduationCap,
   Heart,
+  Newspaper,
   X
 } from "lucide-react"
 import { Link } from "react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { formatNewsDate, type NewsEntry } from "@/modules/news/types/news"
+
+type ClassEntry = {
+  id: number
+  title: string
+  description: string
+  level: string
+  start_date: string | null
+}
+
+function formatCourseDate(startDate: string | null) {
+  if (!startDate) return "Fecha por definir"
+
+  const date = new Date(`${startDate.slice(0, 10)}T00:00:00`)
+  if (Number.isNaN(date.getTime())) return "Fecha por definir"
+
+  return new Intl.DateTimeFormat("es", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  }).format(date)
+}
 
 function Home() {
-  const [showAviso, setShowAviso] = useState(true)
+  const [showAviso, setShowAviso] = useState(() => {
+    return sessionStorage.getItem("inamujer_aviso_closed") !== "true"
+  })
+  const [ultimasClases, setUltimasClases] = useState<ClassEntry[]>([])
+  const [loadingClases, setLoadingClases] = useState(true)
+  const [errorClases, setErrorClases] = useState<string | null>(null)
+  const [ultimasNoticias, setUltimasNoticias] = useState<NewsEntry[]>([])
+  const [loadingNoticias, setLoadingNoticias] = useState(true)
+  const [errorNoticias, setErrorNoticias] = useState<string | null>(null)
+
+  const handleCloseAviso = () => {
+    sessionStorage.setItem("inamujer_aviso_closed", "true")
+    setShowAviso(false)
+  }
+
+  useEffect(() => {
+    let cancelled = false
+
+    const fetchLatestClasses = async () => {
+      try {
+        const response = await fetch("/api/class?limit=4")
+        const data = await response.json()
+
+        if (!response.ok) {
+          throw new Error(data?.error || "No se pudieron cargar las clases")
+        }
+
+        if (!cancelled) {
+          setUltimasClases((data?.data ?? []).slice(0, 4))
+        }
+      } catch (error) {
+        console.error(error)
+        if (!cancelled) {
+          setErrorClases("No se pudieron cargar las clases. Intenta de nuevo más tarde.")
+        }
+      } finally {
+        if (!cancelled) {
+          setLoadingClases(false)
+        }
+      }
+    }
+
+    void fetchLatestClasses()
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  useEffect(() => {
+    let cancelled = false
+
+    const fetchLatestNews = async () => {
+      try {
+        const response = await fetch("/api/news?limit=4")
+        const data = await response.json()
+
+        if (!response.ok) {
+          throw new Error(data?.error || "No se pudieron cargar las noticias")
+        }
+
+        if (!cancelled) {
+          setUltimasNoticias((data?.data ?? []).slice(0, 4))
+        }
+      } catch (error) {
+        console.error(error)
+        if (!cancelled) {
+          setErrorNoticias("No se pudieron cargar las noticias. Intenta de nuevo más tarde.")
+        }
+      } finally {
+        if (!cancelled) {
+          setLoadingNoticias(false)
+        }
+      }
+    }
+
+    void fetchLatestNews()
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   const servicios = [
     {
       icon: <BookOpen className="h-8 w-8" />,
@@ -36,23 +141,6 @@ function Home() {
       enlace: "/clases"
     }
   ]
-
-  // const ultimasClases = [
-  // {
-  //   titulo: "Taller de Empoderamiento",
-  //   descripcion: "Programa integral de desarrollo personal y profesional para mujeres.",
-  //   categoria: "Desarrollo Personal",
-  //   fecha: "15 Abr 2026",
-  //   id: 1
-  // },
-  // {
-  //   titulo: "Curso de Derechos de la Mujer",
-  //   descripcion: "Conocimiento sobre tus derechos legales y recursos disponibles.",
-  //   categoria: "Educación Legal",
-  //   fecha: "10 Abr 2026",
-  //   id: 1
-  // }
-  // ]
 
   const preguntasFrecuentes = [
     {
@@ -170,7 +258,7 @@ function Home() {
       </section>
 
       {/* Últimas Clases */}
-      {/* <section className="py-10 md:py-14 px-4 md:px-6">
+      <section className="py-10 md:py-14 px-4 md:px-6">
         <div className="container mx-auto">
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -182,33 +270,102 @@ function Home() {
             </Link>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            {ultimasClases.map((clase, index) => (
-              <Card key={index} className="hover:shadow-md transition-shadow">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Calendar className="p-3 text-rose-600 dark:text-rose-50 bg-rose-100 dark:bg-rose-900 rounded-lg h-6 w-6 box-content" />
-                    <div className="flex justify-between w-full">
-                      <Badge variant="outline" className="text-nowrap bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50">
-                        {clase.categoria}
-                      </Badge>
-                      <span className="text-sm text-muted-foreground">{clase.fecha}</span>
+          {loadingClases ? (
+            <p className="text-center text-muted-foreground">Cargando clases...</p>
+          ) : errorClases ? (
+            <p role="alert" className="text-center text-muted-foreground">{errorClases}</p>
+          ) : ultimasClases.length === 0 ? (
+            <p className="text-center text-muted-foreground">No hay clases disponibles.</p>
+          ) : (
+            <div className="grid md:grid-cols-2 gap-6">
+              {ultimasClases.map((clase) => (
+                <Card key={clase.id} className="hover:shadow-md transition-shadow">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Calendar className="p-3 text-rose-600 dark:text-rose-50 bg-rose-100 dark:bg-rose-900 rounded-lg h-6 w-6 box-content" />
+                      <div className="flex justify-between w-full">
+                        <Badge variant="outline" className="text-nowrap bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50">
+                          {clase.level}
+                        </Badge>
+                        <span className="text-sm text-muted-foreground">{formatCourseDate(clase.start_date)}</span>
+                      </div>
                     </div>
-                  </div>
 
-                  <h3 className="text-xl font-semibold mb-2">{clase.titulo}</h3>
-                  <p className="text-muted-foreground">{clase.descripcion}</p>
-                  <Link to={`/clases/curso/${clase.id}`}>
-                    <Button variant="link" className="px-0 mt-4 text-rose-600">
-                      Ver más <ArrowRight className="ml-1 h-4 w-4" />
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                    <h3 className="text-xl font-semibold mb-2">{clase.title}</h3>
+                    <p className="text-muted-foreground">{clase.description}</p>
+                    <Link to={`/clases/curso/${clase.id}`}>
+                      <Button variant="link" className="px-0 mt-4 text-rose-600">
+                        Ver más <ArrowRight className="ml-1 h-4 w-4" />
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
-      </section> */}
+      </section>
+
+      <section className="bg-muted/30 px-4 py-10 md:px-6 md:py-14">
+        <div className="container mx-auto">
+          <div className="mb-8 flex items-center justify-between">
+            <div>
+              <h2 className="mb-2 text-3xl font-bold">Últimas Noticias</h2>
+              <p className="text-muted-foreground">Novedades y actividades recientes</p>
+            </div>
+            <Button asChild variant="outline"><Link to="/noticias">Ver Todas</Link></Button>
+          </div>
+
+          {loadingNoticias ? (
+            <p className="text-center text-muted-foreground">Cargando noticias...</p>
+          ) : errorNoticias ? (
+            <p role="alert" className="text-center text-muted-foreground">{errorNoticias}</p>
+          ) : ultimasNoticias.length === 0 ? (
+            <p className="text-center text-muted-foreground">Aún no hay noticias publicadas.</p>
+          ) : (
+            <div className="grid gap-6 md:grid-cols-2">
+              {ultimasNoticias.map((noticia) => (
+                <Card key={noticia.id} className="overflow-hidden transition-shadow hover:shadow-md">
+                  {noticia.image && <img src={noticia.image} alt="" className="aspect-video w-full object-cover" />}
+                  <CardContent className="p-4">
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <Badge variant="outline" className="bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50">
+                        {noticia.category}
+                      </Badge>
+                      <span className="text-sm text-muted-foreground">{formatNewsDate(noticia.published_at)}</span>
+                    </div>
+                    <div className="mb-2 flex items-center gap-2">
+                      <Newspaper className="h-5 w-5 shrink-0 text-rose-600" />
+                      <h3 className="line-clamp-2 text-xl font-semibold">{noticia.title}</h3>
+                    </div>
+                    <p className="line-clamp-3 text-muted-foreground">{noticia.summary}</p>
+                    <Button asChild variant="link" className="mt-3 px-0 text-rose-600">
+                      <Link to={`/noticias/${noticia.id}`}>
+                        Leer noticia <ArrowRight className="ml-1 h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Aviso inline si ya fue cerrado como modal */}
+      {!showAviso && (
+        <section className="py-8 px-4 md:px-6">
+          <div className="container mx-auto flex flex-col items-center">
+            <div className="overflow-hidden rounded-xl shadow-md border max-w-4xl bg-card">
+              <img
+                src="/aviso.jpeg"
+                alt="Aviso Importante"
+                className="w-full h-auto object-contain max-h-150"
+              />
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Preguntas Frecuentes */}
       <section className="py-10 md:py-14 px-4 md:px-6 bg-muted/30">
@@ -243,27 +400,17 @@ function Home() {
         <section className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 px-4 py-6 backdrop-blur-xs animate-in fade-in duration-200">
           <div className="relative w-fit overflow-hidden animate-in zoom-in-95 duration-200">
             <button
-              onClick={() => setShowAviso(false)}
+              onClick={handleCloseAviso}
               className="absolute top-4 right-4 z-10 bg-black/60 hover:bg-black/80 text-white rounded-full p-2 transition-all hover:scale-105 shadow-md focus:outline-hidden"
               aria-label="Cerrar aviso"
             >
               <X className="h-5 w-5" />
             </button>
-            {/* <div className="overflow-hidden rounded-2xl flex justify-center items-center"> */}
             <img
               src="/aviso.jpeg"
               alt="Aviso Importante"
               className="w-full h-auto object-contain max-h-[90vh]"
             />
-            {/* </div> */}
-            {/* <div className="p-2 pt-3 text-center">
-              <Button
-                onClick={() => setShowAviso(false)}
-                className="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-2 rounded-xl transition-all"
-              >
-                Cerrar Aviso
-              </Button>
-            </div> */}
           </div>
         </section>
       )}

@@ -1,22 +1,15 @@
-# Nombre del sistema
+# Directorio INAMUJER
 
-Descripcion breve de que es el sistema
+Aplicación web y API para el directorio, cursos y noticias de INAMUJER.
 
-## Subtitulo - a
+## Base de datos
 
-información de a
+Para crear las tablas, ejecuta `db/create_table.sql` en PostgreSQL. Si la base de
+datos ya existe, vuelve a ejecutar el script para crear las tablas que falten;
+las definiciones usan `IF NOT EXISTS`.
 
-## Subtitulo - b
+## Noticias
 
-información de b
-
-```js
-let variable = "Código de js"
-```
-
-más información
-
-```js
-// Comentario
-let variable2 = "Más código de js"
-```
+Las noticias se consultan públicamente en `/api/news` y `/api/news/:id`. La
+creación, edición y eliminación requieren una sesión con rol `Administrador` o
+`Usuario`. El panel se encuentra en `/admin/noticias`.

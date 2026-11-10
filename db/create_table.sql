@@ -100,7 +100,19 @@ CREATE TABLE if NOT EXISTS courses (
     created_at timestamp DEFAULT NOW()
 );
 
-CREATE TABLE if NOT EXISTS course_modules (
+CREATE TABLE IF NOT EXISTS news (
+    id integer PRIMARY KEY NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
+    title varchar NOT NULL,
+    summary text NOT NULL,
+    content text NOT NULL,
+    category varchar NOT NULL DEFAULT 'General',
+    image varchar,
+    published_at date DEFAULT CURRENT_DATE,
+    created_at timestamp DEFAULT NOW(),
+    updated_at timestamp DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS course_modules (
     id integer PRIMARY KEY NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),
     course_id integer NOT NULL REFERENCES courses(id) ON DELETE CASCADE,
     title varchar NOT NULL,

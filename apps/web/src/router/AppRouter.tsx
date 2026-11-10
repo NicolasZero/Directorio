@@ -11,6 +11,8 @@ const Home = React.lazy(() => import('../modules/home/page/homePage.tsx'))
 const Map = React.lazy(() => import('../modules/map/page/mainMap.tsx'))
 const Classes = React.lazy(() => import('../modules/classes/page/classesMain.tsx'))
 const CourseDetail = React.lazy(() => import('../modules/classes/page/classesDetail.tsx'))
+const NewsList = React.lazy(() => import('../modules/news/page/newsList.tsx'))
+const NewsDetail = React.lazy(() => import('../modules/news/page/newsDetail.tsx'))
 const About = React.lazy(() => import('../modules/about/page/about.tsx'))
 const NotFound = React.lazy(() => import('@/components/not-found.tsx'))
 
@@ -30,6 +32,8 @@ function AppRouter() {
             <Route path="conocenos" element={<About />} />
             <Route path="clases" element={<Classes />} />
             <Route path="clases/curso/:id" element={<CourseDetail />} />
+            <Route path="noticias" element={<NewsList />} />
+            <Route path="noticias/:id" element={<NewsDetail />} />
             <Route path="mapa" element={<Map />} />
             <Route path="/directorio" element={<Directory />} />
             <Route path="/directorio/:id" element={<DirectoryDetail />} />

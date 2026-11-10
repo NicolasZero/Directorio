@@ -22,7 +22,8 @@ const Navbar = () => {
         { name: "Inicio", path: "/" },
         { name: "Directorio", path: "/directorio" },
         { name: "Mapa", path: "/mapa" },
-        // { name: "Aprendizaje", path: "/clases" },
+        { name: "Noticias", path: "/noticias" },
+        { name: "Aprendizaje", path: "/clases" },
         { name: "Conócenos", path: "/conocenos" },
     ];
 
@@ -31,6 +32,7 @@ const Navbar = () => {
         { name: "Directorio", path: "/admin/directorio" },
         { name: "Usuarios", path: "/admin/usuarios" },
         { name: "Aprendizaje", path: "/admin/clases" },
+        { name: "Noticias", path: "/admin/noticias" },
         { name: "Descripción", path: "/admin/about" }
     ];
 
@@ -49,9 +51,9 @@ const Navbar = () => {
                 </button>
 
                 {/* Desktop Menu */}
-                <ul className="hidden md:flex flex-row items-center gap-1">
+                <ul className="overflow-auto w-screen hidden md:flex flex-row items-center gap-1">
                     {publicLinks.map((link) => (
-                        <li key={link.path} className="rounded-md overflow-hidden">
+                        <li key={link.path} className="flex-1 rounded-md">
                             <NavLink
                                 className={({ isActive }) =>
                                     `px-4 py-2 block transition-colors duration-200 hover:bg-black/20 ${isActive ? "bg-black/20 font-medium" : ""}`

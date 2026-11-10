@@ -8,6 +8,8 @@ const EditDirectory = React.lazy(() => import('@/modules/directory/page/director
 const DirectoryForm = React.lazy(() => import('@/modules/directory/page/addDirectory.tsx'))
 const EditClass = React.lazy(() => import('@/modules/classes/page/classList'))
 const ClassForm = React.lazy(() => import('@/modules/classes/page/addClass.tsx'))
+const NewsAdminList = React.lazy(() => import('@/modules/news/page/newsAdminList.tsx'))
+const NewsForm = React.lazy(() => import('@/modules/news/page/newsForm.tsx'))
 const UserList = React.lazy(() => import('@/modules/user/page/userList.tsx'))
 const AdminLayout = React.lazy(() => import('@/layout/adminLayout.tsx'))
 const EditAbout = React.lazy(() => import('@/modules/about/page/editAbout.tsx'))
@@ -27,6 +29,9 @@ export default function PrivateRouter() {
                 <Route path='clases' element={<EditClass />} />
                 <Route path='clases/nuevo' element={<ClassForm />} />
                 <Route path='clases/editar/:id' element={<ClassForm />} />
+                <Route path='noticias' element={<NewsAdminList />} />
+                <Route path='noticias/nuevo' element={<NewsForm />} />
+                <Route path='noticias/editar/:id' element={<NewsForm />} />
                 <Route path='usuarios' element={<UserList />} />
                 <Route path='about' element={<EditAbout />} />
             </Route>
