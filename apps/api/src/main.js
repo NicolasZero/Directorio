@@ -16,7 +16,7 @@ try {
 
 // extrae las variables de entorno o establece un valor por defecto
 const {
-  PORT = 3000,
+  PORT = 3001,
   CORS_URL = '*'
 } = process.env
 
@@ -67,7 +67,7 @@ const start = async () => {
   const port = PORT;
   // const host = HOST ;
   try {
-    // Start the server on port 3000, listening on all network interfaces
+    // Start the server on the configured port, listening on all network interfaces
     await fastify.listen({ port });
     // Log a message to indicate that the API is online
     console.log(`API running on the port ${port}`);
