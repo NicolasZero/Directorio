@@ -1,12 +1,12 @@
 .map-container {
     isolation: isolate;
     overflow: hidden;
-    border: 1px solid rgb(139 177 195 / 44%);
+    border: 1px solid rgb(190 163 222 / 38%);
     border-radius: 1.15rem;
-    background: radial-gradient(ellipse at 48% 42%, #0d2942 0%, #071a30 68%, #031025 100%);
+    background: radial-gradient(ellipse at 48% 42%, #28203f 0%, #1c1730 68%, #141123 100%);
     box-shadow:
-        0 24px 58px rgb(3 16 37 / 23%),
-        0 3px 9px rgb(3 16 37 / 18%),
+        0 24px 58px rgb(20 17 35 / 23%),
+        0 3px 9px rgb(20 17 35 / 18%),
         inset 0 1px 0 rgb(255 255 255 / 9%);
 }
 
@@ -20,17 +20,17 @@
 }
 
 .map-neighbor-country {
-    fill: #0f3948;
+    fill: #28213d;
     fill-opacity: 1;
-    stroke: #9ab5bd;
+    stroke: #9584ae;
     stroke-width: 1.15;
     vector-effect: non-scaling-stroke;
     pointer-events: none;
 }
 
 .map-country-label {
-    fill: #e7f1f1;
-    stroke: #06172c;
+    fill: #f3edfa;
+    stroke: #211a34;
     stroke-width: 4px;
     stroke-linejoin: round;
     paint-order: stroke;
@@ -51,8 +51,8 @@
 }
 
 .map-region-label {
-    fill: #d7e8e4;
-    stroke: #0b2a38;
+    fill: #f4eefa;
+    stroke: #332646;
     stroke-width: 3px;
     stroke-linejoin: round;
     paint-order: stroke;
@@ -64,8 +64,16 @@
     user-select: none;
 }
 
+.map-label-leader {
+    stroke: #dec8f1;
+    stroke-width: 1;
+    stroke-opacity: 0.62;
+    vector-effect: non-scaling-stroke;
+    pointer-events: none;
+}
+
 .map-water-label {
-    fill: #a7c3d0;
+    fill: #c6b5df;
     font-size: 15px;
     font-style: italic;
     font-weight: 600;
@@ -77,8 +85,8 @@
 
 .map-region {
     fill: url(#map-vegetation-gradient);
-    stroke: #9cb8b4;
-    stroke-opacity: 0.62;
+    stroke: #c2addc;
+    stroke-opacity: 0.58;
     stroke-width: 1;
     vector-effect: non-scaling-stroke;
     cursor: pointer;
@@ -86,6 +94,7 @@
 }
 
 .map-regions.is-focused .map-region-label,
+.map-regions.is-focused .map-label-leader,
 .map-regions.is-focused .map-country-label,
 .map-water-label.is-hidden {
     display: none;
@@ -93,30 +102,17 @@
 
 .map-region:hover,
 .map-region:focus-visible {
-    fill: #2a7880;
-    stroke: #d2e8df;
+    fill: #8969b3;
+    stroke: #e5d7f4;
     stroke-width: 1.8;
+    filter: drop-shadow(0 0 3px rgb(197 164 232 / 35%));
     outline: none;
 }
 
 .map-region.is-selected {
-    fill: #39877e;
-    stroke: #e5eee0;
+    fill: #9b79c3;
+    stroke: #f4eafd;
     stroke-width: 2;
-}
-
-.map-region.is-claim {
-    fill: #b98f58;
-    stroke: #f0cf9a;
-    stroke-dasharray: 6 3;
-    stroke-width: 1.6;
-}
-
-.map-region.is-claim:hover,
-.map-region.is-claim:focus-visible,
-.map-region.is-claim.is-selected {
-    fill: #c9a36c;
-    stroke: #ffe4b2;
 }
 
 .map-center {
@@ -129,30 +125,30 @@
 }
 
 .map-center-dot {
-    fill: #be123c;
-    stroke: #fff;
-    stroke-width: 2;
+    fill: #b83b78;
+    stroke: #d7c3ec;
+    stroke-width: 1.25;
     vector-effect: non-scaling-stroke;
 }
 
 .map-center--inamujer .map-center-dot {
-    fill: #be123c;
+    fill: #d34b91;
 }
 
 .map-center--ministerio .map-center-dot {
-    fill: #2563eb;
+    fill: #9670ce;
 }
 
 .map-center--otra .map-center-dot {
-    fill: #c7d2de;
+    fill: #d5ad61;
 }
 
 .map-center:hover .map-center-dot,
 .map-center:focus-visible .map-center-dot,
 .map-center.is-selected .map-center-dot {
-    fill: #701a35;
-    stroke: #fda4af;
-    stroke-width: 3;
+    stroke: #f3e8ff;
+    stroke-width: 2.5;
+    filter: drop-shadow(0 0 3px rgb(229 208 255 / 75%));
 }
 
 .map-center:focus-visible {
@@ -193,6 +189,15 @@
         border-color 320ms ease,
         border-radius 320ms ease,
         box-shadow 320ms ease;
+}
+
+.map-container:hover,
+.map-container:focus-within {
+    border-color: rgb(201 172 232 / 70%);
+    box-shadow:
+        0 24px 58px rgb(20 17 35 / 26%),
+        0 0 18px rgb(143 103 186 / 18%),
+        inset 0 1px 0 rgb(255 255 255 / 10%);
 }
 
 .estado-svg {
@@ -251,14 +256,14 @@
 .map-center-card:hover,
 .map-center-card:focus-visible {
     transform: translateY(-2px);
-    border-color: #e11d48;
-    box-shadow: 0 8px 20px rgb(159 18 57 / 10%);
+    border-color: #9872c5;
+    box-shadow: 0 8px 20px rgb(101 65 142 / 14%);
     outline: none;
 }
 
 .map-center-card.is-selected {
-    border-color: #e11d48;
-    box-shadow: 0 0 0 2px rgb(244 63 94 / 16%);
+    border-color: #9872c5;
+    box-shadow: 0 0 0 2px rgb(151 112 206 / 18%);
 }
 
 .map-empty-centers {
@@ -281,7 +286,7 @@
     overflow: hidden;
     border: 1px solid var(--border);
     border-radius: 0.7rem;
-    background: linear-gradient(145deg, #e6efe6, #c8dcdb);
+    background: linear-gradient(145deg, #eee7f5, #d6c9e6);
 }
 
 .map-center-photo img {
@@ -299,7 +304,7 @@
     align-items: center;
     justify-content: center;
     gap: 0.45rem;
-    color: #52716a;
+    color: #67517c;
     font-size: 0.78rem;
 }
 
@@ -362,18 +367,18 @@
 }
 
 .map-legend-dot--inamujer {
-    color: #be123c;
-    background: #be123c;
+    color: #d34b91;
+    background: #d34b91;
 }
 
 .map-legend-dot--ministerio {
-    color: #2563eb;
-    background: #2563eb;
+    color: #9670ce;
+    background: #9670ce;
 }
 
 .map-legend-dot--otra {
-    color: #475569;
-    background: #475569;
+    color: #d5ad61;
+    background: #d5ad61;
 }
 
 @keyframes map-panel-enter {

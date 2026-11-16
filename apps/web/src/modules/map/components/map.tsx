@@ -131,18 +131,23 @@ const parseFeatureCollection = (value: unknown): MapFeature[] => {
         if (typeof properties.name !== 'string') {
             throw new Error('Hay una región sin nombre en el archivo cartográfico.')
         }
+        const isEsequibo = feature.id === 'VEN-GUY-ESEQUIBO-CLAIM'
 
         return {
             type: 'Feature',
             id: feature.id,
             properties: {
-                name: properties.name,
-                mapName: typeof properties.mapName === 'string' ? properties.mapName : null,
+                name: isEsequibo ? 'Esequibo' : properties.name,
+                mapName: isEsequibo
+                    ? 'Esequibo'
+                    : typeof properties.mapName === 'string'
+                        ? properties.mapName
+                        : null,
                 databaseName: typeof properties.databaseName === 'string' ? properties.databaseName : null,
                 ...(properties.kind === 'neighbor' ? { kind: 'neighbor' as const } : {}),
-                ...(typeof properties.status === 'string' ? { status: properties.status } : {}),
-                ...(typeof properties.claimedBy === 'string' ? { claimedBy: properties.claimedBy } : {}),
-                ...(typeof properties.administeredBy === 'string' ? { administeredBy: properties.administeredBy } : {}),
+                ...(!isEsequibo && typeof properties.status === 'string' ? { status: properties.status } : {}),
+                ...(!isEsequibo && typeof properties.claimedBy === 'string' ? { claimedBy: properties.claimedBy } : {}),
+                ...(!isEsequibo && typeof properties.administeredBy === 'string' ? { administeredBy: properties.administeredBy } : {}),
             },
             geometry: parseGeometry(feature.geometry),
         }
@@ -233,6 +238,103 @@ const getLabelAnchor = (
     return largest
 }
 
+interface LabelPlacement {
+    feature: MapFeature
+    title: string
+    anchor: Position
+    position: Position
+}
+
+interface LabelCandidate {
+    feature: MapFeature
+    title: string
+    anchor: Position
+    area: number
+}
+
+const labelOffsets: Position[] = [
+    [0, 0],
+    [0, -22],
+    [0, 22],
+    [-32, 0],
+    [32, 0],
+    [0, -42],
+    [0, 42],
+    [-38, -22],
+    [38, -22],
+    [-38, 22],
+    [38, 22],
+    [-56, 0],
+    [56, 0],
+]
+
+const getLabelCandidates = (
+    features: MapFeature[],
+    project: Projection['point'],
+): LabelCandidate[] =>
+    features
+        .filter((feature) => feature.properties.kind !== 'neighbor')
+        .flatMap((feature) => {
+            const labelAnchor = getLabelAnchor(feature.geometry, project)
+            if (!labelAnchor || labelAnchor.area < 1400) return []
+
+            return [{
+                feature,
+                title: feature.properties.mapName ?? feature.properties.name,
+                anchor: labelAnchor.position,
+                area: labelAnchor.area,
+            }]
+        })
+
+const getLabelPlacements = (
+    candidates: LabelCandidate[],
+    selectedRegionKey: string | null,
+    zoomScale: number,
+): LabelPlacement[] => {
+    const orderedCandidates = candidates
+        .filter((feature) => {
+            if (!selectedRegionKey) return true
+            return (feature.feature.properties.databaseName ?? feature.feature.properties.mapName) === selectedRegionKey
+        })
+        .sort((first, second) => second.area - first.area)
+
+    const placed: Array<LabelPlacement & { width: number; height: number }> = []
+    const scale = Math.max(1, zoomScale)
+
+    for (const candidate of orderedCandidates) {
+        const width = Math.max(34, candidate.title.length * 8.5 + 8)
+        const height = 22
+        const [anchorX, anchorY] = candidate.anchor
+        const position = labelOffsets
+            .map(([offsetX, offsetY]) => [
+                anchorX + offsetX / scale,
+                anchorY + offsetY / scale,
+            ] as Position)
+            .find(([x, y]) =>
+                placed.every((other) =>
+                    Math.abs(x - other.position[0]) * scale >= (width + other.width) / 2 + 5 ||
+                    Math.abs(y - other.position[1]) * scale >= (height + other.height) / 2 + 5
+                )
+            )
+
+        if (position) {
+            placed.push({
+                feature: candidate.feature,
+                title: candidate.title,
+                anchor: candidate.anchor,
+                position,
+                width,
+                height,
+            })
+        }
+    }
+
+    return placed
+}
+
+const keepScreenSizeTransform = ([x, y]: Position, zoomScale: number) =>
+    `translate(${x} ${y}) scale(${1 / zoomScale}) translate(${-x} ${-y})`
+
 export default function Mapa({
     centers,
     selectedRegionKey,
@@ -284,6 +386,14 @@ export default function Mapa({
     }, [onLoadError])
 
     const projection = useMemo(() => createProjection(features), [features])
+    const labelCandidates = useMemo(
+        () => projection ? getLabelCandidates(features, projection.point) : [],
+        [features, projection],
+    )
+    const labelPlacements = useMemo(
+        () => getLabelPlacements(labelCandidates, selectedRegionKey, zoomScale),
+        [labelCandidates, selectedRegionKey, zoomScale],
+    )
 
     const selectCenter = (center: MapCenter) => {
         const matchingRegion = features.find(
@@ -315,7 +425,7 @@ export default function Mapa({
             viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
             preserveAspectRatio="xMidYMid meet"
             role="group"
-            aria-label="Mapa interactivo de Venezuela y países limítrofes con zona en reclamación"
+            aria-label="Mapa interactivo de Venezuela y países limítrofes"
         >
             <defs>
                 <clipPath id="map-geography-clip">
@@ -334,15 +444,16 @@ export default function Mapa({
                     x2={WIDTH}
                     y2={HEIGHT}
                 >
-                    <stop offset="0%" stopColor="#24616a" />
-                    <stop offset="48%" stopColor="#174b57" />
-                    <stop offset="100%" stopColor="#103744" />
+                    <stop offset="0%" stopColor="#8056b2" />
+                    <stop offset="48%" stopColor="#694395" />
+                    <stop offset="100%" stopColor="#4f3478" />
                 </linearGradient>
             </defs>
             <text
                 className={`map-water-label${selectedRegionKey ? ' is-hidden' : ''}`}
                 x="700"
                 y="54"
+                transform={keepScreenSizeTransform([700, 54], zoomScale)}
                 aria-hidden="true"
                 clipPath="url(#map-geography-clip)"
             >
@@ -365,74 +476,76 @@ export default function Mapa({
                 {features.filter((feature) => feature.properties.kind !== 'neighbor').map((feature) => {
                     const key = feature.properties.databaseName ?? feature.properties.mapName
                     const isSelected = key !== null && key === selectedRegionKey
-                    const isClaim = feature.properties.status === 'disputed_claim'
                     const id = featureElementId(feature.id)
                     const title = feature.properties.mapName ?? feature.properties.name
-                    const labelAnchor = getLabelAnchor(feature.geometry, projection.point)
 
                     return (
-                        <g key={feature.id}>
-                            <path
-                                id={id}
-                                className={`map-region${isSelected ? ' is-selected' : ''}${isClaim ? ' is-claim' : ''}`}
-                                d={projection.path(feature.geometry)}
-                                style={{
-                                    strokeWidth: `${(isSelected ? 2 : isClaim ? 1.6 : 1) / zoomScale}px`,
-                                }}
-                                fillRule="evenodd"
-                                data-name={feature.properties.mapName ?? feature.properties.name}
-                                data-database-name={feature.properties.databaseName ?? ''}
-                                role="button"
-                                tabIndex={0}
-                                aria-label={
-                                    isClaim
-                                        ? `${title}, zona reclamada por Venezuela y administrada por Guyana`
-                                        : title
+                        <path
+                            key={feature.id}
+                            id={id}
+                            className={`map-region${isSelected ? ' is-selected' : ''}`}
+                            d={projection.path(feature.geometry)}
+                            style={{
+                                strokeWidth: `${(isSelected ? 2 : 1) / zoomScale}px`,
+                            }}
+                            fillRule="evenodd"
+                            data-name={feature.properties.mapName ?? feature.properties.name}
+                            data-database-name={feature.properties.databaseName ?? ''}
+                            role="button"
+                            tabIndex={0}
+                            aria-label={title}
+                            aria-pressed={isSelected}
+                            onClick={() => onFeatureSelect(feature.properties, id)}
+                            onKeyDown={(event: KeyboardEvent<SVGPathElement>) => {
+                                if (event.key === 'Enter' || event.key === ' ') {
+                                    event.preventDefault()
+                                    onFeatureSelect(feature.properties, id)
                                 }
-                                aria-pressed={isSelected}
-                                onClick={() => onFeatureSelect(feature.properties, id)}
-                                onKeyDown={(event: KeyboardEvent<SVGPathElement>) => {
-                                    if (event.key === 'Enter' || event.key === ' ') {
-                                        event.preventDefault()
-                                        onFeatureSelect(feature.properties, id)
-                                    }
-                                }}
-                            >
-                                <title>{title}</title>
-                            </path>
-                            {labelAnchor &&
-                                labelAnchor.area >= 1400 &&
-                                (!selectedRegionKey || isSelected) && (
-                                <text
-                                    className="map-region-label"
-                                    x={labelAnchor.position[0]}
-                                    y={labelAnchor.position[1]}
-                                    aria-hidden="true"
-                                >
-                                    {title}
-                                </text>
-                            )}
-                        </g>
+                            }}
+                        >
+                            <title>{title}</title>
+                        </path>
                     )
                 })}
-                <text className="map-country-label" x={projection.point([-73.6, 5.2])[0]} y={projection.point([-73.6, 5.2])[1]}>
+                <text className="map-country-label" x={projection.point([-73.6, 5.2])[0]} y={projection.point([-73.6, 5.2])[1]} transform={keepScreenSizeTransform(projection.point([-73.6, 5.2]), zoomScale)}>
                     Colombia
                 </text>
-                <text className="map-country-label map-country-label--regional" x={projection.point([-85.4, 12.1])[0]} y={projection.point([-85.4, 12.1])[1]}>
+                <text className="map-country-label map-country-label--regional" x={projection.point([-85.4, 12.1])[0]} y={projection.point([-85.4, 12.1])[1]} transform={keepScreenSizeTransform(projection.point([-85.4, 12.1]), zoomScale)}>
                     Nicaragua
                 </text>
-                <text className="map-country-label map-country-label--regional" x={projection.point([-84.4, 9.5])[0]} y={projection.point([-84.4, 9.5])[1]}>
+                <text className="map-country-label map-country-label--regional" x={projection.point([-84.4, 9.5])[0]} y={projection.point([-84.4, 9.5])[1]} transform={keepScreenSizeTransform(projection.point([-84.4, 9.5]), zoomScale)}>
                     Costa Rica
                 </text>
-                <text className="map-country-label" x={projection.point([-62, 0.4])[0]} y={projection.point([-62, 0.4])[1]}>
+                <text className="map-country-label" x={projection.point([-62, 0.4])[0]} y={projection.point([-62, 0.4])[1]} transform={keepScreenSizeTransform(projection.point([-62, 0.4]), zoomScale)}>
                     Brasil
                 </text>
-                <text className="map-country-label map-country-label--guyana" x={projection.point([-57.4, 7.2])[0]} y={projection.point([-57.4, 7.2])[1]}>
+                <text className="map-country-label map-country-label--guyana" x={projection.point([-57.4, 7.2])[0]} y={projection.point([-57.4, 7.2])[1]} transform={keepScreenSizeTransform(projection.point([-57.4, 7.2]), zoomScale)}>
                     Guyana
                 </text>
-                <text className="map-country-label" x={projection.point([-55.7, 4.3])[0]} y={projection.point([-55.7, 4.3])[1]}>
+                <text className="map-country-label" x={projection.point([-55.7, 4.3])[0]} y={projection.point([-55.7, 4.3])[1]} transform={keepScreenSizeTransform(projection.point([-55.7, 4.3]), zoomScale)}>
                     Suriname
                 </text>
+                {labelPlacements.map(({ feature, title, anchor, position }) => (
+                    <g
+                        key={`label-${feature.id}`}
+                        className="map-region-label-group"
+                        transform={keepScreenSizeTransform(position, zoomScale)}
+                        aria-hidden="true"
+                    >
+                        {(anchor[0] !== position[0] || anchor[1] !== position[1]) && (
+                            <line
+                                className="map-label-leader"
+                                x1={anchor[0]}
+                                y1={anchor[1]}
+                                x2={position[0]}
+                                y2={position[1]}
+                            />
+                        )}
+                        <text className="map-region-label" x={position[0]} y={position[1]}>
+                            {title}
+                        </text>
+                    </g>
+                ))}
             </g>
             <g className="map-centers" clipPath="url(#map-geography-clip)">
                 {centers.map((center) => {
@@ -463,7 +576,7 @@ export default function Mapa({
                             }}
                         >
                             <circle className="map-center-hit-area" r="11" />
-                            <circle className="map-center-dot" r={isSelected ? 6 : 4.5} />
+                            <circle className="map-center-dot" r={isSelected ? 8 : 7} />
                             <title>{label}</title>
                         </g>
                     )

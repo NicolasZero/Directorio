@@ -222,11 +222,7 @@ const MapaInteractivo = () => {
         setSelectedState(feature)
         setSelectedRegionElementId(elementId)
         setSelectedCenterId(null)
-        scheduleMapFocus(
-            elementId,
-            zoomToElement,
-            feature.status === 'disputed_claim' ? 2.1 : undefined,
-        )
+        scheduleMapFocus(elementId, zoomToElement)
     }
 
     const handleCenterSelect = (
@@ -328,9 +324,7 @@ const MapaInteractivo = () => {
                     <div>
                         <h2 className="text-xl font-semibold">
                             {selectedState
-                                ? selectedState.status === 'disputed_claim'
-                                    ? 'Zona de reclamación'
-                                    : `Sedes en ${selectedState.mapName ?? selectedState.name}`
+                                ? `Sedes en ${selectedState.mapName ?? selectedState.name}`
                                 : 'Mapa de Venezuela'}
                         </h2>
                         <p className="text-sm text-muted-foreground">
@@ -524,9 +518,7 @@ const MapaInteractivo = () => {
                                                         <CardContent className="p-6 text-center">
                                                             <Search className="mx-auto mb-3 h-7 w-7 text-rose-600" />
                                                             <h3 className="mb-2 font-semibold">
-                                                                {selectedState.status === 'disputed_claim'
-                                                                    ? 'No hay sedes registradas en esta zona'
-                                                                    : 'No hay sedes registradas en este estado'}
+                                                                No hay sedes registradas en esta región
                                                             </h3>
                                                             <p className="text-sm text-muted-foreground">
                                                                 Las sedes disponibles se muestran al elegir otro estado.

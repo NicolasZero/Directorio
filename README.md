@@ -52,12 +52,14 @@ mapa a la vista general y muestra todos los marcadores.
 Los límites provienen de geoBoundaries, conjunto VEN-ADM1-42786344, basados en
 OCHA Venezuela e Instituto Nacional de Estadística, año representado 2020.
 Licencia del conjunto: CC BY 3.0 IGO. Atribución:
-[geoBoundaries](https://www.geoboundaries.org/). El mapa incluye también el
-polígono Natural Earth `West of Essequibo River`, con `status:
-disputed_claim`, `claimedBy: Venezuela` y `administeredBy: Guyana`; se presenta
-como zona reclamada, no como límite internacional acordado. Fuente del polígono:
-[Natural Earth](https://www.naturalearthdata.com/), dominio público. Las
-atribuciones se conservan en esta documentación.
+[geoBoundaries](https://www.geoboundaries.org/). El mapa incorpora el polígono
+Natural Earth `West of Essequibo River` y lo muestra, con el nombre Esequibo y
+la misma paleta que el resto del territorio, como parte integrada de la
+representación de Venezuela solicitada para esta interfaz. La geometría fuente
+conserva su procedencia y sus metadatos de reclamación; este ajuste visual no
+crea límites administrativos, municipios ni sedes para la región en la base de
+datos. Fuente del polígono: [Natural Earth](https://www.naturalearthdata.com/),
+dominio público. Las atribuciones se conservan en esta documentación.
 
 Los contornos de Nicaragua, Costa Rica, Panamá, Colombia, Brasil, Guyana y
 Surinam se derivan de Natural Earth 1:50m
@@ -72,11 +74,12 @@ al cerrar o restablecer vuelve a quedar centrado. En pantallas pequeñas usa
 una relación 4:3 y mantiene el panel debajo del mapa.
 
 La fuente contiene Dependencias Federales, que aún no tiene un estado
-relacionado en la base y por eso lleva `databaseName: null`. No contiene
-el polígono de Guyana Esequiba como estado ADM1; este se integra aparte como
-reclamación geográfica. La geometría superpuesta no añade municipios o sedes a
-la base de datos de esa zona. El agua y el terreno se representan con colores
-planos y gradientes, sin texturas lineales ni datos de elevación. Para mostrar
+relacionado en la base y por eso lleva `databaseName: null`. El polígono de
+Esequibo se integra visualmente como una región seleccionable; no añade
+municipios o sedes a la base de datos. Las etiquetas se distribuyen para reducir
+solapamientos y conservan un tamaño legible al acercar el mapa; los marcadores
+mantienen sus colores por tipo de sede. El agua y el terreno se representan con
+colores y gradientes, sin texturas lineales ni datos de elevación. Para mostrar
 altimetría real se debe integrar una fuente DEM con licencia y atribución
 compatibles.
 
