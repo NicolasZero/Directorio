@@ -129,10 +129,14 @@ CREATE TABLE IF NOT EXISTS news (
     content text NOT NULL,
     category varchar NOT NULL DEFAULT 'General',
     image varchar,
-    published_at date DEFAULT CURRENT_DATE,
-    created_at timestamp DEFAULT NOW(),
-    updated_at timestamp DEFAULT NOW()
+   status varchar NOT NULL DEFAULT 'Publicado',
+   published_at date DEFAULT CURRENT_DATE,
+   created_at timestamp DEFAULT NOW(),
+   updated_at timestamp DEFAULT NOW()
 );
+
+ALTER TABLE news
+   ADD COLUMN IF NOT EXISTS status varchar NOT NULL DEFAULT 'Publicado';
 
 CREATE TABLE IF NOT EXISTS course_modules (
     id integer PRIMARY KEY NOT NULL UNIQUE GENERATED ALWAYS AS IDENTITY (START WITH 1),

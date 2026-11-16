@@ -32,7 +32,7 @@ export default function NewsAdminList() {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await fetch('/api/news')
+        const response = await fetch('/api/news/manage')
         const result = await response.json()
 
         if (!response.ok) {
@@ -169,6 +169,7 @@ export default function NewsAdminList() {
                   <TableRow>
                     <TableHead>Título</TableHead>
                     <TableHead>Categoría</TableHead>
+                    <TableHead>Estado</TableHead>
                     <TableHead>Fecha</TableHead>
                     <TableHead>Opciones</TableHead>
                   </TableRow>
@@ -182,6 +183,11 @@ export default function NewsAdminList() {
                           {item.category}
                         </Badge>
                       </TableCell>
+                      <TableCell>
+                        <Badge variant={item.status === 'Publicado' ? 'default' : 'outline'}>
+                          {item.status}
+                        </Badge>
+                      </TableCell>
                       <TableCell>{formatNewsDate(item.published_at)}</TableCell>
                       <TableCell>
                         <DropdownMenu>
@@ -192,7 +198,10 @@ export default function NewsAdminList() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent>
                             <DropdownMenuItem asChild>
-                              <Link to={`/noticias/${item.id}`}><Eye className="mr-2 h-4 w-4" />Ver</Link>
+                              <Link to={`/noticias/${item.id}`}>
+                                <Eye className="mr-2 h-4 w-4" />
+                                {item.status === 'Publicado' ? 'Ver' : 'Vista previa'}
+                              </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild>
                               <Link to={`/admin/noticias/editar/${item.id}`}><Pencil className="mr-2 h-4 w-4" />Editar</Link>

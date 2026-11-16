@@ -101,3 +101,18 @@ imagen pendiente. No hay fotografías institucionales incluidas todavía.
 Las noticias se consultan públicamente en `/api/news` y `/api/news/:id`. La
 creación, edición y eliminación requieren una sesión con rol `Administrador` o
 `Usuario`. El panel se encuentra en `/admin/noticias`.
+
+Las noticias nuevas se guardan como `Borrador`; solo el rol `Administrador`
+puede consultar esos borradores. La API pública muestra únicamente noticias
+`Publicadas`. Un Administrador puede cambiar el estado al editar una noticia.
+El estado se agrega con `ALTER TABLE` idempotente al ejecutar de nuevo
+`db/create_table.sql`; las noticias existentes conservan el estado
+`Publicado`.
+
+El editor permite aplicar formato, color y tamaño de texto, insertar enlaces y
+elegir imágenes de la biblioteca o subir archivos JPG, PNG, WEBP o GIF de hasta
+5 MB. Las imágenes se guardan en `apps/api/uploads/news/` y se sirven desde
+`/api/news/images/:filename`; la carga y biblioteca requieren una sesión
+autorizada para gestionar noticias. Este directorio se excluye de Git: en
+producción hay que montarlo como almacenamiento persistente y respaldarlo
+junto con la base de datos.

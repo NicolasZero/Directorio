@@ -126,6 +126,53 @@
     @apply bg-background text-foreground;
   }
 
+  .news-content h2,
+  .news-editor h2 {
+    @apply my-5 text-2xl font-bold leading-tight;
+  }
+
+  .news-content h3,
+  .news-editor h3 {
+    @apply my-4 text-xl font-semibold leading-tight;
+  }
+
+  .news-content p,
+  .news-editor p {
+    @apply my-3;
+  }
+
+  .news-content ul,
+  .news-content ol,
+  .news-editor ul,
+  .news-editor ol {
+    @apply my-4 pl-7;
+  }
+
+  .news-content ul,
+  .news-editor ul {
+    @apply list-disc;
+  }
+
+  .news-content ol,
+  .news-editor ol {
+    @apply list-decimal;
+  }
+
+  .news-content blockquote,
+  .news-editor blockquote {
+    @apply my-4 border-l-4 border-rose-300 pl-4 italic text-muted-foreground;
+  }
+
+  .news-content a,
+  .news-editor a {
+    @apply text-rose-700 underline underline-offset-2 dark:text-rose-300;
+  }
+
+  .news-content img,
+  .news-editor img {
+    @apply my-5 h-auto max-w-full rounded-xl;
+  }
+
   html {
     @apply font-sans;
   }

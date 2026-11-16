@@ -4,10 +4,14 @@ import { ArrowLeft } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { useAuth } from '@/context/authContext'
 import { formatNewsDate, type NewsEntry } from '../types/news'
+import { sanitizeNewsHtml } from '../utils/newsContent'
 
 export default function NewsDetail() {
   const { id } = useParams()
+  const { status: authStatus, user } = useAuth()
+  const isAdministrator = user?.role === 'Administrador'
   const [news, setNews] = useState<NewsEntry | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -17,8 +21,12 @@ export default function NewsDetail() {
     let cancelled = false
 
     const fetchNewsItem = async () => {
+      setLoading(true)
+      setError(null)
+      setNews(null)
       try {
-        const response = await fetch(`/api/news/${id}`)
+        const endpoint = isAdministrator ? `/api/news/manage/${id}` : `/api/news/${id}`
+        const response = await fetch(endpoint)
         const result = await response.json()
 
         if (!response.ok) {
@@ -38,7 +46,7 @@ export default function NewsDetail() {
     return () => {
       cancelled = true
     }
-  }, [id])
+  }, [id, isAdministrator, authStatus])
 
   if (loading) {
     return <p className="py-16 text-center text-muted-foreground">Cargando noticia...</p>
@@ -62,7 +70,7 @@ export default function NewsDetail() {
   return (
     <article className="container mx-auto max-w-4xl px-4 py-8">
       <Button asChild variant="ghost" className="mb-6 text-rose-600">
-        <Link to="/noticias">
+        <Link to={isAdministrator ? '/admin/noticias' : '/noticias'}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Volver a noticias
         </Link>
@@ -72,14 +80,22 @@ export default function NewsDetail() {
           <Badge variant="outline" className="bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50">
             {news.category}
           </Badge>
+          {news.status === 'Borrador' && (
+            <Badge variant="outline" className="border-amber-500 text-amber-700 dark:text-amber-300">
+              Vista previa · Borrador
+            </Badge>
+          )}
           <span className="text-sm text-muted-foreground">{formatNewsDate(news.published_at)}</span>
         </div>
         <h1 className="text-3xl font-bold md:text-5xl">{news.title}</h1>
         <p className="text-xl text-muted-foreground">{news.summary}</p>
         {news.image && (
-          <img src={news.image} alt="" className="max-h-[32rem] w-full rounded-2xl object-cover" />
+          <img src={news.image} alt="" className="max-h-128 w-full rounded-2xl object-cover" />
         )}
-        <div className="whitespace-pre-line text-base leading-8 text-foreground">{news.content}</div>
+        <div
+          className="news-content whitespace-pre-line text-base leading-8 text-foreground"
+          dangerouslySetInnerHTML={{ __html: sanitizeNewsHtml(news.content) }}
+        />
       </div>
     </article>
   )
