@@ -1,40 +1,469 @@
-.estado-svg path[data-name]:hover {
-    fill: #e5003d !important;
-    transition: fill 0.3s ease !important;
+.map-container {
+    isolation: isolate;
+    overflow: hidden;
+    border: 1px solid rgb(139 177 195 / 44%);
+    border-radius: 1.15rem;
+    background: radial-gradient(ellipse at 48% 42%, #0d2942 0%, #071a30 68%, #031025 100%);
+    box-shadow:
+        0 24px 58px rgb(3 16 37 / 23%),
+        0 3px 9px rgb(3 16 37 / 18%),
+        inset 0 1px 0 rgb(255 255 255 / 9%);
 }
 
-.estado-svg rect {
-    opacity: 1;
-    fill: #9fdaeb;
+.estado-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    touch-action: none;
+    user-select: none;
+}
+
+.map-neighbor-country {
+    fill: #0f3948;
     fill-opacity: 1;
-    fill-rule: evenodd;
-    stroke: none;
-    stroke-width: 1.05599999;
-    stroke-linejoin: miter;
-    stroke-miterlimit: 4;
-    stroke-dasharray: none;
-    stroke-opacity: 1;
+    stroke: #9ab5bd;
+    stroke-width: 1.15;
+    vector-effect: non-scaling-stroke;
+    pointer-events: none;
 }
 
-.estado-svg path {
-    stroke-width: 1px !important;
-    stroke-linecap: butt !important;
-    stroke-opacity: 1 !important;
-    fill-rule: evenodd !important;
-    fill-opacity: 1 !important;
-    stroke: #000000 !important;
-    stroke-linejoin: miter !important;
+.map-country-label {
+    fill: #e7f1f1;
+    stroke: #06172c;
+    stroke-width: 4px;
+    stroke-linejoin: round;
+    paint-order: stroke;
+    font-size: 24px;
+    font-weight: 650;
+    letter-spacing: 0.035em;
+    text-anchor: middle;
+    pointer-events: none;
+    user-select: none;
 }
 
-.stado-svg text {
-    font-style: normal !important;
-    font-weight: normal !important;
-    fill: #000000 !important;
-    fill-opacity: 1 !important;
-    stroke: none !important;
-    stroke-width: 1px !important;
-    stroke-linecap: butt !important;
-    stroke-linejoin: miter !important;
-    stroke-opacity: 1 !important;
-    font-family: "Bitstream Vera Sans" !important;
+.map-country-label--guyana {
+    font-size: 20px;
+}
+
+.map-country-label--regional {
+    font-size: 18px;
+}
+
+.map-region-label {
+    fill: #d7e8e4;
+    stroke: #0b2a38;
+    stroke-width: 3px;
+    stroke-linejoin: round;
+    paint-order: stroke;
+    font-size: 15px;
+    font-weight: 700;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    pointer-events: none;
+    user-select: none;
+}
+
+.map-water-label {
+    fill: #a7c3d0;
+    font-size: 15px;
+    font-style: italic;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-anchor: middle;
+    opacity: 0.86;
+    pointer-events: none;
+}
+
+.map-region {
+    fill: url(#map-vegetation-gradient);
+    stroke: #9cb8b4;
+    stroke-opacity: 0.62;
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+    cursor: pointer;
+    transition: fill 160ms ease, stroke 160ms ease;
+}
+
+.map-regions.is-focused .map-region-label,
+.map-regions.is-focused .map-country-label,
+.map-water-label.is-hidden {
+    display: none;
+}
+
+.map-region:hover,
+.map-region:focus-visible {
+    fill: #2a7880;
+    stroke: #d2e8df;
+    stroke-width: 1.8;
+    outline: none;
+}
+
+.map-region.is-selected {
+    fill: #39877e;
+    stroke: #e5eee0;
+    stroke-width: 2;
+}
+
+.map-region.is-claim {
+    fill: #b98f58;
+    stroke: #f0cf9a;
+    stroke-dasharray: 6 3;
+    stroke-width: 1.6;
+}
+
+.map-region.is-claim:hover,
+.map-region.is-claim:focus-visible,
+.map-region.is-claim.is-selected {
+    fill: #c9a36c;
+    stroke: #ffe4b2;
+}
+
+.map-center {
+    cursor: pointer;
+}
+
+.map-center-hit-area {
+    fill: transparent;
+    pointer-events: all;
+}
+
+.map-center-dot {
+    fill: #be123c;
+    stroke: #fff;
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+}
+
+.map-center--inamujer .map-center-dot {
+    fill: #be123c;
+}
+
+.map-center--ministerio .map-center-dot {
+    fill: #2563eb;
+}
+
+.map-center--otra .map-center-dot {
+    fill: #c7d2de;
+}
+
+.map-center:hover .map-center-dot,
+.map-center:focus-visible .map-center-dot,
+.map-center.is-selected .map-center-dot {
+    fill: #701a35;
+    stroke: #fda4af;
+    stroke-width: 3;
+}
+
+.map-center:focus-visible {
+    outline: none;
+}
+
+.map-explorer {
+    display: grid;
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0fr);
+    justify-items: center;
+    gap: 0;
+    transition:
+        grid-template-columns 420ms cubic-bezier(0.22, 1, 0.36, 1),
+        gap 420ms ease;
+}
+
+.map-explorer.has-panel {
+    grid-template-columns: minmax(0, 1.55fr) minmax(350px, 0.8fr);
+    justify-items: stretch;
+    gap: 1rem;
+}
+
+.map-explorer.has-panel .map-container {
+    min-height: 0;
+    max-width: 100%;
+    margin-inline: 0;
+}
+
+.map-container {
+    width: 100%;
+    max-width: 96rem;
+    min-width: 0;
+    height: 36rem;
+    margin-inline: auto;
+    transition:
+        max-width 420ms cubic-bezier(0.22, 1, 0.36, 1),
+        border-color 320ms ease,
+        border-radius 320ms ease,
+        box-shadow 320ms ease;
+}
+
+.estado-svg {
+    width: 100%;
+    height: 100%;
+}
+
+.map-side-panel {
+    min-width: 0;
+    max-height: min(70vh, 860px);
+    overflow: auto;
+    border: 1px solid var(--border);
+    border-radius: 0.9rem;
+    background: var(--card);
+    box-shadow: 0 12px 30px rgb(22 46 41 / 9%);
+    animation: map-panel-enter 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.map-side-panel.is-closing {
+    pointer-events: none;
+    animation: map-panel-exit 260ms ease both;
+}
+
+.map-panel-heading {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    min-height: 3.75rem;
+    align-items: center;
+    gap: 0.45rem;
+    border-bottom: 1px solid var(--border);
+    padding: 0.35rem 0.65rem;
+    background: color-mix(in oklch, var(--card) 96%, transparent);
+    backdrop-filter: blur(12px);
+}
+
+.map-panel-heading-spacer {
+    width: 2.5rem;
+    flex: none;
+}
+
+.map-center-list {
+    display: grid;
+    gap: 0.75rem;
+    padding: 0.85rem;
+}
+
+.map-center-card {
+    cursor: pointer;
+    opacity: 0;
+    animation: map-card-enter 380ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.map-center-card:hover,
+.map-center-card:focus-visible {
+    transform: translateY(-2px);
+    border-color: #e11d48;
+    box-shadow: 0 8px 20px rgb(159 18 57 / 10%);
+    outline: none;
+}
+
+.map-center-card.is-selected {
+    border-color: #e11d48;
+    box-shadow: 0 0 0 2px rgb(244 63 94 / 16%);
+}
+
+.map-empty-centers {
+    margin: 0.5rem;
+}
+
+.map-center-details {
+    animation: map-detail-enter 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.map-center-gallery {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.6rem;
+    padding: 0.85rem 0.85rem 0;
+}
+
+.map-center-photo {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 0.7rem;
+    background: linear-gradient(145deg, #e6efe6, #c8dcdb);
+}
+
+.map-center-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: map-photo-enter 420ms ease both;
+}
+
+.map-photo-placeholder {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    color: #52716a;
+    font-size: 0.78rem;
+}
+
+.map-photo-placeholder svg {
+    width: 1.7rem;
+    height: 1.7rem;
+    opacity: 0.75;
+}
+
+.map-detail-content {
+    padding: 1rem;
+}
+
+.map-detail-section {
+    margin: 1rem 0;
+    border-top: 1px solid hsl(var(--border));
+    padding-top: 0.8rem;
+    color: var(--muted-foreground);
+    font-size: 0.92rem;
+    line-height: 1.55;
+}
+
+.map-detail-section h4 {
+    margin-bottom: 0.35rem;
+    color: var(--foreground);
+    font-weight: 650;
+}
+
+.map-detail-section p + p {
+    margin-top: 0.3rem;
+}
+
+.map-coordinates {
+    font-size: 0.8rem;
+}
+
+.map-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.25rem;
+    padding: 0.9rem 0 0.35rem;
+    color: var(--muted-foreground);
+    font-size: 0.88rem;
+}
+
+.map-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.map-legend-dot {
+    display: inline-block;
+    width: 0.72rem;
+    height: 0.72rem;
+    border: 2px solid #fff;
+    border-radius: 9999px;
+    box-shadow: 0 0 0 1px currentColor;
+}
+
+.map-legend-dot--inamujer {
+    color: #be123c;
+    background: #be123c;
+}
+
+.map-legend-dot--ministerio {
+    color: #2563eb;
+    background: #2563eb;
+}
+
+.map-legend-dot--otra {
+    color: #475569;
+    background: #475569;
+}
+
+@keyframes map-panel-enter {
+    from {
+        opacity: 0;
+        transform: translateX(24px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes map-panel-exit {
+    to {
+        opacity: 0;
+        transform: translateX(22px);
+    }
+}
+
+@keyframes map-card-enter {
+    from {
+        opacity: 0;
+        transform: translate(20px, 8px) scale(0.985);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+    }
+}
+
+@keyframes map-detail-enter {
+    from {
+        opacity: 0;
+        transform: translateX(14px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes map-photo-enter {
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@media (max-width: 900px) {
+    .map-explorer,
+    .map-explorer.has-panel {
+        grid-template-columns: minmax(0, 1fr);
+        justify-items: stretch;
+        gap: 0.9rem;
+    }
+
+    .map-container {
+        height: auto;
+        aspect-ratio: 4 / 3;
+    }
+
+    .map-side-panel {
+        max-height: 65vh;
+    }
+}
+
+@media (min-width: 901px) and (max-width: 1200px) {
+    .map-container {
+        max-width: 64rem;
+        height: auto;
+        aspect-ratio: 16 / 10;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .map-explorer,
+    .map-side-panel,
+    .map-center-card,
+    .map-center-details,
+    .map-center-photo img {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
 }
