@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
-import { ArrowLeft, Newspaper } from 'lucide-react'
+import { Newspaper } from 'lucide-react'
+import BackArrowButton from '@/components/backArrowButton'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -115,9 +116,7 @@ export default function NewsForm() {
             {isEdit ? 'Actualiza la información de la noticia.' : 'Completa los datos para publicar una noticia.'}
           </p>
         </div>
-        <Button asChild variant="ghost" size="sm">
-          <Link to="/admin/noticias"><ArrowLeft className="mr-2 h-4 w-4" />Volver a noticias</Link>
-        </Button>
+        <BackArrowButton to="/admin/noticias" ariaLabel="Volver a noticias" />
       </div>
 
       {error && (

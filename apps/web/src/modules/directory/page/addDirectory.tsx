@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import BackArrowButton from '@/components/backArrowButton'
 import {
     Select,
     SelectContent,
@@ -25,12 +26,11 @@ import {
     Building2,
     FileText,
     AlertCircle,
-    ArrowLeft,
 } from 'lucide-react'
 import { useDirectoryForm } from '../hooks/useDirectoryForm'
 import { useLocations } from '../hooks/useLocations'
 import { FacebookLogoIcon, InstagramLogoIcon, TwitterLogoIcon, WhatsappLogoIcon, TiktokLogoIcon, LinkedinLogoIcon, YoutubeLogoIcon } from '@phosphor-icons/react'
-import { Link, useNavigate, useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 import { Textarea } from '@/components/ui/textarea'
 import FormField from '@/components/formField'
 import SectionHeader from '@/components/sectionHeader'
@@ -194,12 +194,7 @@ export default function AddDirectory() {
                             <Building2 className="w-3 h-3 mr-1" />
                             {isEdit ? 'Editar directorio' : 'Registro de directorio'}
                         </Badge>
-                        <Button variant="ghost" size="sm" asChild>
-                            <Link to="/admin/directorio">
-                                <ArrowLeft className="w-4 h-4 mr-2" />
-                                Volver al directorio
-                            </Link>
-                        </Button>
+                        <BackArrowButton to="/admin/directorio" ariaLabel="Volver al directorio" />
                     </div>
 
                     <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-2">
@@ -634,10 +629,7 @@ export default function AddDirectory() {
                         </Button>
 
                         {isEdit && (
-                            <Button type="button" variant="outline" onClick={() => navigate('/admin/directorio')}>
-                                <ArrowLeft className="w-4 h-4 mr-2" />
-                                Volver sin guardar
-                            </Button>
+                            <BackArrowButton onClick={() => navigate('/admin/directorio')} ariaLabel="Volver sin guardar" />
                         )}
                     </div>
 

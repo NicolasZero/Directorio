@@ -77,6 +77,27 @@ export const getCountDirectory = async (request, reply) => {
   }
 }
 
+export const getDirectoryStateCounts = async (request, reply) => {
+  try {
+    const response = await query(
+      `SELECT
+          e.nombre AS estado,
+          COUNT(d.id)::integer AS total_directorios
+        FROM estados e
+        LEFT JOIN municipios m ON m.estado_id = e.id
+        LEFT JOIN directorios d ON d.municipio_id = m.id
+        WHERE e.id <> 0
+        GROUP BY e.id, e.nombre
+        ORDER BY e.nombre`
+    )
+
+    return reply.code(200).send({ status: 'OK', data: response.rows })
+  } catch (error) {
+    console.error(error)
+    return reply.code(500).send({ status: 'failed', error: 'Error interno del servidor' })
+  }
+}
+
 export const getAllDirectories = async (request, reply) => {
   try {
     const count = await query(

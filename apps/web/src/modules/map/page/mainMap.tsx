@@ -4,7 +4,6 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
-    ArrowLeft,
     ExternalLink,
     Image as ImageIcon,
     MapPin,
@@ -12,6 +11,7 @@ import {
     Star,
     X,
 } from 'lucide-react'
+import BackArrowButton from '@/components/backArrowButton'
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch'
 import type { ReactZoomPanPinchContentRef } from 'react-zoom-pan-pinch'
 import Map from '@/modules/map/components/map'
@@ -394,14 +394,11 @@ const MapaInteractivo = () => {
                                     >
                                         <div className="map-panel-heading">
                                             {selectedCenter ? (
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    aria-label="Volver a las sedes del estado"
+                                                <BackArrowButton
+                                                    ariaLabel="Volver a las sedes del estado"
                                                     onClick={() => goBackToCenters(zoomToElement)}
-                                                >
-                                                    <ArrowLeft className="h-5 w-5" />
-                                                </Button>
+                                                    className="h-10 w-28"
+                                                />
                                             ) : (
                                                 <span className="map-panel-heading-spacer" />
                                             )}

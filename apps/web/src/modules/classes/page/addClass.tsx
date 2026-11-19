@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import BackArrowButton from '@/components/backArrowButton'
 import {
   Select,
   SelectContent,
@@ -13,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { ArrowLeft, CirclePlus, GraduationCap } from 'lucide-react'
+import { CirclePlus, GraduationCap } from 'lucide-react'
 
 type ModuleItem = {
   title: string
@@ -248,12 +249,7 @@ export default function AddClass() {
                   : 'Completa el formulario para crear un nuevo curso.'}
               </p>
             </div>
-            <Button variant="ghost" size="sm" asChild>
-              <Link to="/admin/clases">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Volver a clases
-              </Link>
-            </Button>
+            <BackArrowButton to="/admin/clases" ariaLabel="Volver a clases" />
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2 lg:pt-8">
@@ -488,9 +484,7 @@ export default function AddClass() {
               {saving ? 'Guardando...' : isEdit ? 'Guardar cambios' : 'Guardar curso'}
             </Button>
             {isEdit && (
-              <Button type="button" variant="outline" className="rounded-3xl" onClick={() => navigate('/admin/clases')}>
-                Volver sin guardar
-              </Button>
+              <BackArrowButton onClick={() => navigate('/admin/clases')} ariaLabel="Volver sin guardar" />
             )}
           </div>
           <div className="max-w-2xl mt-4 space-y-4">

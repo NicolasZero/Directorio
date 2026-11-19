@@ -1,8 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { AlertTriangle, ArrowRight } from "lucide-react"
-import { Link } from "react-router"
+import BackArrowButton from '@/components/backArrowButton'
+import { AlertTriangle } from "lucide-react"
 
 function NotFound() {
   return (
@@ -25,11 +24,7 @@ function NotFound() {
         <CardContent>
           <div className="rounded-3xl bg-rose-50 dark:bg-muted p-6 text-center">
             <p className="text-2xl font-semibold text-rose-600 dark:text-rose-100 mb-3">Ups, parece que te perdiste.</p>
-            <Button asChild size="lg" className="bg-rose-600 text-rose-100 hover:bg-rose-800! dark:bg-rose-900 dark:hover:bg-rose-800">
-              <Link to="/" replace>
-                Volver al inicio <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+            <BackArrowButton to="/" replace ariaLabel="Volver al inicio" className="mx-auto" />
           </div>
         </CardContent>
       </Card>

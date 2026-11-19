@@ -1,6 +1,7 @@
 ﻿import { type SubmitEvent, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { Button } from '@/components/ui/button'
+import BackArrowButton from '@/components/backArrowButton'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/context/authContext.tsx'
 
@@ -75,9 +76,7 @@ function Login() {
         >
           ¿Olvidaste tu contraseña?
         </button> */}
-        <Button type="button" onClick={() => navigate('/')} variant="link" className="text-rose-600 dark:text-rose-400">
-          Volver a la página principal
-        </Button>
+        <BackArrowButton onClick={() => navigate('/')} ariaLabel="Volver a la página principal" className="mx-auto" />
       </fieldset>
 
       {error ? (

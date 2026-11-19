@@ -2,7 +2,8 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Clock, User, BarChart, BookOpen, Calendar, CheckCircle2, AlertCircle, GraduationCap } from "lucide-react"
+import BackArrowButton from "@/components/backArrowButton"
+import { Clock, User, BarChart, BookOpen, Calendar, CheckCircle2, AlertCircle, GraduationCap } from "lucide-react"
 import { Link, useParams } from "react-router"
 import { useAuth } from "@/context/authContext"
 import type { ClassDetailType } from "@/modules/classes/schemas/classDetailSchema"
@@ -74,17 +75,7 @@ export default function ClassesDetail() {
     <section className="px-4 overflow-hidden">
       <div className="container mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-rose-600 hover:text-rose-700 hover:bg-rose-200"
-            asChild
-          >
-            <Link to="/clases">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Volver a Cursos
-            </Link>
-          </Button>
+          <BackArrowButton to="/clases" ariaLabel="Volver a cursos" />
           {status === 'authenticated' && (
             <Button
               variant="secondary"
