@@ -7,7 +7,7 @@ const AdminLayout = () => {
         <div className="h-screen flex flex-col justify-between">
             <Header />
             <Navbar />
-            <main className="flex-2">
+            <main className="flex-2 pb-3">
                 <Outlet />
             </main>
             <footer className="p-4 bg-rose-700 dark:bg-rose-950">
