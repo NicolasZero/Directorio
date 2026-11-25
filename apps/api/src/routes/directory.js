@@ -1,5 +1,5 @@
 import { authenticate } from '../middlewares/authMiddleware.js'
-import { getDirectories, getDirectoryById, createDirectory, updateDirectory, deleteDirectory, getCountDirectory, getDirectoryStateCounts, getAllDirectories } from '../controllers/directoryController.js'
+import { getDirectories, getDirectoryById, createDirectory, updateDirectory, deleteDirectory, getCountDirectory, getDirectoryStateCounts, getDirectoryMunicipalities, getAllDirectories } from '../controllers/directoryController.js'
 
 export default async function (fastify) {
     // GET routes are public
@@ -7,6 +7,7 @@ export default async function (fastify) {
     fastify.get('/all', getAllDirectories)
     fastify.get('/count', getCountDirectory)
     fastify.get('/state-counts', getDirectoryStateCounts)
+    fastify.get('/municipalities', getDirectoryMunicipalities)
     fastify.get('/:id', getDirectoryById)
 
     // Protected routes: require authentication

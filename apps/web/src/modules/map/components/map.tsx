@@ -60,9 +60,8 @@ interface Projection {
 }
 
 const WIDTH = 1400
-const HEIGHT = 800
-const PADDING = 24
-const MAP_BOUNDS = { west: -79.6, east: -53, south: -0.5, north: 14.7 }
+const HEIGHT = 1100
+const PADDING = 42
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
     typeof value === 'object' && value !== null
@@ -168,8 +167,17 @@ const createProjection = (features: MapFeature[]): Projection | null => {
 
     if (features.length === 0) return null
 
-    const [minX, maxY] = projectGeographic([MAP_BOUNDS.west, MAP_BOUNDS.north])
-    const [maxX, minY] = projectGeographic([MAP_BOUNDS.east, MAP_BOUNDS.south])
+    const projectedPoints = features.flatMap((feature) =>
+        getPolygons(feature.geometry).flatMap((polygon) =>
+            polygon.flatMap((ring) => ring.map(projectGeographic)),
+        ),
+    )
+    const xValues = projectedPoints.map(([x]) => x)
+    const yValues = projectedPoints.map(([, y]) => y)
+    const minX = Math.min(...xValues)
+    const maxX = Math.max(...xValues)
+    const minY = Math.min(...yValues)
+    const maxY = Math.max(...yValues)
     const rangeX = maxX - minX
     const rangeY = maxY - minY
     if (rangeX === 0 || rangeY === 0) return null
@@ -352,23 +360,17 @@ export default function Mapa({
 
         const loadBoundaries = async () => {
             try {
-                const [boundariesResponse, neighborsResponse] = await Promise.all([
-                    fetch(new URL('../assets/venezuela-estados.geojson', import.meta.url)),
-                    fetch(new URL('../assets/venezuela-paises-vecinos.geojson', import.meta.url)),
-                ])
-                if (!boundariesResponse.ok || !neighborsResponse.ok) {
-                    throw new Error(
-                        `Error HTTP ${!boundariesResponse.ok ? boundariesResponse.status : neighborsResponse.status}`
-                    )
+                const boundariesResponse = await fetch(
+                    new URL('../assets/venezuela-estados.geojson', import.meta.url),
+                )
+                if (!boundariesResponse.ok) {
+                    throw new Error(`Error HTTP ${boundariesResponse.status}`)
                 }
 
-                const [boundaries, neighbors] = await Promise.all([
-                    boundariesResponse.json().then(parseFeatureCollection),
-                    neighborsResponse.json().then(parseFeatureCollection),
-                ])
+                const boundaries = await boundariesResponse.json().then(parseFeatureCollection)
                 if (cancelled) return
 
-                setFeatures([...neighbors, ...boundaries])
+                setFeatures(boundaries)
                 onLoadError(null)
             } catch (error) {
                 if (cancelled) return
@@ -425,7 +427,7 @@ export default function Mapa({
             viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
             preserveAspectRatio="xMidYMid meet"
             role="group"
-            aria-label="Mapa interactivo de Venezuela y países limítrofes"
+            aria-label="Mapa interactivo de Venezuela"
         >
             <defs>
                 <clipPath id="map-geography-clip">
@@ -449,31 +451,8 @@ export default function Mapa({
                     <stop offset="100%" stopColor="#4f3478" />
                 </linearGradient>
             </defs>
-            <text
-                className={`map-water-label${selectedRegionKey ? ' is-hidden' : ''}`}
-                x="700"
-                y="54"
-                transform={keepScreenSizeTransform([700, 54], zoomScale)}
-                aria-hidden="true"
-                clipPath="url(#map-geography-clip)"
-            >
-                Mar Caribe
-            </text>
             <g className={`map-regions${selectedRegionKey ? ' is-focused' : ''}`} clipPath="url(#map-geography-clip)">
-                {features
-                    .filter((feature) => feature.properties.kind === 'neighbor')
-                    .map((feature) => (
-                        <path
-                            key={feature.id}
-                            className="map-neighbor-country"
-                            d={projection.path(feature.geometry)}
-                            fillRule="evenodd"
-                            aria-hidden="true"
-                        >
-                            <title>{feature.properties.name}</title>
-                        </path>
-                    ))}
-                {features.filter((feature) => feature.properties.kind !== 'neighbor').map((feature) => {
+                {features.map((feature) => {
                     const key = feature.properties.databaseName ?? feature.properties.mapName
                     const isSelected = key !== null && key === selectedRegionKey
                     const id = featureElementId(feature.id)
@@ -507,24 +486,6 @@ export default function Mapa({
                         </path>
                     )
                 })}
-                <text className="map-country-label" x={projection.point([-73.6, 5.2])[0]} y={projection.point([-73.6, 5.2])[1]} transform={keepScreenSizeTransform(projection.point([-73.6, 5.2]), zoomScale)}>
-                    Colombia
-                </text>
-                <text className="map-country-label map-country-label--regional" x={projection.point([-85.4, 12.1])[0]} y={projection.point([-85.4, 12.1])[1]} transform={keepScreenSizeTransform(projection.point([-85.4, 12.1]), zoomScale)}>
-                    Nicaragua
-                </text>
-                <text className="map-country-label map-country-label--regional" x={projection.point([-84.4, 9.5])[0]} y={projection.point([-84.4, 9.5])[1]} transform={keepScreenSizeTransform(projection.point([-84.4, 9.5]), zoomScale)}>
-                    Costa Rica
-                </text>
-                <text className="map-country-label" x={projection.point([-62, 0.4])[0]} y={projection.point([-62, 0.4])[1]} transform={keepScreenSizeTransform(projection.point([-62, 0.4]), zoomScale)}>
-                    Brasil
-                </text>
-                <text className="map-country-label map-country-label--guyana" x={projection.point([-57.4, 7.2])[0]} y={projection.point([-57.4, 7.2])[1]} transform={keepScreenSizeTransform(projection.point([-57.4, 7.2]), zoomScale)}>
-                    Guyana
-                </text>
-                <text className="map-country-label" x={projection.point([-55.7, 4.3])[0]} y={projection.point([-55.7, 4.3])[1]} transform={keepScreenSizeTransform(projection.point([-55.7, 4.3]), zoomScale)}>
-                    Suriname
-                </text>
                 {labelPlacements.map(({ feature, title, anchor, position }) => (
                     <g
                         key={`label-${feature.id}`}
@@ -576,7 +537,7 @@ export default function Mapa({
                             }}
                         >
                             <circle className="map-center-hit-area" r="11" />
-                            <circle className="map-center-dot" r={isSelected ? 8 : 7} />
+                            <path className="map-center-icon" d="M-8 -1 0 -7.5 8 -1 6.5 0.8 6.5 7 -6.5 7 -6.5 0.8 -8 -1Z M-1.6 7V2H1.6V7Z" fillRule="evenodd" />
                             <title>{label}</title>
                         </g>
                     )

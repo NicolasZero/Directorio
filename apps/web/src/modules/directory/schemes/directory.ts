@@ -19,6 +19,8 @@ export interface DirectoryDetailData {
   municipio: string
   estado: string
   horario: string
+  latitud: number | null
+  longitud: number | null
   servicios?: string[]
   responsables?: Responsable[]
   redes?: RedSocial[]
@@ -33,4 +35,28 @@ export interface DirectoryEntry {
   foto?: string
   municipio: string
   estado: string
+}
+
+export const getCoordinateValidationError = (latitude: string, longitude: string) => {
+  const hasLatitude = latitude.trim() !== ''
+  const hasLongitude = longitude.trim() !== ''
+
+  if (!hasLatitude && !hasLongitude) return null
+  if (!hasLatitude || !hasLongitude) return 'Ingresa latitud y longitud, o deja ambos campos vacíos.'
+
+  const latitudeValue = Number(latitude)
+  const longitudeValue = Number(longitude)
+
+  if (
+    !Number.isFinite(latitudeValue) ||
+    !Number.isFinite(longitudeValue) ||
+    latitudeValue < -90 ||
+    latitudeValue > 90 ||
+    longitudeValue < -180 ||
+    longitudeValue > 180
+  ) {
+    return 'Las coordenadas deben estar dentro de los rangos geográficos válidos.'
+  }
+
+  return null
 }

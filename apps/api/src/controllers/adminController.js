@@ -4,7 +4,7 @@ export const getAdminStats = async (request, reply) => {
   try {
     const response = await query(
       `SELECT
-        (SELECT COUNT(*) FROM directorios) AS directorios,
+        (SELECT COUNT(*) FROM centros WHERE tipo_registro = 'DIRECTORIO') AS directorios,
         (SELECT COUNT(*) FROM courses) AS cursos`
     )
 

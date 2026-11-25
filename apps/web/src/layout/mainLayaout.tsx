@@ -5,10 +5,10 @@ import Navbar from "@/components/navbar";
 
 const MainLayout = () => {
     return (
-        <div className="h-screen flex flex-col justify-between">
+        <div className="min-h-screen w-full flex flex-col">
             <Header />
             <Navbar />
-            <main className="flex-2">
+            <main className="w-full flex-1">
                 <Outlet />
             </main>
             <Footer />

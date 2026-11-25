@@ -45,13 +45,15 @@ const Navbar = () => {
                 <button
                     className="md:hidden p-2 -ml-2 rounded-md hover:bg-black/20 focus:outline-none transition-colors"
                     onClick={toggleMenu}
-                    aria-label="Toggle menu"
+                    aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
+                    aria-expanded={isOpen}
+                    aria-controls="mobile-navigation"
                 >
                     {isOpen ? <X size={24} /> : <Menu size={24} />}
                 </button>
 
                 {/* Desktop Menu */}
-                <ul className="overflow-auto w-screen hidden md:flex flex-row items-center gap-1">
+                <ul className="hidden min-w-0 flex-1 flex-row items-center gap-1 overflow-x-auto md:flex">
                     {publicLinks.map((link) => (
                         <li key={link.path} className="flex-1 rounded-md">
                             <NavLink
@@ -108,7 +110,7 @@ const Navbar = () => {
 
             {/* Mobile Menu Dropdown */}
             {isOpen && (
-                <div className="md:hidden absolute top-full left-0 w-full bg-rose-700 dark:bg-rose-900 shadow-xl border-t border-white/10 flex flex-col">
+                <div id="mobile-navigation" className="md:hidden absolute top-full left-0 w-full bg-rose-700 dark:bg-rose-900 shadow-xl border-t border-white/10 flex flex-col">
                     <ul className="flex flex-col">
                         {publicLinks.map((link) => (
                             <li key={link.path} className="px-3">

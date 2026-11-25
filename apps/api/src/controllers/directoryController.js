@@ -1,4 +1,28 @@
-import query from '../database/postgre.js'
+import query, { withTransaction } from '../database/postgre.js'
+
+const parseCoordinatePair = (latitude, longitude) => {
+  const latitudeValue = latitude == null || String(latitude).trim() === '' ? null : Number(latitude)
+  const longitudeValue = longitude == null || String(longitude).trim() === '' ? null : Number(longitude)
+
+  if (latitudeValue === null && longitudeValue === null) {
+    return { valid: true, latitude: null, longitude: null }
+  }
+
+  if (
+    latitudeValue === null ||
+    longitudeValue === null ||
+    !Number.isFinite(latitudeValue) ||
+    !Number.isFinite(longitudeValue) ||
+    latitudeValue < -90 ||
+    latitudeValue > 90 ||
+    longitudeValue < -180 ||
+    longitudeValue > 180
+  ) {
+    return { valid: false }
+  }
+
+  return { valid: true, latitude: latitudeValue, longitude: longitudeValue }
+}
 
 export const getDirectories = async (request, reply) => {
   const { estado, municipio, search, page, limit } = request.query || {}
@@ -21,6 +45,7 @@ export const getDirectories = async (request, reply) => {
     conditions.push(`d.nombre ILIKE $${values.length}`)
   }
 
+  conditions.push(`d.tipo_registro = 'DIRECTORIO'`)
   const parsedPage = parseInt(page, 10) || 1
   const parsedLimit = parseInt(limit, 10) || 9
   const offset = (parsedPage - 1) * parsedLimit
@@ -45,7 +70,7 @@ export const getDirectories = async (request, reply) => {
           d.horario,
           m.nombre AS municipio,
           e.nombre AS estado
-        FROM directorios d
+        FROM centros d
         JOIN municipios m ON m.id = d.municipio_id
         JOIN estados e ON e.id = m.estado_id
         ${whereClause}
@@ -62,13 +87,32 @@ export const getDirectories = async (request, reply) => {
 }
 
 export const getCountDirectory = async (request, reply) => {
+  const { estado } = request.query || {}
+
   try {
     const response = await query(
-      `SELECT 
-        count(*) as total_centros,
-        COUNT(distinct estado_id) as total_estados,
-        count(distinct municipio_id) as total_municipios
-      FROM directorios`
+      `WITH directorios AS (
+         SELECT e.id AS estado_id, d.municipio_id, d.latitud, d.longitud, d.direccion
+         FROM centros d
+         JOIN municipios m ON m.id = d.municipio_id
+         JOIN estados e ON e.id = m.estado_id
+         WHERE d.tipo_registro = 'DIRECTORIO'
+           AND ($1::varchar IS NULL OR e.nombre = $1)
+       ),
+       sedes AS (
+         SELECT municipio_id, latitud, longitud, LOWER(BTRIM(direccion)) AS direccion
+         FROM directorios
+         WHERE latitud IS NOT NULL
+           AND longitud IS NOT NULL
+         GROUP BY municipio_id, latitud, longitud, LOWER(BTRIM(direccion))
+       )
+       SELECT
+         (SELECT COUNT(*)::integer FROM directorios) AS total_defensoras,
+         (SELECT COUNT(*)::integer FROM sedes) AS total_centros,
+         COUNT(DISTINCT estado_id)::integer AS total_estados,
+         COUNT(DISTINCT municipio_id)::integer AS total_municipios
+       FROM directorios`,
+      [estado || null]
     )
     return reply.code(200).send({ status: 'OK', data: response.rows[0] })
   } catch (error) {
@@ -85,7 +129,9 @@ export const getDirectoryStateCounts = async (request, reply) => {
           COUNT(d.id)::integer AS total_directorios
         FROM estados e
         LEFT JOIN municipios m ON m.estado_id = e.id
-        LEFT JOIN directorios d ON d.municipio_id = m.id
+        LEFT JOIN centros d
+          ON d.municipio_id = m.id
+          AND d.tipo_registro = 'DIRECTORIO'
         WHERE e.id <> 0
         GROUP BY e.id, e.nombre
         ORDER BY e.nombre`
@@ -98,12 +144,42 @@ export const getDirectoryStateCounts = async (request, reply) => {
   }
 }
 
+export const getDirectoryMunicipalities = async (request, reply) => {
+  const { estado } = request.query || {}
+
+  if (!estado) {
+    return reply.code(400).send({ status: 'BAD_REQUEST', error: 'El estado es obligatorio' })
+  }
+
+  try {
+    const response = await query(
+      `SELECT DISTINCT m.nombre AS municipio
+       FROM centros d
+       JOIN municipios m ON m.id = d.municipio_id
+       JOIN estados e ON e.id = m.estado_id
+       WHERE d.tipo_registro = 'DIRECTORIO'
+         AND e.nombre = $1
+       ORDER BY m.nombre`,
+      [estado]
+    )
+
+    return reply.code(200).send({
+      status: 'OK',
+      data: response.rows.map((row) => row.municipio),
+    })
+  } catch (error) {
+    console.error(error)
+    return reply.code(500).send({ status: 'failed', error: 'Error interno del servidor' })
+  }
+}
+
 export const getAllDirectories = async (request, reply) => {
   try {
     const count = await query(
       `SELECT
           COUNT(*) as total_centros
-        FROM directorios`
+        FROM centros
+        WHERE tipo_registro = 'DIRECTORIO'`
     )
 
     const response = await query(
@@ -118,9 +194,10 @@ export const getAllDirectories = async (request, reply) => {
           d.horario,
           m.nombre AS municipio,
           e.nombre AS estado
-        FROM directorios d
+        FROM centros d
         JOIN municipios m ON m.id = d.municipio_id
         JOIN estados e ON e.id = m.estado_id
+        WHERE d.tipo_registro = 'DIRECTORIO'
         ORDER BY d.nombre`
     )
     return reply.code(200).send({ status: 'OK', data: response.rows, count: count.rows[0].total_centros })
@@ -144,32 +221,35 @@ export const getDirectoryById = async (request, reply) => {
           d.correo,
           d.foto,
           d.horario,
+          d.latitud::double precision AS latitud,
+          d.longitud::double precision AS longitud,
           m.nombre AS municipio,
           e.nombre AS estado,
           (
             SELECT json_agg(servicio ORDER BY created_at)
-            FROM servicios_directorio sd
-            WHERE sd.directorio_id = d.id
+            FROM servicios_centro sd
+            WHERE sd.centro_id = d.id
           ) AS servicios,
           (
             SELECT json_agg(jsonb_build_object('nombre', nombre, 'cargo', cargo) ORDER BY created_at)
-            FROM responsables_directorio rd
-            WHERE rd.directorio_id = d.id
+            FROM responsables_centro rd
+            WHERE rd.centro_id = d.id
           ) AS responsables,
           (
             SELECT json_agg(jsonb_build_object('nombre', nombre, 'url', url, 'icono', icono) ORDER BY created_at)
-            FROM redes_directorio rd
-            WHERE rd.directorio_id = d.id
+            FROM redes_centro rd
+            WHERE rd.centro_id = d.id
           ) AS redes,
           (
             SELECT json_agg(requisito ORDER BY created_at)
-            FROM requisitos_directorio rd
-            WHERE rd.directorio_id = d.id
+            FROM requisitos_centro rd
+            WHERE rd.centro_id = d.id
           ) AS requisitos
-        FROM directorios d
+        FROM centros d
         JOIN municipios m ON m.id = d.municipio_id
         JOIN estados e ON e.id = m.estado_id
-        WHERE d.id = $1`,
+        WHERE d.id = $1
+          AND d.tipo_registro = 'DIRECTORIO'`,
       [id]
     )
 
@@ -184,6 +264,70 @@ export const getDirectoryById = async (request, reply) => {
   }
 }
 
+const insertRows = async (client, table, columns, rows) => {
+  if (rows.length === 0) return
+
+  const placeholders = rows.map((_, rowIndex) => {
+    const values = columns.map((_, columnIndex) => `$${rowIndex * columns.length + columnIndex + 1}`)
+    return `(${values.join(', ')})`
+  })
+
+  await client.query(
+    `INSERT INTO ${table} (${columns.join(', ')}) VALUES ${placeholders.join(', ')}`,
+    rows.flat()
+  )
+}
+
+const insertDirectoryRelations = async (client, directoryId, { servicios, responsables, redes, requisitos }) => {
+  await insertRows(
+    client,
+    'servicios_centro',
+    ['centro_id', 'servicio'],
+    servicios
+      .filter((service) => typeof service === 'string' && service.trim())
+      .map((service) => [directoryId, service.trim()])
+  )
+  await insertRows(
+    client,
+    'responsables_centro',
+    ['centro_id', 'nombre', 'cargo'],
+    responsables
+      .filter((responsable) =>
+        typeof responsable?.nombre === 'string' &&
+        responsable.nombre.trim() &&
+        typeof responsable?.cargo === 'string' &&
+        responsable.cargo.trim()
+      )
+      .map((responsable) => [directoryId, responsable.nombre.trim(), responsable.cargo.trim()])
+  )
+  await insertRows(
+    client,
+    'redes_centro',
+    ['centro_id', 'nombre', 'url', 'icono'],
+    redes
+      .filter((red) =>
+        typeof red?.nombre === 'string' &&
+        red.nombre.trim() &&
+        typeof red?.url === 'string' &&
+        red.url.trim()
+      )
+      .map((red) => [
+        directoryId,
+        red.nombre.trim(),
+        red.url.trim(),
+        typeof red.icono === 'string' && red.icono.trim() ? red.icono.trim() : null,
+      ])
+  )
+  await insertRows(
+    client,
+    'requisitos_centro',
+    ['centro_id', 'requisito'],
+    requisitos
+      .filter((requirement) => typeof requirement === 'string' && requirement.trim())
+      .map((requirement) => [directoryId, requirement.trim()])
+  )
+}
+
 export const createDirectory = async (request, reply) => {
   const {
     nombre,
@@ -193,6 +337,8 @@ export const createDirectory = async (request, reply) => {
     correo,
     foto,
     horario,
+    latitud,
+    longitud,
     estado,
     municipio,
     servicios = [],
@@ -206,78 +352,42 @@ export const createDirectory = async (request, reply) => {
     return reply.code(400).send({ status: 'BAD_REQUEST', error: 'Campos obligatorios faltantes' })
   }
 
+  const coordinates = parseCoordinatePair(latitud, longitud)
+  if (!coordinates.valid) {
+    return reply.code(400).send({
+      status: 'BAD_REQUEST',
+      error: 'Indica latitud y longitud válidas, o deja ambos campos vacíos'
+    })
+  }
+
   try {
-    // Iniciar transacción
-    await query('BEGIN')
-
-    // Obtener municipio_id
-    const municipioResult = await query(
-      `SELECT m.id as "municipioId", e.id as "estadoId" FROM municipios m
-       JOIN estados e ON e.id = m.estado_id
-       WHERE e.nombre = $1 AND m.nombre = $2`,
-      [estado, municipio]
-    )
-
-    if (municipioResult.rowCount === 0) {
-      await query('ROLLBACK')
+    const locationIds = await getLocationIds(estado, municipio)
+    if (!locationIds) {
       return reply.code(400).send({ status: 'BAD_REQUEST', error: 'Estado o municipio no encontrado' })
     }
 
-    const municipioId = municipioResult.rows[0].municipioId
-    const estadoId = municipioResult.rows[0].estadoId
-
-    // Insertar directorio
-    const directorioResult = await query(
-      `INSERT INTO directorios (nombre, descripcion, direccion, telefono, correo, foto, estado_id, municipio_id, horario)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-       RETURNING id`,
-      [nombre, descripcion, direccion, telefono, correo, foto, estadoId, municipioId, horario]
-    )
-
-    const directorioId = directorioResult.rows[0].id
-
-    // Insertar servicios
-    if (servicios.length > 0) {
-      const servicioValues = servicios.map(servicio => `(${directorioId}, '${servicio.replace(/'/g, "''")}')`).join(', ')
-      await query(
-        `INSERT INTO servicios_directorio (directorio_id, servicio) VALUES ${servicioValues}`
+    const directoryId = await withTransaction(async (client) => {
+      const directoryResult = await client.query(
+        `INSERT INTO centros (
+           tipo_registro, fuente, fuente_id, nombre, descripcion, direccion, telefono,
+           correo, foto, estado_id, municipio_id, latitud, longitud, horario
+         )
+         VALUES ('DIRECTORIO', 'ADMIN', NULL, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+         RETURNING id`,
+        [
+          nombre, descripcion, direccion, telefono, correo, foto,
+          locationIds.estado_id, locationIds.municipio_id,
+          coordinates.latitude, coordinates.longitude, horario
+        ]
       )
-    }
 
-    // Insertar responsables
-    if (responsables.length > 0) {
-      const responsableValues = responsables.map(r =>
-        `(${directorioId}, '${r.nombre.replace(/'/g, "''")}', '${r.cargo.replace(/'/g, "''")}')`
-      ).join(', ')
-      await query(
-        `INSERT INTO responsables_directorio (directorio_id, nombre, cargo) VALUES ${responsableValues}`
-      )
-    }
+      const id = directoryResult.rows[0].id
+      await insertDirectoryRelations(client, id, { servicios, responsables, redes, requisitos })
+      return id
+    })
 
-    // Insertar redes
-    if (redes.length > 0) {
-      const redValues = redes.map(r =>
-        `(${directorioId}, '${r.nombre.replace(/'/g, "''")}', '${r.url.replace(/'/g, "''")}', ${r.icono ? `'${r.icono.replace(/'/g, "''")}'` : 'NULL'})`
-      ).join(', ')
-      await query(
-        `INSERT INTO redes_directorio (directorio_id, nombre, url, icono) VALUES ${redValues}`
-      )
-    }
-
-    // Insertar requisitos
-    if (requisitos.length > 0) {
-      const requisitoValues = requisitos.map(req => `(${directorioId}, '${req.replace(/'/g, "''")}')`).join(', ')
-      await query(
-        `INSERT INTO requisitos_directorio (directorio_id, requisito) VALUES ${requisitoValues}`
-      )
-    }
-
-    // Confirmar transacción
-    await query('COMMIT')
-
-    return reply.code(201).send({ status: 'CREATED', message: 'Directorio creado exitosamente', id: directorioId })
+    return reply.code(201).send({ status: 'CREATED', message: 'Directorio creado exitosamente', id: directoryId })
   } catch (error) {
-    await query('ROLLBACK')
     console.error(error)
     return reply.code(500).send({ status: 'failed', error: 'Error interno del servidor' })
   }
@@ -309,6 +419,8 @@ export const updateDirectory = async (request, reply) => {
     correo,
     foto,
     horario,
+    latitud,
+    longitud,
     estado,
     municipio,
     servicios = [],
@@ -321,83 +433,58 @@ export const updateDirectory = async (request, reply) => {
     return reply.code(400).send({ status: 'BAD_REQUEST', error: 'Campos obligatorios faltantes' })
   }
 
-  const locationIds = await getLocationIds(estado, municipio)
-  if (!locationIds) {
-    return reply.code(400).send({ status: 'BAD_REQUEST', error: 'Estado o municipio no encontrado' })
+  const coordinates = parseCoordinatePair(latitud, longitud)
+  if (!coordinates.valid) {
+    return reply.code(400).send({
+      status: 'BAD_REQUEST',
+      error: 'Indica latitud y longitud válidas, o deja ambos campos vacíos'
+    })
   }
 
   try {
-    await query('BEGIN')
+    const locationIds = await getLocationIds(estado, municipio)
+    if (!locationIds) {
+      return reply.code(400).send({ status: 'BAD_REQUEST', error: 'Estado o municipio no encontrado' })
+    }
 
-    const updateResult = await query(
-      `UPDATE directorios
-       SET nombre = $1,
-           descripcion = $2,
-           direccion = $3,
-           telefono = $4,
-           correo = $5,
-           foto = $6,
-           horario = $7,
-           estado_id = $8,
-           municipio_id = $9
-       WHERE id = $10`,
-      [nombre, descripcion, direccion, telefono, correo, foto, horario, locationIds.estado_id, locationIds.municipio_id, id]
-    )
+    const updated = await withTransaction(async (client) => {
+      const updateResult = await client.query(
+        `UPDATE centros
+         SET nombre = $1,
+             descripcion = $2,
+             direccion = $3,
+             telefono = $4,
+             correo = $5,
+             foto = $6,
+             horario = $7,
+             estado_id = $8,
+             municipio_id = $9,
+             latitud = $10,
+             longitud = $11
+         WHERE id = $12
+           AND tipo_registro = 'DIRECTORIO'`,
+        [
+          nombre, descripcion, direccion, telefono, correo, foto, horario,
+          locationIds.estado_id, locationIds.municipio_id,
+          coordinates.latitude, coordinates.longitude, id
+        ]
+      )
 
-    if (updateResult.rowCount === 0) {
-      await query('ROLLBACK')
+      if (updateResult.rowCount === 0) return false
+
+      await client.query('DELETE FROM servicios_centro WHERE centro_id = $1', [id])
+      await client.query('DELETE FROM responsables_centro WHERE centro_id = $1', [id])
+      await client.query('DELETE FROM redes_centro WHERE centro_id = $1', [id])
+      await client.query('DELETE FROM requisitos_centro WHERE centro_id = $1', [id])
+      await insertDirectoryRelations(client, id, { servicios, responsables, redes, requisitos })
+      return true
+    })
+
+    if (!updated) {
       return reply.code(404).send({ status: 'NOT_FOUND', error: 'Directorio no encontrado' })
     }
-
-    await query('DELETE FROM servicios_directorio WHERE directorio_id = $1', [id])
-    await query('DELETE FROM responsables_directorio WHERE directorio_id = $1', [id])
-    await query('DELETE FROM redes_directorio WHERE directorio_id = $1', [id])
-    await query('DELETE FROM requisitos_directorio WHERE directorio_id = $1', [id])
-
-    for (const servicio of servicios) {
-      if (servicio?.trim()) {
-        await query(
-          `INSERT INTO servicios_directorio (directorio_id, servicio)
-           VALUES ($1, $2)`,
-          [id, servicio.trim()]
-        )
-      }
-    }
-
-    for (const responsable of responsables) {
-      if (responsable?.nombre && responsable?.cargo) {
-        await query(
-          `INSERT INTO responsables_directorio (directorio_id, nombre, cargo)
-           VALUES ($1, $2, $3)`,
-          [id, responsable.nombre.trim(), responsable.cargo.trim()]
-        )
-      }
-    }
-
-    for (const red of redes) {
-      if (red?.nombre && red?.url) {
-        await query(
-          `INSERT INTO redes_directorio (directorio_id, nombre, url, icono)
-           VALUES ($1, $2, $3, $4)`,
-          [id, red.nombre.trim(), red.url.trim(), red.icono || null]
-        )
-      }
-    }
-
-    for (const requisito of requisitos) {
-      if (requisito?.trim()) {
-        await query(
-          `INSERT INTO requisitos_directorio (directorio_id, requisito)
-           VALUES ($1, $2)`,
-          [id, requisito.trim()]
-        )
-      }
-    }
-
-    await query('COMMIT')
     return reply.code(200).send({ status: 'OK', message: 'Directorio actualizado exitosamente' })
   } catch (error) {
-    await query('ROLLBACK')
     console.error(error)
     return reply.code(500).send({ status: 'failed', error: 'Error interno del servidor' })
   }
@@ -407,23 +494,35 @@ export const deleteDirectory = async (request, reply) => {
   const { id } = request.params
 
   try {
-    await query('BEGIN')
+    const deleted = await withTransaction(async (client) => {
+      const directoryResult = await client.query(
+        `SELECT id
+         FROM centros
+         WHERE id = $1 AND tipo_registro = 'DIRECTORIO'
+         FOR UPDATE`,
+        [id]
+      )
+      if (directoryResult.rowCount === 0) return false
 
-    await query('DELETE FROM servicios_directorio WHERE directorio_id = $1', [id])
-    await query('DELETE FROM responsables_directorio WHERE directorio_id = $1', [id])
-    await query('DELETE FROM redes_directorio WHERE directorio_id = $1', [id])
+      await client.query('DELETE FROM servicios_centro WHERE centro_id = $1', [id])
+      await client.query('DELETE FROM responsables_centro WHERE centro_id = $1', [id])
+      await client.query('DELETE FROM redes_centro WHERE centro_id = $1', [id])
+      await client.query('DELETE FROM requisitos_centro WHERE centro_id = $1', [id])
 
-    const deleteResult = await query('DELETE FROM directorios WHERE id = $1', [id])
+      const deleteResult = await client.query(
+        `DELETE FROM centros
+         WHERE id = $1 AND tipo_registro = 'DIRECTORIO'`,
+        [id]
+      )
+      return deleteResult.rowCount > 0
+    })
 
-    if (deleteResult.rowCount === 0) {
-      await query('ROLLBACK')
+    if (!deleted) {
       return reply.code(404).send({ status: 'NOT_FOUND', error: 'Directorio no encontrado' })
     }
 
-    await query('COMMIT')
     return reply.code(200).send({ status: 'OK', message: 'Directorio eliminado exitosamente' })
   } catch (error) {
-    await query('ROLLBACK')
     console.error(error)
     return reply.code(500).send({ status: 'failed', error: 'Error interno del servidor' })
   }

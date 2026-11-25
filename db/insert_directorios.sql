@@ -1,26 +1,22 @@
 -- ============================================================================
--- Script de migración de datos: Tabla `directorios`
+-- Script de importación de datos del directorio a la tabla unificada `centros`
 -- Archivo generado desde: data.directorio.csv (133 registros)
 -- Destino: PostgreSQL. Requiere ejecutar primero create_table.sql e inster_data.sql.
--- Los IDs existentes se conservan; los IDs duplicados no se vuelven a insertar.
+-- Los IDs del archivo se guardan como fuente_id para permitir reimportaciones idempotentes.
 -- ============================================================================
 
 BEGIN;
 
-INSERT INTO directorios (
-    id,
-    nombre,
-    descripcion,
-    direccion,
-    telefono,
-    correo,
-    foto,
-    estado_id,
-    municipio_id,
-    horario,
-    created_at
-) OVERRIDING SYSTEM VALUE
-VALUES
+INSERT INTO centros (
+    tipo_registro, fuente, fuente_id, nombre, descripcion, direccion, telefono,
+    correo, foto, estado_id, municipio_id, horario, created_at
+)
+SELECT
+    'DIRECTORIO', 'DIRECTORIO', source_data.id, source_data.nombre,
+    source_data.descripcion, source_data.direccion, source_data.telefono,
+    source_data.correo, source_data.foto, source_data.estado_id,
+    source_data.municipio_id, source_data.horario, source_data.created_at::timestamp
+FROM (VALUES
     (1, 'GERENCIA DE LA DEFENSORA NACIONAL DE LOS DERECHOS DE LA MUJER', 'CAFIM', 'AMAZONAS', '0416-2738244', 'Chiquinquiraguinare.@gmail.com', NULL, 22, 324, NULL, '2026-06-19 19:01:01.273239'),
     (2, 'GERENCIA DE LA DEFENSORA NACIONAL DE LOS DERECHOS DE LA MUJER', 'ALCALDIA DE SAN CARLOS DE RIO NEGRO', 'AMAZONAS', '416-4064257', 'Henquezdeybys339@gmail.com', NULL, 22, 327, NULL, '2026-06-19 19:01:01.273239'),
     (3, 'GERENCIA DE LA DEFENSORA NACIONAL DE LOS DERECHOS DE LA MUJER', 'ALCALDIA DE MANAPIARE', 'AMAZONAS', '0426-4605708', 'Marbikeina25@gmail.com', NULL, 22, 329, NULL, '2026-06-19 19:01:01.273239'),
@@ -154,15 +150,34 @@ VALUES
     (131, 'GERENCIA DE LA DEFENSORA NACIONAL DE LOS DERECHOS DE LA MUJER', 'SEDE INAMUJER', 'ZULIA', '04165683032/04269006665', 'nailaatencio2@gmail.com', NULL, 21, 310, NULL, '2026-06-19 19:01:01.273239'),
     (132, 'GERENCIA DE LA DEFENSORA NACIONAL DE LOS DERECHOS DE LA MUJER', 'SEDE ALCALDIA DE MACHIQUES', 'ZULIA', '04121715933/04126816674', 'coronapilar@gmail.com', NULL, 21, 310, NULL, '2026-06-19 19:01:01.273239'),
     (133, 'GERENCIA DE LA DEFENSORA NACIONAL DE LOS DERECHOS DE LA MUJER', 'INSTITUTO MUNICIPAL DE LA MUJER,', 'ZULIA', '4127855631', 'eneidagonzalez309@gmail.com', NULL, 21, 306, NULL, '2026-06-19 19:01:01.273239')
-ON CONFLICT (id) DO NOTHING;
+) AS source_data(id, nombre, descripcion, direccion, telefono, correo, foto, estado_id, municipio_id, horario, created_at)
+ON CONFLICT (fuente, fuente_id) DO UPDATE SET
+    tipo_registro = EXCLUDED.tipo_registro,
+    nombre = EXCLUDED.nombre,
+    descripcion = CASE
+        WHEN centros.latitud IS NOT NULL AND centros.longitud IS NOT NULL THEN centros.descripcion
+        ELSE EXCLUDED.descripcion
+    END,
+    direccion = CASE
+        WHEN centros.latitud IS NOT NULL AND centros.longitud IS NOT NULL THEN centros.direccion
+        ELSE EXCLUDED.direccion
+    END,
+    telefono = EXCLUDED.telefono,
+    correo = EXCLUDED.correo,
+    foto = EXCLUDED.foto,
+    estado_id = EXCLUDED.estado_id,
+    municipio_id = EXCLUDED.municipio_id,
+    horario = EXCLUDED.horario,
+    created_at = EXCLUDED.created_at;
 
 DO $$
 BEGIN
     IF EXISTS (
         SELECT 1
-        FROM directorios d
+        FROM centros d
         JOIN municipios m ON m.id = d.municipio_id
-        WHERE d.id BETWEEN 1 AND 133
+        WHERE d.fuente = 'DIRECTORIO'
+          AND d.fuente_id BETWEEN 1 AND 133
           AND d.estado_id <> m.estado_id
     ) THEN
         RAISE EXCEPTION
@@ -173,9 +188,9 @@ $$;
 
 -- Asegura que las siguientes inserciones automáticas continúen después del ID máximo.
 SELECT setval(
-    pg_get_serial_sequence('directorios', 'id'),
-    COALESCE((SELECT MAX(id) FROM directorios), 1),
-    EXISTS (SELECT 1 FROM directorios)
+    pg_get_serial_sequence('centros', 'id'),
+    COALESCE((SELECT MAX(id) FROM centros), 1),
+    EXISTS (SELECT 1 FROM centros)
 );
 
 COMMIT;

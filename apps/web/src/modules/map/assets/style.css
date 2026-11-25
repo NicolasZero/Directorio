@@ -19,37 +19,6 @@
     user-select: none;
 }
 
-.map-neighbor-country {
-    fill: #28213d;
-    fill-opacity: 1;
-    stroke: #9584ae;
-    stroke-width: 1.15;
-    vector-effect: non-scaling-stroke;
-    pointer-events: none;
-}
-
-.map-country-label {
-    fill: #f3edfa;
-    stroke: #211a34;
-    stroke-width: 4px;
-    stroke-linejoin: round;
-    paint-order: stroke;
-    font-size: 24px;
-    font-weight: 650;
-    letter-spacing: 0.035em;
-    text-anchor: middle;
-    pointer-events: none;
-    user-select: none;
-}
-
-.map-country-label--guyana {
-    font-size: 20px;
-}
-
-.map-country-label--regional {
-    font-size: 18px;
-}
-
 .map-region-label {
     fill: #f4eefa;
     stroke: #332646;
@@ -72,17 +41,6 @@
     pointer-events: none;
 }
 
-.map-water-label {
-    fill: #c6b5df;
-    font-size: 15px;
-    font-style: italic;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-anchor: middle;
-    opacity: 0.86;
-    pointer-events: none;
-}
-
 .map-region {
     fill: url(#map-vegetation-gradient);
     stroke: #c2addc;
@@ -94,9 +52,7 @@
 }
 
 .map-regions.is-focused .map-region-label,
-.map-regions.is-focused .map-label-leader,
-.map-regions.is-focused .map-country-label,
-.map-water-label.is-hidden {
+.map-regions.is-focused .map-label-leader {
     display: none;
 }
 
@@ -124,30 +80,31 @@
     pointer-events: all;
 }
 
-.map-center-dot {
+.map-center-icon {
     fill: #b83b78;
     stroke: #d7c3ec;
-    stroke-width: 1.25;
+    stroke-width: 0.9;
     vector-effect: non-scaling-stroke;
+    stroke-linejoin: round;
 }
 
-.map-center--inamujer .map-center-dot {
+.map-center--inamujer .map-center-icon {
     fill: #d34b91;
 }
 
-.map-center--ministerio .map-center-dot {
+.map-center--ministerio .map-center-icon {
     fill: #9670ce;
 }
 
-.map-center--otra .map-center-dot {
+.map-center--otra .map-center-icon {
     fill: #d5ad61;
 }
 
-.map-center:hover .map-center-dot,
-.map-center:focus-visible .map-center-dot,
-.map-center.is-selected .map-center-dot {
+.map-center:hover .map-center-icon,
+.map-center:focus-visible .map-center-icon,
+.map-center.is-selected .map-center-icon {
     stroke: #f3e8ff;
-    stroke-width: 2.5;
+    stroke-width: 1.8;
     filter: drop-shadow(0 0 3px rgb(229 208 255 / 75%));
 }
 
@@ -182,7 +139,8 @@
     width: 100%;
     max-width: 96rem;
     min-width: 0;
-    height: 36rem;
+    height: auto;
+    aspect-ratio: 14 / 11;
     margin-inline: auto;
     transition:
         max-width 420ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -357,28 +315,24 @@
     gap: 0.5rem;
 }
 
-.map-legend-dot {
+.map-legend-icon {
     display: inline-block;
     width: 0.72rem;
     height: 0.72rem;
-    border: 2px solid #fff;
-    border-radius: 9999px;
-    box-shadow: 0 0 0 1px currentColor;
+    flex: 0 0 0.72rem;
+    stroke-width: 2.5;
 }
 
-.map-legend-dot--inamujer {
+.map-legend-icon--inamujer {
     color: #d34b91;
-    background: #d34b91;
 }
 
-.map-legend-dot--ministerio {
+.map-legend-icon--ministerio {
     color: #9670ce;
-    background: #9670ce;
 }
 
-.map-legend-dot--otra {
+.map-legend-icon--otra {
     color: #d5ad61;
-    background: #d5ad61;
 }
 
 @keyframes map-panel-enter {
@@ -397,6 +351,25 @@
     to {
         opacity: 0;
         transform: translateX(22px);
+    }
+}
+
+@keyframes map-panel-enter-mobile {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes map-panel-exit-mobile {
+    to {
+        opacity: 0;
+        transform: translateY(12px);
     }
 }
 
@@ -445,20 +418,23 @@
     }
 
     .map-container {
-        height: auto;
-        aspect-ratio: 4 / 3;
+        width: 100%;
+        max-width: 100%;
     }
 
     .map-side-panel {
         max-height: 65vh;
+        animation-name: map-panel-enter-mobile;
+    }
+
+    .map-side-panel.is-closing {
+        animation-name: map-panel-exit-mobile;
     }
 }
 
 @media (min-width: 901px) and (max-width: 1200px) {
     .map-container {
         max-width: 64rem;
-        height: auto;
-        aspect-ratio: 16 / 10;
     }
 }
 

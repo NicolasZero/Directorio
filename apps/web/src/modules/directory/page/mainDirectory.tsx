@@ -17,7 +17,6 @@ import {
 import DirectoryCard from '../components/directoryCard'
 import StateDirectoryGrid from '../components/stateDirectoryGrid'
 import { type DirectoryEntry } from '../schemes/directory'
-import { useLocations } from '../hooks/useLocations'
 
 function Directory() {
 	const [directories, setDirectories] = useState<DirectoryEntry[]>([])
@@ -29,31 +28,40 @@ function Directory() {
 	const [searchParams, setSearchParams] = useSearchParams()
 	const selectedState = searchParams.get('estado') ?? ''
 	const selectedStateName = searchParams.get('nombre') || selectedState
+	const [municipalityFilter, setMunicipalityFilter] = useState<{ estado: string; municipio: string } | null>(null)
+	const selectedMunicipality = municipalityFilter?.estado === selectedState ? municipalityFilter.municipio : ''
+	const [directoryMunicipalities, setDirectoryMunicipalities] = useState<{ estado: string; municipios: string[] } | null>(null)
+	const [loadingMunicipalities, setLoadingMunicipalities] = useState(Boolean(selectedState))
+	const [municipalityError, setMunicipalityError] = useState<string | null>(null)
 	const directoryReturnQuery = selectedState
 		? new URLSearchParams({ estado: selectedState, nombre: selectedStateName }).toString()
 		: ''
-	const { listMunicipalities, loadingLocation } = useLocations()
-	const [selectedMunicipality, setSelectedMunicipality] = useState('')
-	const [count, setCount] = useState<{ total_centros: number; total_estados: number; total_municipios: number } | null>(null)
+	const municipalitiesForState = directoryMunicipalities?.estado === selectedState
+		? directoryMunicipalities.municipios
+		: []
+	const municipalityOptionsLoading = Boolean(selectedState) &&
+		(loadingMunicipalities || directoryMunicipalities?.estado !== selectedState)
+	const [count, setCount] = useState<{ total_defensoras: number; total_centros: number; total_estados: number; total_municipios: number; estado: string | null } | null>(null)
+	const currentCount = count?.estado === (selectedState || null) ? count : null
 	const observer = useRef<IntersectionObserver | null>(null)
 
 	const handleSelectMunicipality = (value: string) => {
 		setPage(1)
 		setHasMore(true)
-		setSelectedMunicipality(value)
+		setMunicipalityFilter({ estado: selectedState, municipio: value })
 	}
 
 	const handleFetchAllDirectories = () => {
 		setPage(1)
 		setHasMore(true)
 		setSearchParams({})
-		setSelectedMunicipality('')
+		setMunicipalityFilter(null)
 	}
 
 	const handleClearMunicipality = () => {
 		setPage(1)
 		setHasMore(true)
-		setSelectedMunicipality('')
+		setMunicipalityFilter(null)
 	}
 
 	useEffect(() => {
@@ -62,20 +70,65 @@ function Directory() {
 	}, [selectedState])
 
 	useEffect(() => {
+		const controller = new AbortController()
 		const fetchCount = async () => {
 			try {
-				const response = await fetch('/api/directory/count')
+				const query = new URLSearchParams()
+				if (selectedState) query.set('estado', selectedState)
+				const response = await fetch(`/api/directory/count?${query}`, { signal: controller.signal })
 				const data = await response.json()
 
 				if (!response.ok) throw new Error(data?.error || 'Error al cargar las estadísticas')
-				setCount(data.data)
+				setCount({ ...data.data, estado: selectedState || null })
 			} catch (fetchError) {
+				if (controller.signal.aborted) return
 				console.error(fetchError)
 			}
 		}
 
-		fetchCount()
-	}, [])
+		void fetchCount()
+		return () => controller.abort()
+	}, [selectedState])
+
+	useEffect(() => {
+		if (!selectedState) return
+
+		const controller = new AbortController()
+		const fetchMunicipalities = async () => {
+			setLoadingMunicipalities(true)
+			setMunicipalityError(null)
+
+			try {
+				const query = new URLSearchParams({ estado: selectedState })
+				const response = await fetch(`/api/directory/municipalities?${query}`, {
+					signal: controller.signal,
+					cache: 'no-store',
+				})
+				const payload = await response.json() as { data?: unknown; error?: string }
+
+				if (!response.ok) {
+					throw new Error(payload.error || 'No se pudieron cargar los municipios.')
+				}
+				if (
+					!Array.isArray(payload.data) ||
+					!payload.data.every((municipality): municipality is string => typeof municipality === 'string')
+				) {
+					throw new Error('La respuesta de municipios tiene un formato inválido.')
+				}
+
+				setDirectoryMunicipalities({ estado: selectedState, municipios: payload.data })
+			} catch (fetchError) {
+				if (controller.signal.aborted) return
+				console.error(fetchError)
+				setMunicipalityError('No se pudieron cargar los municipios con centros. Intenta nuevamente.')
+			} finally {
+				if (!controller.signal.aborted) setLoadingMunicipalities(false)
+			}
+		}
+
+		void fetchMunicipalities()
+		return () => controller.abort()
+	}, [selectedState])
 
 	const fetchDirectories = useCallback(async (pageNumber: number, resetList = false) => {
 		if (pageNumber === 1) {
@@ -138,6 +191,19 @@ function Directory() {
 		if (node) observer.current.observe(node)
 	}, [loading, loadingMore, hasMore])
 
+	const statistics = selectedState
+		? [
+			{ label: 'Defensoras', value: currentCount?.total_defensoras ?? '—' },
+			{ label: 'Centros', value: currentCount?.total_centros ?? '—' },
+			{ label: 'Municipios', value: currentCount?.total_municipios ?? '—' },
+		]
+		: [
+			{ label: 'Centros', value: currentCount?.total_centros ?? '—' },
+			{ label: 'Estados', value: currentCount?.total_estados ?? '—' },
+			{ label: 'Municipios', value: currentCount?.total_municipios ?? '—' },
+			{ label: 'Defensoras', value: currentCount?.total_defensoras ?? '—' },
+		]
+
 	return (
 		<div className="min-h-screen">
 			<section className={`relative bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 px-4 ${selectedState ? 'pb-8 pt-16 md:py-12' : 'py-8 md:py-12'}`}>
@@ -160,19 +226,16 @@ function Directory() {
 						Explora los centros de atención disponibles en todo el país.
 					</p>
 
-					<div className="flex justify-center gap-8 md:gap-12">
-						<div className="text-center">
-							<p className="text-3xl font-bold text-rose-600">{count?.total_centros ?? '—'}</p>
-							<h2 className="text-sm text-muted-foreground">Centros</h2>
-						</div>
-						<div className="text-center">
-							<p className="text-3xl font-bold text-rose-600">{count?.total_estados ?? '—'}</p>
-							<h2 className="text-sm text-muted-foreground">Estados</h2>
-						</div>
-						<div className="text-center">
-							<p className="text-3xl font-bold text-rose-600">{count?.total_municipios ?? '—'}</p>
-							<h2 className="text-sm text-muted-foreground">Municipios</h2>
-						</div>
+					<div
+						key={`${selectedState || 'nacional'}:${Boolean(currentCount)}`}
+						className={`grid justify-center${selectedState ? ' grid-cols-3 gap-4 md:gap-12' : ' grid-cols-2 gap-x-8 gap-y-4 sm:grid-cols-4 md:gap-8'}${currentCount ? ' directory-statistics-enter' : ''}`}
+					>
+						{statistics.map(({ label, value }) => (
+							<div key={label} className="text-center">
+								<p className="text-3xl font-bold text-rose-600">{value}</p>
+								<h2 className="text-sm text-muted-foreground">{label}</h2>
+							</div>
+						))}
 					</div>
 				</div>
 			</section>
@@ -197,7 +260,7 @@ function Directory() {
 									<Select
 										value={selectedMunicipality}
 										onValueChange={handleSelectMunicipality}
-										disabled={loadingLocation || (listMunicipalities[selectedState]?.length ?? 0) === 0}
+										disabled={municipalityOptionsLoading || municipalitiesForState.length === 0}
 									>
 										<SelectTrigger
 											id="municipality-filter"
@@ -205,18 +268,28 @@ function Directory() {
 										>
 											<span className="flex min-w-0 items-center gap-2">
 												<MapPin className="h-4 w-4 shrink-0 text-[#8969b3]" aria-hidden="true" />
-												<SelectValue placeholder={loadingLocation ? 'Cargando municipios...' : 'Todos los municipios'} />
+												<SelectValue
+													placeholder={
+														municipalityOptionsLoading
+															? 'Buscando municipios con centros...'
+															: municipalityError
+																? 'No se pudieron cargar municipios'
+																: municipalitiesForState.length > 0
+																	? 'Todos los municipios'
+																	: 'No hay centros registrados'
+													}
+												/>
 											</span>
 										</SelectTrigger>
 										<SelectContent
 											className="municipality-select-content"
 											style={{
-												'--municipality-exit-duration': `${Math.max(170, (listMunicipalities[selectedState]?.length ?? 0) * 22 + 140)}ms`,
+												'--municipality-exit-duration': `${Math.max(170, municipalitiesForState.length * 22 + 140)}ms`,
 											} as CSSProperties}
 										>
 											<SelectGroup>
 												<SelectLabel>Municipios de {selectedStateName}</SelectLabel>
-												{listMunicipalities[selectedState]?.map((municipality, index, municipalities) => (
+												{municipalitiesForState.map((municipality, index, municipalities) => (
 													<SelectItem
 														key={municipality}
 														value={municipality}
@@ -232,6 +305,11 @@ function Directory() {
 											</SelectGroup>
 										</SelectContent>
 									</Select>
+									{municipalityError && (
+										<p className="mt-2 text-sm text-destructive" role="alert">
+											{municipalityError}
+										</p>
+									)}
 								</div>
 							</div>
 						</div>
