@@ -57,7 +57,13 @@ const refreshAccessToken = async (request, reply) => {
 
   try {
     const decodedRefresh = verifyRefreshToken(refreshToken);
-    const resp = await query(`SELECT id, cedula, nombre, email, username, rol_id FROM auth.users where id=$1;`, [decodedRefresh.id]);
+    const resp = await query(
+      `SELECT u.id, u.cedula, u.nombre, u.email, u.username, u.rol_id, r.nombre AS rol
+       FROM auth.users u
+       JOIN auth.roles r ON r.id = u.rol_id
+       WHERE u.id = $1`,
+      [decodedRefresh.id]
+    );
 
     if (resp.rowCount !== 1) {
       return reply.code(401).send({ error: 'Usuario no encontrado', status: 'failed' });
@@ -83,7 +89,13 @@ export const auth = async (request, reply) => {
       return reply.code(401).send({ error: 'Usuario o contraseña incorrecta', status: 'failed' });
     }
 
-    const resp = await query(`SELECT id, cedula, nombre, email, username, rol_id, password FROM auth.users where UPPER(username)=UPPER($1);`, [user]);
+    const resp = await query(
+      `SELECT u.id, u.cedula, u.nombre, u.email, u.username, u.rol_id, u.password, r.nombre AS rol
+       FROM auth.users u
+       JOIN auth.roles r ON r.id = u.rol_id
+       WHERE UPPER(u.username) = UPPER($1)`,
+      [user]
+    );
 
     if (resp.rowCount != 1) {
       return reply.code(401).send({ error: 'Usuario o contraseña incorrecta', status: 'failed' });
@@ -117,7 +129,13 @@ export const validateToken = async (request, reply) => {
 
     try {
       const decoded = verifyAccessToken(token);
-      const resp = await query(`SELECT id, cedula, nombre, email, username, rol_id FROM auth.users where id=$1;`, [decoded.id]);
+      const resp = await query(
+        `SELECT u.id, u.cedula, u.nombre, u.email, u.username, u.rol_id, r.nombre AS rol
+         FROM auth.users u
+         JOIN auth.roles r ON r.id = u.rol_id
+         WHERE u.id = $1`,
+        [decoded.id]
+      );
 
       if (resp.rowCount != 1) {
         return reply.code(401).send({ error: 'Usuario no encontrado', status: 'failed' });

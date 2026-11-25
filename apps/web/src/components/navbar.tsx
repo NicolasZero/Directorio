@@ -53,10 +53,10 @@ const Navbar = () => {
                 {/* Desktop Menu */}
                 <ul className="overflow-auto w-screen hidden md:flex flex-row items-center gap-1">
                     {publicLinks.map((link) => (
-                        <li key={link.path} className="flex-1 rounded-md">
+                        <li key={link.path}>
                             <NavLink
                                 className={({ isActive }) =>
-                                    `px-4 py-2 block transition-colors duration-200 hover:bg-black/20 ${isActive ? "bg-black/20 font-medium" : ""}`
+                                    `rounded-md px-4 py-2 block transition-colors duration-200 hover:bg-black/20 ${isActive ? "bg-black/20 font-medium" : ""}`
                                 }
                                 to={link.path}
                             >

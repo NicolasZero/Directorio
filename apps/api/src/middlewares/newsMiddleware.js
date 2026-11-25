@@ -13,12 +13,15 @@ export const authorizeNews = async (request, reply) => {
       [request.user.id]
     )
 
-    if (!NEWS_EDITOR_ROLES.includes(result.rows[0]?.role)) {
+    const role = result.rows[0]?.role
+    if (!NEWS_EDITOR_ROLES.includes(role)) {
       return reply.code(403).send({
         status: 'failed',
         error: 'No tienes permisos para gestionar noticias.',
       })
     }
+
+    request.newsRole = role
   } catch (error) {
     console.error(error)
     return reply.code(500).send({

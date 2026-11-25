@@ -8,7 +8,7 @@ const MainLayout = () => {
         <div className="h-screen flex flex-col justify-between">
             <Header />
             <Navbar />
-            <main className="flex-2">
+            <main className="flex-2 pb-3">
                 <Outlet />
             </main>
             <Footer />

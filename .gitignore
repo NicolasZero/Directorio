@@ -26,5 +26,9 @@ dist-ssr
 .env
 .turbo
 
+# Ruta que almacena los archivos subidos
+apps/api/uploads
+
 # Private database
 db/private
+apps/api/uploads/

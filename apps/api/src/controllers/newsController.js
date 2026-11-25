@@ -1,4 +1,29 @@
 import query from '../database/postgre.js'
+import sanitizeHtml from 'sanitize-html'
+
+const newsHtmlOptions = {
+  allowedTags: ['p', 'br', 'strong', 'b', 'em', 'i', 'u', 's', 'h2', 'h3', 'ul', 'ol', 'li', 'blockquote', 'a', 'span', 'div', 'img'],
+  allowedAttributes: {
+    a: ['href'],
+    img: ['src', 'alt', 'style'],
+    p: ['style'],
+    h2: ['style'],
+    h3: ['style'],
+    blockquote: ['style'],
+    span: ['style'],
+    div: ['style'],
+  },
+  allowedStyles: {
+    '*': {
+      color: [/^(#[\da-f]{3,8}|[a-z]{3,20}|rgba?\([\d.,%\s]+\))$/i],
+      'font-size': [/^(8|9|1\d|2\d|3\d|4[0-8])px$/],
+      'text-align': [/^(left|center|right|justify)$/],
+    },
+  },
+  allowedSchemes: ['http', 'https', 'mailto'],
+  allowProtocolRelative: false,
+  allowRelativeUrls: true,
+}
 
 const isValidDate = (value) => {
   if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false
@@ -8,7 +33,15 @@ const isValidDate = (value) => {
 }
 
 const getNewsInput = (body) => {
-  const { title, summary, content, category = 'General', image = '', publishedAt = null } = body || {}
+  const {
+    title,
+    summary,
+    content,
+    category = 'General',
+    image = '',
+    publishedAt = null,
+    status = null,
+  } = body || {}
 
   if (
     typeof title !== 'string' ||
@@ -19,18 +52,24 @@ const getNewsInput = (body) => {
     !content.trim() ||
     typeof category !== 'string' ||
     (image !== null && typeof image !== 'string') ||
-    (publishedAt !== null && !isValidDate(publishedAt))
+    (publishedAt !== null && !isValidDate(publishedAt)) ||
+    (status !== null && !['Borrador', 'Publicado'].includes(status))
   ) {
     return null
   }
 
+  const cleanContent = sanitizeHtml(content.trim(), newsHtmlOptions)
+
+  if (!cleanContent.replace(/<[^>]*>/g, '').trim()) return null
+
   return {
     title: title.trim(),
     summary: summary.trim(),
-    content: content.trim(),
+    content: cleanContent,
     category: category.trim() || 'General',
     image: typeof image === 'string' ? image.trim() || null : null,
     publishedAt,
+    status,
   }
 }
 
@@ -49,6 +88,7 @@ export const getNews = async (request, reply) => {
 
   try {
     const values = []
+    const conditions = request.newsRole === 'Administrador' ? '' : "WHERE status = 'Publicado'"
     let pagination = ''
 
     if (parsedLimit !== null) {
@@ -58,8 +98,9 @@ export const getNews = async (request, reply) => {
     }
 
     const result = await query(
-      `SELECT id, title, summary, content, category, image, published_at, created_at, updated_at
+      `SELECT id, title, summary, content, category, image, status, published_at, created_at, updated_at
        FROM news
+       ${conditions}
        ORDER BY published_at DESC NULLS LAST, created_at DESC
        ${pagination}`,
       values
@@ -77,10 +118,11 @@ export const getNewsById = async (request, reply) => {
 
   try {
     const result = await query(
-      `SELECT id, title, summary, content, category, image, published_at, created_at, updated_at
+      `SELECT id, title, summary, content, category, image, status, published_at, created_at, updated_at
        FROM news
-       WHERE id = $1`,
-      [id]
+       WHERE id = $1
+         AND ($2::boolean OR status = 'Publicado')`,
+      [id, request.newsRole === 'Administrador']
     )
 
     if (result.rowCount === 0) {
@@ -106,8 +148,8 @@ export const createNews = async (request, reply) => {
 
   try {
     const result = await query(
-      `INSERT INTO news (title, summary, content, category, image, published_at)
-       VALUES ($1, $2, $3, $4, $5, COALESCE($6::date, CURRENT_DATE))
+      `INSERT INTO news (title, summary, content, category, image, status, published_at)
+       VALUES ($1, $2, $3, $4, $5, 'Borrador', COALESCE($6::date, CURRENT_DATE))
        RETURNING id`,
       [news.title, news.summary, news.content, news.category, news.image, news.publishedAt]
     )
@@ -138,10 +180,22 @@ export const updateNews = async (request, reply) => {
            content = $3,
            category = $4,
            image = $5,
+           status = CASE WHEN $8 = 'Administrador' THEN COALESCE($7, status) ELSE status END,
            published_at = $6::date,
            updated_at = NOW()
-       WHERE id = $7`,
-      [news.title, news.summary, news.content, news.category, news.image, news.publishedAt, id]
+       WHERE id = $9
+         AND (status = 'Publicado' OR $8 = 'Administrador')`,
+      [
+        news.title,
+        news.summary,
+        news.content,
+        news.category,
+        news.image,
+        news.publishedAt,
+        news.status,
+        request.newsRole,
+        id,
+      ]
     )
 
     if (result.rowCount === 0) {
@@ -155,11 +209,50 @@ export const updateNews = async (request, reply) => {
   }
 }
 
+export const publishNews = async (request, reply) => {
+  if (request.newsRole !== 'Administrador') {
+    return reply.code(403).send({
+      status: 'failed',
+      error: 'No tienes permisos para publicar noticias.',
+    })
+  }
+
+  const { id } = request.params
+
+  try {
+    const result = await query(
+      `UPDATE news
+       SET status = 'Publicado',
+           updated_at = NOW()
+       WHERE id = $1 AND status = 'Borrador'
+       RETURNING id`,
+      [id]
+    )
+
+    if (result.rowCount === 0) {
+      return reply.code(404).send({
+        status: 'NOT_FOUND',
+        error: 'No se encontró un borrador para publicar.',
+      })
+    }
+
+    return reply.code(200).send({ status: 'OK', message: 'Noticia publicada correctamente.' })
+  } catch (error) {
+    console.error(error)
+    return reply.code(500).send({ status: 'failed', error: 'No se pudo publicar la noticia.' })
+  }
+}
+
 export const deleteNews = async (request, reply) => {
   const { id } = request.params
 
   try {
-    const result = await query('DELETE FROM news WHERE id = $1', [id])
+    const result = await query(
+      `DELETE FROM news
+       WHERE id = $1
+         AND (status = 'Publicado' OR $2 = 'Administrador')`,
+      [id, request.newsRole]
+    )
 
     if (result.rowCount === 0) {
       return reply.code(404).send({ status: 'NOT_FOUND', error: 'Noticia no encontrada.' })

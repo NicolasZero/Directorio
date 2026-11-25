@@ -134,6 +134,12 @@ function Home() {
       descripcion: "Encuentra ubicaciones de interés cercanas mediante nuestro mapa interactivo.",
       enlace: "/mapa"
     },
+    // {
+    //   icon: <Newspaper className="h-8 w-8" />,
+    //   titulo: "Noticias",
+    //   descripcion: "Accede a materiales educativos y cursos disponibles para tu desarrollo.",
+    //   enlace: "/noticias"
+    // },
     {
       icon: <Users className="h-8 w-8" />,
       titulo: "Clases y Cursos",
@@ -222,6 +228,53 @@ function Home() {
 
       </section>
 
+      {/* Últimas Noticias */}
+      <section className="bg-muted/30 px-4 py-10 md:px-6 md:py-14">
+        <div className="container mx-auto">
+          <div className="mb-8 flex items-center justify-between">
+            <div>
+              <h2 className="mb-2 text-3xl font-bold">Últimas Noticias</h2>
+              <p className="text-muted-foreground">Novedades y actividades recientes</p>
+            </div>
+            <Button asChild variant="outline"><Link to="/noticias">Ver Todas</Link></Button>
+          </div>
+
+          {loadingNoticias ? (
+            <p className="text-center text-muted-foreground">Cargando noticias...</p>
+          ) : errorNoticias ? (
+            <p role="alert" className="text-center text-muted-foreground">{errorNoticias}</p>
+          ) : ultimasNoticias.length === 0 ? (
+            <p className="text-center text-muted-foreground">Aún no hay noticias publicadas.</p>
+          ) : (
+            <div className="grid gap-6 md:grid-cols-2">
+              {ultimasNoticias.map((noticia) => (
+                <Card key={noticia.id} className="overflow-hidden transition-shadow hover:shadow-md">
+                  {noticia.image && <img src={noticia.image} alt="" className="aspect-video w-full object-cover" />}
+                  <CardContent className="p-4">
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <Badge variant="outline" className="bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50">
+                        {noticia.category}
+                      </Badge>
+                      <span className="text-sm text-muted-foreground">{formatNewsDate(noticia.published_at)}</span>
+                    </div>
+                    <div className="mb-2 flex items-center gap-2">
+                      <Newspaper className="h-5 w-5 shrink-0 text-rose-600" />
+                      <h3 className="line-clamp-2 text-xl font-semibold">{noticia.title}</h3>
+                    </div>
+                    <p className="line-clamp-3 text-muted-foreground">{noticia.summary}</p>
+                    <Button asChild variant="link" className="mt-3 px-0 text-rose-600">
+                      <Link to={`/noticias/${noticia.id}`}>
+                        Leer noticia <ArrowRight className="ml-1 h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* Servicios */}
       <section className="py-10 md:py-14 px-4 md:px-6 bg-muted/50 dark:bg-muted/30">
         <div className="container mx-auto">
@@ -306,51 +359,6 @@ function Home() {
         </div>
       </section>
 
-      <section className="bg-muted/30 px-4 py-10 md:px-6 md:py-14">
-        <div className="container mx-auto">
-          <div className="mb-8 flex items-center justify-between">
-            <div>
-              <h2 className="mb-2 text-3xl font-bold">Últimas Noticias</h2>
-              <p className="text-muted-foreground">Novedades y actividades recientes</p>
-            </div>
-            <Button asChild variant="outline"><Link to="/noticias">Ver Todas</Link></Button>
-          </div>
-
-          {loadingNoticias ? (
-            <p className="text-center text-muted-foreground">Cargando noticias...</p>
-          ) : errorNoticias ? (
-            <p role="alert" className="text-center text-muted-foreground">{errorNoticias}</p>
-          ) : ultimasNoticias.length === 0 ? (
-            <p className="text-center text-muted-foreground">Aún no hay noticias publicadas.</p>
-          ) : (
-            <div className="grid gap-6 md:grid-cols-2">
-              {ultimasNoticias.map((noticia) => (
-                <Card key={noticia.id} className="overflow-hidden transition-shadow hover:shadow-md">
-                  {noticia.image && <img src={noticia.image} alt="" className="aspect-video w-full object-cover" />}
-                  <CardContent className="p-4">
-                    <div className="mb-3 flex items-center justify-between gap-3">
-                      <Badge variant="outline" className="bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50">
-                        {noticia.category}
-                      </Badge>
-                      <span className="text-sm text-muted-foreground">{formatNewsDate(noticia.published_at)}</span>
-                    </div>
-                    <div className="mb-2 flex items-center gap-2">
-                      <Newspaper className="h-5 w-5 shrink-0 text-rose-600" />
-                      <h3 className="line-clamp-2 text-xl font-semibold">{noticia.title}</h3>
-                    </div>
-                    <p className="line-clamp-3 text-muted-foreground">{noticia.summary}</p>
-                    <Button asChild variant="link" className="mt-3 px-0 text-rose-600">
-                      <Link to={`/noticias/${noticia.id}`}>
-                        Leer noticia <ArrowRight className="ml-1 h-4 w-4" />
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
 
       {/* Aviso inline si ya fue cerrado como modal */}
       {!showAviso && (

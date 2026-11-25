@@ -6,6 +6,13 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Dialog } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
   Table,
   TableBody,
   TableCell,
@@ -14,25 +21,30 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { Eye, MoreHorizontal, Pencil, Plus, Search, Trash2 } from 'lucide-react'
+import { Eye, MoreHorizontal, Pencil, Plus, Search, Send, Trash2 } from 'lucide-react'
+import { useAuth } from '@/context/authContext'
 import { formatNewsDate, type NewsEntry } from '../types/news'
 
 const PAGE_SIZE = 10
+type NewsStatusFilter = 'Todas' | NewsEntry['status']
 
 export default function NewsAdminList() {
+  const { user } = useAuth()
   const [news, setNews] = useState<NewsEntry[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState('')
   const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState<NewsStatusFilter>('Todas')
   const [page, setPage] = useState(1)
   const [newsToDelete, setNewsToDelete] = useState<NewsEntry | null>(null)
   const [deletingId, setDeletingId] = useState<number | null>(null)
+  const [publishingId, setPublishingId] = useState<number | null>(null)
 
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await fetch('/api/news')
+        const response = await fetch('/api/news/manage')
         const result = await response.json()
 
         if (!response.ok) {
@@ -53,15 +65,49 @@ export default function NewsAdminList() {
 
   const filteredNews = useMemo(() => {
     const query = search.trim().toLowerCase()
-    if (!query) return news
     return news.filter((item) =>
-      [item.title, item.summary, item.category].join(' ').toLowerCase().includes(query)
+      (statusFilter === 'Todas' || item.status === statusFilter) &&
+      (!query || [item.title, item.summary, item.category].join(' ').toLowerCase().includes(query))
     )
-  }, [news, search])
+  }, [news, search, statusFilter])
+
+  const statusCounts = useMemo(() => ({
+    Borrador: news.filter((item) => item.status === 'Borrador').length,
+    Publicado: news.filter((item) => item.status === 'Publicado').length,
+  }), [news])
 
   const pageCount = Math.max(1, Math.ceil(filteredNews.length / PAGE_SIZE))
   const currentPage = Math.min(page, pageCount)
   const currentItems = filteredNews.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+
+  const handlePublish = async (item: NewsEntry) => {
+    setPublishingId(item.id)
+    setError(null)
+    setMessage('')
+
+    try {
+      const response = await fetch(`/api/news/${item.id}/publish`, { method: 'PATCH' })
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result?.error || 'No se pudo publicar la noticia.')
+      }
+
+      setNews((current) =>
+        current.map((newsItem) =>
+          newsItem.id === item.id ? { ...newsItem, status: 'Publicado' } : newsItem
+        )
+      )
+      setMessage('Noticia publicada correctamente.')
+    } catch (publishError) {
+      console.error(publishError)
+      setError(publishError instanceof Error
+        ? publishError.message
+        : 'No se pudo publicar la noticia. Intenta de nuevo más tarde.')
+    } finally {
+      setPublishingId(null)
+    }
+  }
 
   const handleDelete = async () => {
     if (!newsToDelete) return
@@ -97,39 +143,86 @@ export default function NewsAdminList() {
             Noticias
           </Badge>
           <h1 className="mb-3 text-3xl font-bold md:text-4xl">Gestión de noticias</h1>
-          <p className="text-lg text-muted-foreground">Crea, revisa y actualiza las noticias publicadas.</p>
+          <p className="text-lg text-muted-foreground">Administra borradores y noticias publicadas desde un solo lugar.</p>
         </div>
       </section>
 
       <section className="container mx-auto px-4">
-        <div className="mb-4 grid gap-4 md:grid-cols-[1fr_auto_auto] md:items-end">
-          <div>
-            <p className="text-sm text-muted-foreground">Total de noticias</p>
-            <p className="text-3xl font-bold text-rose-600">{news.length}</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {filteredNews.length} resultado{filteredNews.length !== 1 ? 's' : ''} encontrados
-            </p>
+        <div className="mb-5 grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div className="grid gap-3 sm:grid-cols-3">
+            <Card>
+              <CardContent className="py-4">
+                <p className="text-sm text-muted-foreground">Total de noticias</p>
+                <p className="mt-1 text-2xl font-bold text-rose-600">{news.length}</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="py-4">
+                <p className="text-sm text-muted-foreground">Borradores</p>
+                <p className="mt-1 text-2xl font-bold">{statusCounts.Borrador}</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="py-4">
+                <p className="text-sm text-muted-foreground">Publicadas</p>
+                <p className="mt-1 text-2xl font-bold">{statusCounts.Publicado}</p>
+              </CardContent>
+            </Card>
           </div>
           <Button asChild size="lg" className="bg-rose-600 text-base font-bold hover:bg-rose-700">
-            <Link to="/admin/noticias/nuevo">Agregar noticia <Plus className="h-4 w-4" /></Link>
+            <Link to="/admin/noticias/nuevo"><Plus className="mr-2 h-4 w-4" />Agregar noticia</Link>
           </Button>
-          <div className="flex flex-col justify-end gap-3 sm:flex-row sm:items-center">
-            <label className="relative w-full max-w-sm">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                value={search}
-                onChange={(event) => {
-                  setSearch(event.target.value)
+        </div>
+
+        <Card className="mb-4">
+          <CardContent className="flex flex-col gap-4 py-4 sm:flex-row sm:items-end">
+            <label className="flex-1 space-y-2 text-sm font-medium">
+              Buscar
+              <span className="relative block">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  value={search}
+                  onChange={(event) => {
+                    setSearch(event.target.value)
+                    setPage(1)
+                  }}
+                  placeholder="Título, resumen o categoría"
+                  aria-label="Buscar noticias"
+                  className="pl-9"
+                />
+              </span>
+            </label>
+            <label className="space-y-2 text-sm font-medium">
+              Estatus
+              <Select
+                value={statusFilter}
+                onValueChange={(value) => {
+                  setStatusFilter(value as NewsStatusFilter)
                   setPage(1)
                 }}
-                placeholder="Buscar noticia"
-                className="pl-9"
-              />
+              >
+                <SelectTrigger aria-label="Filtrar por estatus" className="w-full sm:w-44">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Todas">Todos los estatus</SelectItem>
+                  <SelectItem value="Borrador">Borradores</SelectItem>
+                  <SelectItem value="Publicado">Publicadas</SelectItem>
+                </SelectContent>
+              </Select>
             </label>
-            <Button variant="outline" size="sm" onClick={() => { setSearch(''); setPage(1) }}>
+            <Button
+              variant="outline"
+              onClick={() => { setSearch(''); setStatusFilter('Todas'); setPage(1) }}
+              disabled={!search && statusFilter === 'Todas'}
+            >
               Limpiar
             </Button>
-          </div>
+          </CardContent>
+        </Card>
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2 text-sm text-muted-foreground">
+          <p>{filteredNews.length} resultado{filteredNews.length !== 1 ? 's' : ''}</p>
+          <p>Selecciona “Publicar” para hacer visible un borrador.</p>
         </div>
 
         {message && (
@@ -158,7 +251,7 @@ export default function NewsAdminList() {
         ) : error && news.length === 0 ? (
           <Card><CardContent className="py-10 text-center" role="alert">{error}</CardContent></Card>
         ) : news.length === 0 ? (
-          <Card><CardContent className="py-10 text-center">Aún no hay noticias publicadas.</CardContent></Card>
+          <Card><CardContent className="py-10 text-center">Aún no hay noticias. Crea una para comenzar.</CardContent></Card>
         ) : filteredNews.length === 0 ? (
           <Card><CardContent className="py-10 text-center">No se encontraron noticias.</CardContent></Card>
         ) : (
@@ -167,45 +260,75 @@ export default function NewsAdminList() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Título</TableHead>
+                    <TableHead className="min-w-64">Noticia</TableHead>
                     <TableHead>Categoría</TableHead>
-                    <TableHead>Fecha</TableHead>
-                    <TableHead>Opciones</TableHead>
+                    <TableHead>Estado</TableHead>
+                    <TableHead>Fecha de publicación</TableHead>
+                    <TableHead><span className="sr-only">Opciones</span></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {currentItems.map((item) => (
                     <TableRow key={item.id}>
-                      <TableCell>{item.title}</TableCell>
+                      <TableCell className="max-w-md whitespace-normal">
+                        <p className="font-semibold leading-snug">{item.title}</p>
+                        <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{item.summary}</p>
+                      </TableCell>
                       <TableCell>
                         <Badge className="bg-rose-50 text-rose-700 dark:bg-rose-900 dark:text-rose-100">
                           {item.category}
                         </Badge>
                       </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={item.status === 'Publicado' ? 'default' : 'outline'}
+                          className={item.status === 'Publicado'
+                            ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-100 dark:bg-emerald-900 dark:text-emerald-100'
+                            : 'border-amber-300 bg-amber-50 text-amber-800 dark:bg-amber-950 dark:text-amber-100'}
+                        >
+                          {item.status}
+                        </Badge>
+                      </TableCell>
                       <TableCell>{formatNewsDate(item.published_at)}</TableCell>
                       <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm" aria-label={`Opciones para ${item.title}`}>
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent>
-                            <DropdownMenuItem asChild>
-                              <Link to={`/noticias/${item.id}`}><Eye className="mr-2 h-4 w-4" />Ver</Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
-                              <Link to={`/admin/noticias/editar/${item.id}`}><Pencil className="mr-2 h-4 w-4" />Editar</Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              className="gap-0"
-                              disabled={deletingId === item.id}
-                              onClick={() => setNewsToDelete(item)}
+                        <div className="flex items-center justify-end gap-2">
+                          {item.status === 'Borrador' && user?.role === 'Administrador' && (
+                            <Button
+                              size="sm"
+                              className="bg-emerald-600 hover:bg-emerald-700"
+                              disabled={publishingId !== null}
+                              onClick={() => void handlePublish(item)}
                             >
-                              <Trash2 className="mr-2 h-4 w-4" />Eliminar
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                              <Send className="mr-2 h-4 w-4" />
+                              {publishingId === item.id ? 'Publicando...' : 'Publicar'}
+                            </Button>
+                          )}
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="outline" size="sm" aria-label={`Opciones para ${item.title}`}>
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                              <DropdownMenuItem asChild>
+                                <Link to={`/noticias/${item.id}`}>
+                                  <Eye className="mr-2 h-4 w-4" />
+                                  {item.status === 'Publicado' ? 'Ver' : 'Vista previa'}
+                                </Link>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem asChild>
+                                <Link to={`/admin/noticias/editar/${item.id}`}><Pencil className="mr-2 h-4 w-4" />Editar</Link>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                className="gap-0"
+                                disabled={deletingId === item.id}
+                                onClick={() => setNewsToDelete(item)}
+                              >
+                                <Trash2 className="mr-2 h-4 w-4" />Eliminar
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
