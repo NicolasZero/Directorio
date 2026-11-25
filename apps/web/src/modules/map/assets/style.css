@@ -84,7 +84,6 @@
     fill: #b83b78;
     stroke: #d7c3ec;
     stroke-width: 0.9;
-    vector-effect: non-scaling-stroke;
     stroke-linejoin: round;
 }
 
@@ -165,8 +164,9 @@
 
 .map-side-panel {
     min-width: 0;
-    max-height: min(70vh, 860px);
-    overflow: auto;
+    /* max-height: min(90vh, 860px); */
+    contain: size;
+    overflow-y: auto;
     border: 1px solid var(--border);
     border-radius: 0.9rem;
     background: var(--card);

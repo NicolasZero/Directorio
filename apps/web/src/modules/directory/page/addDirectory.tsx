@@ -717,7 +717,8 @@ export default function AddDirectory() {
                         </Button>
 
                         {isEdit && (
-                            <BackArrowButton onClick={() => navigate('/admin/directorio')} ariaLabel="Volver sin guardar" />
+                            // <BackArrowButton onClick={() => navigate('/admin/directorio')} ariaLabel="Volver sin guardar" />
+                            <Button onClick={() => navigate('/admin/directorio')}>Volver sin guardar</Button>
                         )}
                     </div>
 
