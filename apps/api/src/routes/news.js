@@ -9,6 +9,7 @@ import {
   deleteNews,
   getNews,
   getNewsById,
+  publishNews,
   updateNews,
 } from '../controllers/newsController.js'
 
@@ -116,6 +117,7 @@ export default async function (fastify) {
       return reply.code(500).send({ status: 'failed', error: 'No se pudo almacenar la imagen.' })
     }
   })
+  fastify.patch('/:id/publish', { preHandler: [authenticate, authorizeNews] }, publishNews)
   fastify.put('/:id', { preHandler: [authenticate, authorizeNews] }, updateNews)
   fastify.delete('/:id', { preHandler: [authenticate, authorizeNews] }, deleteNews)
 }

@@ -209,6 +209,40 @@ export const updateNews = async (request, reply) => {
   }
 }
 
+export const publishNews = async (request, reply) => {
+  if (request.newsRole !== 'Administrador') {
+    return reply.code(403).send({
+      status: 'failed',
+      error: 'No tienes permisos para publicar noticias.',
+    })
+  }
+
+  const { id } = request.params
+
+  try {
+    const result = await query(
+      `UPDATE news
+       SET status = 'Publicado',
+           updated_at = NOW()
+       WHERE id = $1 AND status = 'Borrador'
+       RETURNING id`,
+      [id]
+    )
+
+    if (result.rowCount === 0) {
+      return reply.code(404).send({
+        status: 'NOT_FOUND',
+        error: 'No se encontró un borrador para publicar.',
+      })
+    }
+
+    return reply.code(200).send({ status: 'OK', message: 'Noticia publicada correctamente.' })
+  } catch (error) {
+    console.error(error)
+    return reply.code(500).send({ status: 'failed', error: 'No se pudo publicar la noticia.' })
+  }
+}
+
 export const deleteNews = async (request, reply) => {
   const { id } = request.params
 
