@@ -193,7 +193,7 @@ export default function NewsAdminList() {
               </span>
             </label>
             <label className="space-y-2 text-sm font-medium">
-              Estado
+              Estatus
               <Select
                 value={statusFilter}
                 onValueChange={(value) => {
@@ -201,11 +201,11 @@ export default function NewsAdminList() {
                   setPage(1)
                 }}
               >
-                <SelectTrigger aria-label="Filtrar por estado" className="w-full sm:w-44">
+                <SelectTrigger aria-label="Filtrar por estatus" className="w-full sm:w-44">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Todas">Todos los estados</SelectItem>
+                  <SelectItem value="Todas">Todos los estatus</SelectItem>
                   <SelectItem value="Borrador">Borradores</SelectItem>
                   <SelectItem value="Publicado">Publicadas</SelectItem>
                 </SelectContent>
