@@ -12,7 +12,7 @@ export const testController = async (request, reply) => {
 
 export const testDb = async (request, reply) => {
     try {
-        const response = await query(`SELECT * FROM test`)
+        const response = await query(`SELECT 1 AS conexion_ok`)
         return reply.code(200).send({ status: "OK", data: response.rows })
     } catch (error) {
         console.log(error);
