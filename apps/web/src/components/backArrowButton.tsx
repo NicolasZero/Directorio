@@ -4,16 +4,16 @@ import { cn } from '@/lib/utils'
 
 type BackArrowButtonProps =
 	| {
-			to: string
-			ariaLabel: string
-			className?: string
-			replace?: boolean
-	  }
+		to: string
+		ariaLabel: string
+		className?: string
+		replace?: boolean
+	}
 	| {
-			onClick: MouseEventHandler<HTMLButtonElement>
-			ariaLabel: string
-			className?: string
-	  }
+		onClick: MouseEventHandler<HTMLButtonElement>
+		ariaLabel: string
+		className?: string
+	}
 
 const buttonClassName =
 	'group inline-flex h-14 w-36 shrink-0 items-center justify-center rounded-md text-white drop-shadow-[0_3px_5px_rgba(89,0,31,0.28)] transition-[filter,transform] duration-300 ease-out hover:-translate-y-0.5 hover:scale-[1.02] hover:drop-shadow-[0_7px_10px_rgba(89,0,31,0.42)] active:translate-y-0 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#d92f5d] focus-visible:ring-offset-2'
@@ -29,8 +29,8 @@ function BackArrowShape() {
 		>
 			<defs>
 				<linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="0%">
-					<stop offset="0%" stopColor="#A60037" />
-					<stop offset="100%" stopColor="#FF627D" />
+					<stop offset="0%" stopColor="#5d0ec0" />
+					<stop offset="100%" stopColor="#a684ff" />
 				</linearGradient>
 			</defs>
 			<path

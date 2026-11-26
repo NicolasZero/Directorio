@@ -436,7 +436,7 @@ export default function AddDirectory() {
                                     href={coordinateMapUrl}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="inline-flex shrink-0 items-center gap-2 text-sm font-medium text-rose-700 underline-offset-4 hover:underline dark:text-rose-300"
+                                    className="inline-flex shrink-0 items-center gap-2 text-sm font-medium text-violet-700 underline-offset-4 hover:underline dark:text-violet-300"
                                 >
                                     Verificar ubicación
                                     <ExternalLink className="h-4 w-4" aria-hidden="true" />

@@ -130,7 +130,7 @@ function StateDirectoryGrid() {
 	return (
 		<section className="container mx-auto px-4 py-10 md:px-8">
 			<div className="mb-8 text-center">
-				<p className="mb-2 text-sm font-semibold uppercase tracking-[0.18em] text-rose-600">
+				<p className="mb-2 text-sm font-semibold uppercase tracking-[0.18em] text-violet-600">
 					Cobertura nacional
 				</p>
 				<h2 className="text-2xl font-bold md:text-3xl">Explora los directorios por estado</h2>
@@ -195,10 +195,10 @@ function StateDirectoryGrid() {
 										key={state.estado}
 										to={`/directorio?estado=${encodeURIComponent(state.estado)}&nombre=${encodeURIComponent(stateDisplayName)}`}
 										aria-label={`Ver ${state.total_directorios} ${state.total_directorios === 1 ? 'directorio' : 'directorios'} en ${stateDisplayName}`}
-										className="state-directory-card-entry group rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-600 focus-visible:ring-offset-2"
+										className="state-directory-card-entry group rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600 focus-visible:ring-offset-2"
 										style={{ animationDelay: `${Math.min(index, 7) * 45}ms` }}
 									>
-										<Card className="h-full overflow-hidden border border-rose-100/80 bg-card shadow-sm transition-all duration-300 group-hover:-translate-y-1 group-hover:border-rose-200 group-hover:shadow-xl dark:border-rose-950">
+										<Card className="h-full overflow-hidden border border-violet-100/80 bg-card shadow-sm transition-all duration-300 group-hover:-translate-y-1 group-hover:border-violet-200 group-hover:shadow-xl dark:border-violet-950">
 											<CardContent className="flex h-full flex-col items-center p-5 text-center">
 												<div className="flex h-36 w-full items-center justify-center rounded-xl bg-gradient-to-br from-[#f5f0fa] via-[#fdfbff] to-[#eee5f7] p-3 dark:from-[#241d32] dark:via-[#1c1730] dark:to-[#302341]">
 													{feature ? (

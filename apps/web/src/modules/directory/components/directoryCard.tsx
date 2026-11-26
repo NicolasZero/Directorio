@@ -34,20 +34,20 @@ function DirectoryCard({
 						const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
 						window.scrollTo({ top: 0, behavior })
 					}}
-					className="absolute inset-0 z-10 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-600 focus-visible:ring-offset-2"
+					className="absolute inset-0 z-10 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600 focus-visible:ring-offset-2"
 				/>
-				<Card className="h-full transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-lg group-focus-within:ring-2 group-focus-within:ring-rose-600/50">
+				<Card className="h-full transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-lg group-focus-within:ring-2 group-focus-within:ring-violet-600/50">
 					<CardHeader className="pb-3">
 						<div className="flex items-start gap-4">
 							{directorio.foto ? (
 								<img
 									src={directorio.foto}
 									alt={directorio.nombre}
-									className="h-16 w-16 rounded-xl border-2 border-rose-100 object-cover"
+									className="h-16 w-16 rounded-xl border-2 border-violet-100 object-cover"
 								/>
 							) : (
-								<div className="flex h-16 w-16 items-center justify-center rounded-xl bg-rose-100 dark:bg-rose-900">
-									<Building2 className="h-8 w-8 text-rose-600 dark:text-rose-100" />
+								<div className="flex h-16 w-16 items-center justify-center rounded-xl bg-violet-100 dark:bg-violet-900">
+									<Building2 className="h-8 w-8 text-violet-600 dark:text-violet-100" />
 								</div>
 							)}
 							<div className="min-w-0 flex-1">
@@ -55,7 +55,7 @@ function DirectoryCard({
 									{directorio.nombre}
 								</CardTitle>
 								<div className="flex flex-wrap items-center gap-2">
-									<Badge variant="outline" className="bg-rose-50 text-xs text-rose-700 dark:bg-rose-900 dark:text-rose-100">
+									<Badge variant="outline" className="bg-violet-50 text-xs text-violet-700 dark:bg-violet-900 dark:text-violet-100">
 										{directorio.estado}
 									</Badge>
 									<span className="text-xs text-muted-foreground">
@@ -77,13 +77,13 @@ function DirectoryCard({
 								<Phone className="h-4 w-4 shrink-0" />
 								<a
 									href={`tel:${directorio.telefono}`}
-									className="relative z-20 font-medium focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-600"
+									className="relative z-20 font-medium focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-600"
 								>
 									{directorio.telefono}
 								</a>
 							</div>
 						</div>
-						<div className="mt-4 flex items-center justify-between border-t pt-3 text-sm font-medium text-rose-600 transition-colors group-hover:text-rose-700">
+						<div className="mt-4 flex items-center justify-between border-t pt-3 text-sm font-medium text-violet-600 transition-colors group-hover:text-violet-700">
 							<span>Ver detalles</span>
 							<ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
 						</div>

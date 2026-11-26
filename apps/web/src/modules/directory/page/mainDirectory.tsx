@@ -206,7 +206,7 @@ function Directory() {
 
 	return (
 		<div className="min-h-screen">
-			<section className={`relative bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 px-4 ${selectedState ? 'pb-8 pt-16 md:py-12' : 'py-8 md:py-12'}`}>
+			<section className={`relative bg-linear-to-br from-violet-100 dark:from-violet-950/80 via-white dark:via-black to-violet-100/50 dark:to-violet-950/30 px-4 ${selectedState ? 'pb-8 pt-16 md:py-12' : 'py-8 md:py-12'}`}>
 				{selectedState && (
 					<BackArrowButton
 						onClick={handleFetchAllDirectories}
@@ -215,12 +215,12 @@ function Directory() {
 					/>
 				)}
 				<div className="container mx-auto max-w-3xl text-center">
-					<Badge variant="outline" className="mb-4 bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50">
+					<Badge variant="outline" className="mb-4 bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-50">
 						<Search className="mr-1 h-3 w-3" />
 						Directorio
 					</Badge>
 					<h1 className="mb-4 text-3xl font-bold text-foreground md:text-4xl lg:text-5xl">
-						Encuentra <span className="text-rose-600">Centros de Atención</span>
+						Encuentra <span className="text-violet-600">Centros de Atención</span>
 					</h1>
 					<p className="mb-6 text-lg text-muted-foreground">
 						Explora los centros de atención disponibles en todo el país.
@@ -232,7 +232,7 @@ function Directory() {
 					>
 						{statistics.map(({ label, value }) => (
 							<div key={label} className="text-center">
-								<p className="text-3xl font-bold text-rose-600">{value}</p>
+								<p className="text-3xl font-bold text-violet-600">{value}</p>
 								<h2 className="text-sm text-muted-foreground">{label}</h2>
 							</div>
 						))}
@@ -359,8 +359,8 @@ function Directory() {
 						) : (
 							<Card className="mx-auto max-w-md">
 								<CardContent className="p-8 text-center">
-									<div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-rose-100 dark:bg-rose-900">
-										<Search className="h-8 w-8 text-rose-600 dark:text-rose-100" />
+									<div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-violet-100 dark:bg-violet-900">
+										<Search className="h-8 w-8 text-violet-600 dark:text-violet-100" />
 									</div>
 									<h3 className="mb-2 text-lg font-semibold">No se encontraron directorios</h3>
 									<p className="mb-4 text-muted-foreground">
