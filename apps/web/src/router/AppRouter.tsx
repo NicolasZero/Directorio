@@ -14,6 +14,7 @@ const CourseDetail = React.lazy(() => import('../modules/classes/page/classesDet
 const NewsList = React.lazy(() => import('../modules/news/page/newsList.tsx'))
 const NewsDetail = React.lazy(() => import('../modules/news/page/newsDetail.tsx'))
 const About = React.lazy(() => import('../modules/about/page/about.tsx'))
+const Denounce = React.lazy(() => import('../modules/denounce/page/denounceForm.tsx'))
 const NotFound = React.lazy(() => import('@/components/not-found.tsx'))
 
 // Private routes
@@ -37,6 +38,7 @@ function AppRouter() {
             <Route path="mapa" element={<Map />} />
             <Route path="/directorio" element={<Directory />} />
             <Route path="/directorio/:id" element={<DirectoryDetail />} />
+            <Route path="/denuncia" element={<Denounce />} />
           </Route>
           <Route path="/auth/login" element={<Login />} />
           <Route path="/admin/*" element={<PrivateRouter />} />

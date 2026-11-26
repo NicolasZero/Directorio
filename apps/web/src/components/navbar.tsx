@@ -25,6 +25,7 @@ const Navbar = () => {
         { name: "Noticias", path: "/noticias" },
         { name: "Aprendizaje", path: "/clases" },
         { name: "Conócenos", path: "/conocenos" },
+        { name: "Denuncia en linea", path: "/denuncia"}
     ];
 
     const adminLinks = [
