@@ -35,15 +35,15 @@ function HomeAdminPage() {
   }, [])
 
   return (
-    <div className="bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 py-6 px-4">
+    <div className="bg-linear-to-br from-violet-100 dark:from-violet-950/80 via-white dark:via-black to-violet-100/50 dark:to-violet-950/30 py-6 px-4">
       <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr] items-start">
         <section className="rounded-[2rem] bg-neutral-50 dark:bg-neutral-900 shadow-xl p-8 border border-neutral-200 dark:border-neutral-800">
           <div className="flex items-center gap-4 mb-6">
-            <figure className="p-3 rounded-2xl bg-rose-100 text-rose-600 dark:bg-rose-900 dark:text-rose-50">
+            <figure className="p-3 rounded-2xl bg-violet-100 text-violet-600 dark:bg-violet-900 dark:text-violet-50">
               <ShieldCheck className="h-8 w-8" />
             </figure>
             <div>
-              <Badge variant="outline" className="mb-2 bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50">
+              <Badge variant="outline" className="mb-2 bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-50">
                 Dashboard Admin
               </Badge>
               <h1 className="text-3xl md:text-4xl font-bold text-foreground">
@@ -58,30 +58,30 @@ function HomeAdminPage() {
           </p>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            <Card className="bg-rose-50 dark:bg-muted border border-rose-200 dark:border-accent">
+            <Card className="bg-violet-50 dark:bg-muted border border-violet-200 dark:border-accent">
               <CardHeader>
                 <div className="flex items-center gap-3">
-                  <BookOpen className="h-6 w-6 text-rose-600" />
+                  <BookOpen className="h-6 w-6 text-violet-600" />
                   <CardTitle className="text-lg">Directorios</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-5xl font-extrabold text-rose-700">{loading ? '...' : stats.directorios}</p>
+                <p className="text-5xl font-extrabold text-violet-700">{loading ? '...' : stats.directorios}</p>
                 <CardDescription className="mt-2 text-sm text-muted-foreground">
                   Total de directorios registrados en el sistema.
                 </CardDescription>
               </CardContent>
             </Card>
 
-            <Card className="bg-rose-50 dark:bg-muted border border-rose-200 dark:border-accent">
+            <Card className="bg-violet-50 dark:bg-muted border border-violet-200 dark:border-accent">
               <CardHeader>
                 <div className="flex items-center gap-3">
-                  <GraduationCap className="h-6 w-6 text-rose-600" />
+                  <GraduationCap className="h-6 w-6 text-violet-600" />
                   <CardTitle className="text-lg">Cursos / Clases</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-5xl font-extrabold text-rose-700">{loading ? '...' : stats.cursos}</p>
+                <p className="text-5xl font-extrabold text-violet-700">{loading ? '...' : stats.cursos}</p>
                 <CardDescription className="mt-2 text-sm text-muted-foreground">
                   Cantidad de cursos y talleres disponibles.
                 </CardDescription>
@@ -91,7 +91,7 @@ function HomeAdminPage() {
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link to="/admin/directorio">
-              <Button size="lg" className="bg-rose-600 hover:bg-rose-700">
+              <Button size="lg" className="bg-violet-600 hover:bg-violet-700">
                 Administrar Directorio
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -112,33 +112,33 @@ function HomeAdminPage() {
         </section>
 
         <section className="space-y-6">
-          <Card className="overflow-hidden rounded-[2rem] bg-rose-100/80 dark:bg-rose-900/80 shadow-lg border border-rose-200 dark:border-rose-800">
+          <Card className="overflow-hidden rounded-[2rem] bg-violet-100/80 dark:bg-violet-900/80 shadow-lg border border-violet-200 dark:border-violet-800">
             <CardHeader className="px-6 py-5">
               <div className="flex items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-2xl font-bold text-rose-700 dark:text-rose-100">Resumen de servicio</h2>
+                  <h2 className="text-2xl font-bold text-violet-700 dark:text-violet-100">Resumen de servicio</h2>
                   <p className="text-sm text-muted-foreground">Una vista general de los modulos administrables.</p>
                 </div>
-                <Badge variant="outline" className="bg-white/90 text-rose-700 dark:bg-rose-950 dark:text-rose-50">Actualizado</Badge>
+                <Badge variant="outline" className="bg-white/90 text-violet-700 dark:bg-violet-950 dark:text-violet-50">Actualizado</Badge>
               </div>
             </CardHeader>
             <CardContent className="space-y-4 px-6 pb-6">
               <div className="flex items-center gap-3 rounded-3xl bg-white/90 dark:bg-neutral-950/70 p-4">
-                <MapPin className="h-6 w-6 text-rose-600" />
+                <MapPin className="h-6 w-6 text-violet-600" />
                 <div>
                   <p className="text-sm font-medium">Mapa de servicios</p>
                   <p className="text-sm text-muted-foreground">Accede a la geolocalizacion y estados.</p>
                 </div>
               </div>
               <div className="flex items-center gap-3 rounded-3xl bg-white/90 dark:bg-neutral-950/70 p-4">
-                <Users className="h-6 w-6 text-rose-600" />
+                <Users className="h-6 w-6 text-violet-600" />
                 <div>
                   <p className="text-sm font-medium">Usuarios activos</p>
                   <p className="text-sm text-muted-foreground">Visibilidad del equipo de administracion.</p>
                 </div>
               </div>
               <div className="flex items-center gap-3 rounded-3xl bg-white/90 dark:bg-neutral-950/70 p-4">
-                <Calendar className="h-6 w-6 text-rose-600" />
+                <Calendar className="h-6 w-6 text-violet-600" />
                 <div>
                   <p className="text-sm font-medium">Eventos proximos</p>
                   <p className="text-sm text-muted-foreground">Planifica y gestiona los cursos.</p>

@@ -137,9 +137,9 @@ export default function NewsAdminList() {
 
   return (
     <>
-      <section className="bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 mb-6 px-4 py-6">
+      <section className="bg-linear-to-br from-violet-100 dark:from-violet-950/80 via-white dark:via-black to-violet-100/50 dark:to-violet-950/30 mb-6 px-4 py-6">
         <div className="container mx-auto max-w-4xl text-center">
-          <Badge variant="outline" className="mb-4 bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50">
+          <Badge variant="outline" className="mb-4 bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-50">
             Noticias
           </Badge>
           <h1 className="mb-3 text-3xl font-bold md:text-4xl">Gestión de noticias</h1>
@@ -153,7 +153,7 @@ export default function NewsAdminList() {
             <Card>
               <CardContent className="py-4">
                 <p className="text-sm text-muted-foreground">Total de noticias</p>
-                <p className="mt-1 text-2xl font-bold text-rose-600">{news.length}</p>
+                <p className="mt-1 text-2xl font-bold text-violet-600">{news.length}</p>
               </CardContent>
             </Card>
             <Card>
@@ -169,7 +169,7 @@ export default function NewsAdminList() {
               </CardContent>
             </Card>
           </div>
-          <Button asChild size="lg" className="bg-rose-600 text-base font-bold hover:bg-rose-700">
+          <Button asChild size="lg" className="bg-violet-600 text-base font-bold hover:bg-violet-700!">
             <Link to="/admin/noticias/nuevo"><Plus className="mr-2 h-4 w-4" />Agregar noticia</Link>
           </Button>
         </div>
@@ -275,7 +275,7 @@ export default function NewsAdminList() {
                         <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{item.summary}</p>
                       </TableCell>
                       <TableCell>
-                        <Badge className="bg-rose-50 text-rose-700 dark:bg-rose-900 dark:text-rose-100">
+                        <Badge className="bg-violet-50 text-violet-700 dark:bg-violet-900 dark:text-violet-100">
                           {item.category}
                         </Badge>
                       </TableCell>
@@ -284,7 +284,7 @@ export default function NewsAdminList() {
                           variant={item.status === 'Publicado' ? 'default' : 'outline'}
                           className={item.status === 'Publicado'
                             ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-100 dark:bg-emerald-900 dark:text-emerald-100'
-                            : 'border-amber-300 bg-amber-50 text-amber-800 dark:bg-amber-950 dark:text-amber-100'}
+                            : 'bg-amber-50 text-amber-800 dark:bg-amber-950 dark:text-amber-50'}
                         >
                           {item.status}
                         </Badge>

@@ -39,7 +39,7 @@ export default function UserTable({ openEditDialog, openDeleteDialog, deletingUs
                         <TableCell>{user.username}</TableCell>
                         <TableCell>{user.email}</TableCell>
                         <TableCell>
-                            <Badge className="bg-rose-50 text-rose-700 dark:bg-rose-900 dark:text-rose-100 hover:bg-rose-50">
+                            <Badge className="bg-violet-50 text-violet-700 dark:bg-violet-900 dark:text-violet-100 hover:bg-violet-50">
                                 {user.rol}
                             </Badge>
                         </TableCell>

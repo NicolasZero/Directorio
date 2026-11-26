@@ -124,7 +124,7 @@ export default function NewsImagePicker({ open, onClose, onSelect }: NewsImagePi
                 <button
                   key={image.url}
                   type="button"
-                  className="group overflow-hidden rounded-xl border text-left transition hover:border-rose-500 hover:ring-2 hover:ring-rose-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
+                  className="group overflow-hidden rounded-xl border text-left transition hover:border-violet-500 hover:ring-2 hover:ring-violet-500/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500"
                   onClick={() => onSelect(image.url)}
                 >
                   <img src={image.url} alt="" className="aspect-square w-full object-cover" loading="lazy" />

@@ -110,14 +110,14 @@ function ClassesMain() {
   return (
     <>
       {/* Hero Section */}
-      <section className="bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 md:py-10 px-4">
+      <section className="bg-linear-to-br from-violet-100 dark:from-violet-950/80 via-white dark:via-black to-violet-100/50 dark:to-violet-950/30 md:py-10 px-4">
         <div className="container mx-auto text-center max-w-2xl">
-          <Badge variant="secondary" className="mb-4 bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50">
+          <Badge variant="secondary" className="mb-4 bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-50">
             <GraduationCap className="w-3 h-3 mr-1" />
             Educación
           </Badge>
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-foreground">
-            Cursos <span className="text-rose-600">en Línea</span>
+            Cursos <span className="text-violet-600">en Línea</span>
           </h1>
           <p className="text-lg text-muted-foreground mb-6">
             Explora nuestra oferta de cursos diseñados para impulsar tu desarrollo profesional.
@@ -127,15 +127,15 @@ function ClassesMain() {
           {/* Stats */}
           <div className="flex justify-center gap-8 md:gap-12">
             <div className="text-center">
-              <div className="text-3xl font-bold text-rose-600">{count?.total_cursos ?? 0}</div>
+              <div className="text-3xl font-bold text-violet-600">{count?.total_cursos ?? 0}</div>
               <div className="text-sm text-muted-foreground">Cursos</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-rose-600">{count?.total_horas ?? 0}</div>
+              <div className="text-3xl font-bold text-violet-600">{count?.total_horas ?? 0}</div>
               <div className="text-sm text-muted-foreground">Horas Totales</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-rose-600">{count?.total_niveles ?? 0}</div>
+              <div className="text-3xl font-bold text-violet-600">{count?.total_niveles ?? 0}</div>
               <div className="text-sm text-muted-foreground">Niveles</div>
             </div>
           </div>
@@ -146,7 +146,7 @@ function ClassesMain() {
       <section className="py-12 px-4">
         <div className="container mx-auto">
           {loading ? (
-            <div className="rounded-3xl border border-dashed border-rose-200 bg-rose-50 dark:bg-rose-900 dark:border-rose-800 dark:text-rose-100 p-3 text-center text-muted-foreground">
+            <div className="rounded-3xl border border-dashed border-violet-200 bg-violet-50 dark:bg-violet-900 dark:border-violet-800 dark:text-violet-100 p-3 text-center text-muted-foreground">
               Cargando cursos...
             </div>
           ) : error ? (

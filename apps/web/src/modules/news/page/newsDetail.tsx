@@ -69,7 +69,7 @@ export default function NewsDetail() {
 
   return (
     <article className="container mx-auto max-w-4xl px-4 py-8">
-      <Button asChild variant="ghost" className="mb-6 text-rose-600">
+      <Button asChild variant="ghost" className="mb-6 text-violet-600">
         <Link to={isAdministrator ? '/admin/noticias' : '/noticias'}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Volver a noticias
@@ -77,7 +77,7 @@ export default function NewsDetail() {
       </Button>
       <div className="space-y-5">
         <div className="flex flex-wrap items-center gap-3">
-          <Badge variant="outline" className="bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50">
+          <Badge variant="outline" className="bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-50">
             {news.category}
           </Badge>
           {news.status === 'Borrador' && (

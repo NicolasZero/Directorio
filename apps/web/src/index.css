@@ -160,12 +160,12 @@
 
   .news-content blockquote,
   .news-editor blockquote {
-    @apply my-4 border-l-4 border-rose-300 pl-4 italic text-muted-foreground;
+    @apply my-4 border-l-4 border-violet-300 pl-4 italic text-muted-foreground;
   }
 
   .news-content a,
   .news-editor a {
-    @apply text-rose-700 underline underline-offset-2 dark:text-rose-300;
+    @apply text-violet-700 underline underline-offset-2 dark:text-violet-300;
   }
 
   .news-content img,

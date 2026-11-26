@@ -143,15 +143,15 @@ function Directory() {
 
 	return (
 		<div className="min-h-screen">
-			<section className="bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 py-4 md:py-10 px-4">
+			<section className="bg-linear-to-br from-violet-100 dark:from-violet-950/80 via-white dark:via-black to-violet-100/50 dark:to-violet-950/30 py-4 md:py-10 px-4">
 
 				<div className="container mx-auto text-center max-w-2xl">
-					<Badge variant="outline" className="mb-4 bg-rose-100 dark:bg-rose-900 dark:text-rose-50 text-rose-700">
+					<Badge variant="outline" className="mb-4 bg-violet-100 dark:bg-violet-900 dark:text-violet-50 text-violet-700">
 						<Search className="w-3 h-3 mr-1" />
 						Directorio
 					</Badge>
 					<h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-foreground">
-						Encuentra <span className="text-rose-600">Centros de Atención</span>
+						Encuentra <span className="text-violet-600">Centros de Atención</span>
 					</h1>
 					<p className="text-lg text-muted-foreground mb-6">
 						Explora los centros de atención disponibles en todo el país.
@@ -160,17 +160,17 @@ function Directory() {
 					{/* Stats */}
 					<div className="flex justify-center gap-8 md:gap-12">
 						<div className="text-center">
-							<p className="text-3xl font-bold text-rose-600">{count?.total_centros}</p>
+							<p className="text-3xl font-bold text-violet-600">{count?.total_centros}</p>
 							<h5 className="text-sm text-muted-foreground">Centros</h5>
 						</div>
 						<div className="text-center">
-							<p className="text-3xl font-bold text-rose-600">
+							<p className="text-3xl font-bold text-violet-600">
 								{count?.total_estados}
 							</p>
 							<h5 className="text-sm text-muted-foreground">Estados</h5>
 						</div>
 						<div className="text-center">
-							<p className="text-3xl font-bold text-rose-600">
+							<p className="text-3xl font-bold text-violet-600">
 								{count?.total_municipios}
 							</p>
 							<h5 className="text-sm text-muted-foreground">Municipios</h5>
@@ -232,7 +232,7 @@ function Directory() {
 				{/* <div className="flex w-full max-w-3xl flex-wrap items-center gap-2"> */}
 				<Button
 					// variant="outline"
-					className='bg-rose-600 text-white hover:bg-rose-700 dark:hover:bg-rose-700 dark:bg-rose-900'
+					className='bg-violet-600 text-white hover:bg-violet-700 dark:hover:bg-violet-700 dark:bg-violet-900'
 					size="sm"
 					onClick={handleFetchAllDirectories}
 				>
@@ -299,8 +299,8 @@ function Directory() {
 						) : (
 							<Card className="max-w-md mx-auto">
 								<CardContent className="p-8 text-center">
-									<div className="w-16 h-16 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center mx-auto mb-4">
-										<Search className="w-8 h-8 text-rose-600 dark:text-rose-100" />
+									<div className="w-16 h-16 rounded-full bg-violet-100 dark:bg-violet-900 flex items-center justify-center mx-auto mb-4">
+										<Search className="w-8 h-8 text-violet-600 dark:text-violet-100" />
 									</div>
 									<h3 className="text-lg font-semibold mb-2">
 										No se encontraron directorios
@@ -315,8 +315,8 @@ function Directory() {
 				)
 					// : (
 					// 	<div className="text-center py-5">
-					// 		<div className="w-20 h-20 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center mx-auto mb-6">
-					// 			<MapPin className="w-10 h-10 text-rose-600 dark:text-rose-100" />
+					// 		<div className="w-20 h-20 rounded-full bg-violet-100 dark:bg-violet-900 flex items-center justify-center mx-auto mb-6">
+					// 			<MapPin className="w-10 h-10 text-violet-600 dark:text-violet-100" />
 					// 		</div>
 					// 		<h3 className="text-xl font-semibold mb-2">
 					// 			Selecciona un Estado
@@ -332,7 +332,7 @@ function Directory() {
 						<Badge
 							key={estado}
 							variant="outline"
-							className="cursor-pointer hover:bg-rose-50 hover:border-rose-300 hover:text-rose-700 dark:hover:text-rose-500 dark:hover:bg-background dark:hover:border-rose-500 transition-colors"
+							className="cursor-pointer hover:bg-violet-50 hover:border-violet-300 hover:text-violet-700 dark:hover:text-violet-500 dark:hover:bg-background dark:hover:border-violet-500 transition-colors"
 							onClick={() => handleSelectState(estado)}
 						>
 							{estado}

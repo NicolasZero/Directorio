@@ -189,7 +189,7 @@ export default function AddDirectory() {
                     <div className='flex flex-col lg:flex-row lg:justify-between lg:items-start gap-8'>
                         <Badge
                             variant="outline"
-                            className="mb-4 bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50"
+                            className="mb-4 bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-50"
                         >
                             <Building2 className="w-3 h-3 mr-1" />
                             {isEdit ? 'Editar directorio' : 'Registro de directorio'}
@@ -410,8 +410,8 @@ export default function AddDirectory() {
                                     <Card key={index} className="hover:shadow-md transition-shadow">
                                         <CardContent className="p-4 flex items-center justify-between gap-3">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center shrink-0">
-                                                    <FileText className="w-5 h-5 text-rose-600 dark:text-rose-100" />
+                                                <div className="w-10 h-10 rounded-full bg-violet-100 dark:bg-violet-900 flex items-center justify-center shrink-0">
+                                                    <FileText className="w-5 h-5 text-violet-600 dark:text-violet-100" />
                                                 </div>
                                                 <span className="font-medium text-sm">{servicio}</span>
                                             </div>
@@ -464,8 +464,8 @@ export default function AddDirectory() {
                                     <Card key={index} className="hover:shadow-md transition-shadow">
                                         <CardContent className="p-4 flex items-center justify-between gap-3">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center shrink-0">
-                                                    <AlertCircle className="w-5 h-5 text-rose-600 dark:text-rose-100" />
+                                                <div className="w-10 h-10 rounded-full bg-violet-100 dark:bg-violet-900 flex items-center justify-center shrink-0">
+                                                    <AlertCircle className="w-5 h-5 text-violet-600 dark:text-violet-100" />
                                                 </div>
                                                 <span className="font-medium text-sm">{requisito}</span>
                                             </div>
@@ -524,8 +524,8 @@ export default function AddDirectory() {
                         <div className="space-y-3">
                             {responsables.map((responsable, index) => (
                                 <div key={index} className="flex items-center gap-4 p-3 rounded-lg bg-background">
-                                    <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center shrink-0">
-                                        <Users className="w-6 h-6 text-rose-600 dark:text-rose-100" />
+                                    <div className="w-12 h-12 rounded-full bg-violet-100 dark:bg-violet-900 flex items-center justify-center shrink-0">
+                                        <Users className="w-6 h-6 text-violet-600 dark:text-violet-100" />
                                     </div>
                                     <div className="flex-1">
                                         <p className="font-medium">{responsable.nombre}</p>
@@ -593,14 +593,14 @@ export default function AddDirectory() {
                         <div className="space-y-3">
                             {redes.map((red, index) => (
                                 <div key={index} className="flex items-center gap-4 p-3 rounded-lg bg-background">
-                                    <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center shrink-0">
-                                        {red.icono === 'Facebook' && <FacebookLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                                        {red.icono === 'Instagram' && <InstagramLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                                        {red.icono === 'Twitter' && <TwitterLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                                        {red.icono === 'Whatsapp' && <WhatsappLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                                        {red.icono === 'Tiktok' && <TiktokLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                                        {red.icono === 'Linkedin' && <LinkedinLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                                        {red.icono === 'Youtube' && <YoutubeLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                                    <div className="w-12 h-12 rounded-full bg-violet-100 dark:bg-violet-900 flex items-center justify-center shrink-0">
+                                        {red.icono === 'Facebook' && <FacebookLogoIcon className="w-6 h-6 text-violet-600 dark:text-violet-100" />}
+                                        {red.icono === 'Instagram' && <InstagramLogoIcon className="w-6 h-6 text-violet-600 dark:text-violet-100" />}
+                                        {red.icono === 'Twitter' && <TwitterLogoIcon className="w-6 h-6 text-violet-600 dark:text-violet-100" />}
+                                        {red.icono === 'Whatsapp' && <WhatsappLogoIcon className="w-6 h-6 text-violet-600 dark:text-violet-100" />}
+                                        {red.icono === 'Tiktok' && <TiktokLogoIcon className="w-6 h-6 text-violet-600 dark:text-violet-100" />}
+                                        {red.icono === 'Linkedin' && <LinkedinLogoIcon className="w-6 h-6 text-violet-600 dark:text-violet-100" />}
+                                        {red.icono === 'Youtube' && <YoutubeLogoIcon className="w-6 h-6 text-violet-600 dark:text-violet-100" />}
                                     </div>
                                     <div className="flex-1">
                                         <p className="font-medium">{red.nombre}</p>
@@ -626,7 +626,7 @@ export default function AddDirectory() {
                     <div className="flex flex-row gap-4 max-w-md">
                         <Button
                             type="submit"
-                            className="rounded-3xl bg-rose-600 text-white hover:bg-rose-700"
+                            className="rounded-3xl bg-violet-600 text-white hover:bg-violet-700"
                             disabled={saving || loadingLocation}
                         >
                             <AlertCircle className="w-4 h-4 mr-2" />

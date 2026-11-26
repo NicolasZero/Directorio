@@ -91,9 +91,9 @@ export default function NewsList() {
 
   return (
     <>
-      <section className="bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 py-10 px-4">
+      <section className="bg-linear-to-br from-violet-100 dark:from-violet-950/80 via-white dark:via-black to-violet-100/50 dark:to-violet-950/30 py-10 px-4">
         <div className="container mx-auto max-w-3xl text-center">
-          <Badge variant="outline" className="mb-4 bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50">
+          <Badge variant="outline" className="mb-4 bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-50">
             <Newspaper className="mr-1 h-3 w-3" />
             Actualidad
           </Badge>
@@ -109,7 +109,7 @@ export default function NewsList() {
         <div className="grid gap-4 md:grid-cols-1 md:items-end mb-8">
           {/* <div>
             <p className="text-sm text-muted-foreground">Total de noticias</p>
-            <p className="text-3xl font-bold text-rose-600">{news.length}</p>
+            <p className="text-3xl font-bold text-violet-600">{news.length}</p>
             <p className="text-sm text-muted-foreground mt-1">
               {filteredNews.length} resultado{filteredNews.length !== 1 ? 's' : ''} encontrado{filteredNews.length !== 1 ? 's' : ''}
             </p>
@@ -174,7 +174,7 @@ export default function NewsList() {
                     )}
                     <CardHeader>
                       <div className="mb-2 flex items-center justify-between gap-3">
-                        <Badge variant="outline" className="bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50">
+                        <Badge variant="outline" className="bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-50">
                           {item.category}
                         </Badge>
                         <span className="text-sm text-muted-foreground">{formatNewsDate(item.published_at)}</span>
@@ -186,7 +186,7 @@ export default function NewsList() {
                     </CardContent>
                   </div>
                   <div className="px-6 pb-6 pt-0">
-                    <Button asChild variant="link" className="px-0 text-rose-600">
+                    <Button asChild variant="link" className="px-0 text-violet-600">
                       <Link to={`/noticias/${item.id}`}>
                         Leer noticia <ArrowRight className="ml-1 h-4 w-4" />
                       </Link>

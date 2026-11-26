@@ -49,7 +49,7 @@ export default function AddUserModal({ showFormDialog, isEditing, closeFormDialo
                 className="space-y-4"
             >
                 {formError && (
-                    <div className="rounded-3xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                    <div className="rounded-3xl border border-violet-200 bg-violet-50 px-4 py-3 text-sm text-violet-700">
                         {formError}
                     </div>
                 )}

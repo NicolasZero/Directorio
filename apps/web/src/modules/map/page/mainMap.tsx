@@ -291,20 +291,20 @@ const MapaInteractivo = () => {
 
     return (
         <main className="min-h-screen">
-            <section className="bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 px-4 py-6 md:py-8">
+            <section className="bg-linear-to-br from-violet-100 dark:from-violet-950/80 via-white dark:via-black to-violet-100/50 dark:to-violet-950/30 px-4 py-6 md:py-8">
                 <div className="container mx-auto max-w-3xl text-center">
-                    <Badge variant="outline" className="mb-4 bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50">
+                    <Badge variant="outline" className="mb-4 bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-50">
                         <MapPin className="mr-1 h-3 w-3" />
                         Mapa interactivo
                     </Badge>
                     <h1 className="mb-3 text-3xl font-bold md:text-4xl">
-                        Explora los <span className="text-rose-600">Centros de Atención</span>
+                        Explora los <span className="text-violet-600">Centros de Atención</span>
                     </h1>
                     <p className="text-muted-foreground">
                         Selecciona un estado para ver sus sedes y abre cualquier centro para consultar sus detalles.
                     </p>
                     <div className="mt-4">
-                        <span className="text-3xl font-bold text-rose-600">
+                        <span className="text-3xl font-bold text-violet-600">
                             {loadingCenters ? '…' : centers.length}
                         </span>
                         <p className="text-sm text-muted-foreground">Sedes georreferenciadas</p>
@@ -314,7 +314,7 @@ const MapaInteractivo = () => {
 
             {(error || mapError) && (
                 <section className="px-4 pt-5">
-                    <Card className="mx-auto max-w-3xl border-rose-200 bg-rose-50 text-rose-700">
+                    <Card className="mx-auto max-w-3xl border-violet-200 bg-violet-50 text-violet-700">
                         <CardContent className="p-4">
                             {error && <p>{error}</p>}
                             {mapError && <p>{mapError}</p>}
@@ -522,7 +522,7 @@ const MapaInteractivo = () => {
                                                 ) : (
                                                     <Card className="map-empty-centers">
                                                         <CardContent className="p-6 text-center">
-                                                            <Search className="mx-auto mb-3 h-7 w-7 text-rose-600" />
+                                                            <Search className="mx-auto mb-3 h-7 w-7 text-violet-600" />
                                                             <h3 className="mb-2 font-semibold">
                                                                 {selectedState.status === 'disputed_claim'
                                                                     ? 'No hay sedes registradas en esta zona'

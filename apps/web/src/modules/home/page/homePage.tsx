@@ -165,14 +165,14 @@ function Home() {
 
   return (
     <div className="min-h-screen">
-      <section className="bg-linear-to-br from-rose-100 dark:from-rose-950/50 via-white dark:via-rose-950 to-rose-100/50 dark:to-rose-950/50 py-8 md:py-12 px-4 md:px-6">
+      <section className="bg-linear-to-br from-violet-100 dark:from-violet-950/50 via-white dark:via-violet-950 to-violet-100/50 dark:to-violet-950/50 py-8 md:py-12 px-4 md:px-6">
         <div className="container mx-auto flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
           <div className="flex-1 text-center lg:text-left px-3">
-            <Badge variant="outline" className="mb-4 bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50">
+            <Badge variant="outline" className="mb-4 bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-50">
               Bienvenida
             </Badge>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-foreground">
-              Instituto Nacional de la <span className="text-rose-600">Mujer</span>
+              Instituto Nacional de la <span className="text-violet-600">Mujer</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-6 max-w-2xl mx-auto lg:mx-0">
               Un espacio dedicado a empoderar, informar y acompañar a las mujeres en su desarrollo personal,
@@ -180,7 +180,7 @@ function Home() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
               <Link to="/directorio">
-                <Button size="lg" className="text-base font-bold bg-rose-600 hover:bg-rose-700">
+                <Button size="lg" className="text-base font-bold bg-violet-600 hover:bg-violet-700">
                   Explorar Directorio
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
@@ -197,27 +197,27 @@ function Home() {
           <div className="flex-1 flex justify-center">
             <div className="relative w-full max-w-md">
 
-              <div className="absolute inset-0 bg-linear-to-r from-rose-400 to-rose-600 rounded-3xl rotate-6 opacity-20" />
+              <div className="absolute inset-0 bg-linear-to-r from-violet-400 to-violet-600 rounded-3xl rotate-6 opacity-20" />
 
               <div className="relative bg-neutral-50 dark:bg-neutral-900 rounded-3xl shadow-xl p-8 dark:border-0 border">
                 <div className="flex items-center justify-center gap-4 mb-6">
-                  <div className="p-3 bg-rose-100 text-rose-600 dark:bg-rose-900 dark:text-rose-50 rounded-full">
+                  <div className="p-3 bg-violet-100 text-violet-600 dark:bg-violet-900 dark:text-violet-50 rounded-full">
                     <Heart className="h-8 w-8" />
                   </div>
-                  <h3 className="text-2xl font-bold text-rose-600">INAMUJER</h3>
+                  <h3 className="text-2xl font-bold text-violet-600">INAMUJER</h3>
                 </div>
 
                 <div className="space-y-4">
                   <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/80">
-                    <BookOpen className="h-5 w-5 text-rose-500" />
+                    <BookOpen className="h-5 w-5 text-violet-500" />
                     <span className="text-sm font-medium">Directorio de Recursos</span>
                   </div>
                   <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/80">
-                    <MapPin className="h-5 w-5 text-rose-500" />
+                    <MapPin className="h-5 w-5 text-violet-500" />
                     <span className="text-sm font-medium">Mapa de Servicios</span>
                   </div>
                   <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/80">
-                    <GraduationCap className="h-5 w-5 text-rose-500" />
+                    <GraduationCap className="h-5 w-5 text-violet-500" />
                     <span className="text-sm font-medium">Educación y Capacitación</span>
                   </div>
                 </div>
@@ -252,17 +252,17 @@ function Home() {
                   {noticia.image && <img src={noticia.image} alt="" className="aspect-video w-full object-cover" />}
                   <CardContent className="p-4">
                     <div className="mb-3 flex items-center justify-between gap-3">
-                      <Badge variant="outline" className="bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50">
+                      <Badge variant="outline" className="bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-50">
                         {noticia.category}
                       </Badge>
                       <span className="text-sm text-muted-foreground">{formatNewsDate(noticia.published_at)}</span>
                     </div>
                     <div className="mb-2 flex items-center gap-2">
-                      <Newspaper className="h-5 w-5 shrink-0 text-rose-600" />
+                      <Newspaper className="h-5 w-5 shrink-0 text-violet-600" />
                       <h3 className="line-clamp-2 text-xl font-semibold">{noticia.title}</h3>
                     </div>
                     <p className="line-clamp-3 text-muted-foreground">{noticia.summary}</p>
-                    <Button asChild variant="link" className="mt-3 px-0 text-rose-600">
+                    <Button asChild variant="link" className="mt-3 px-0 text-violet-600">
                       <Link to={`/noticias/${noticia.id}`}>
                         Leer noticia <ArrowRight className="ml-1 h-4 w-4" />
                       </Link>
@@ -289,7 +289,7 @@ function Home() {
             {servicios.map((servicio, index) => (
               <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
                 <CardHeader>
-                  <div className="p-3 w-fit rounded-lg bg-rose-100 text-rose-600 dark:bg-rose-900 dark:text-rose-50 mb-3">
+                  <div className="p-3 w-fit rounded-lg bg-violet-100 text-violet-600 dark:bg-violet-900 dark:text-violet-50 mb-3">
                     {servicio.icon}
                   </div>
                   <CardTitle>{servicio.titulo}</CardTitle>
@@ -299,7 +299,7 @@ function Home() {
                     {servicio.descripcion}
                   </CardDescription>
                   <Link to={servicio.enlace}>
-                    <Button variant="link" className="px-0 mt-4 text-rose-600">
+                    <Button variant="link" className="px-0 mt-4 text-violet-600">
                       Ver más <ArrowRight className="ml-1 h-4 w-4" />
                     </Button>
                   </Link>
@@ -335,9 +335,9 @@ function Home() {
                 <Card key={clase.id} className="hover:shadow-md transition-shadow">
                   <CardContent className="p-4">
                     <div className="flex items-center gap-2 mb-2">
-                      <Calendar className="p-3 text-rose-600 dark:text-rose-50 bg-rose-100 dark:bg-rose-900 rounded-lg h-6 w-6 box-content" />
+                      <Calendar className="p-3 text-violet-600 dark:text-violet-50 bg-violet-100 dark:bg-violet-900 rounded-lg h-6 w-6 box-content" />
                       <div className="flex justify-between w-full">
-                        <Badge variant="outline" className="text-nowrap bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50">
+                        <Badge variant="outline" className="text-nowrap bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-50">
                           {clase.level}
                         </Badge>
                         <span className="text-sm text-muted-foreground">{formatCourseDate(clase.start_date)}</span>
@@ -347,7 +347,7 @@ function Home() {
                     <h3 className="text-xl font-semibold mb-2">{clase.title}</h3>
                     <p className="text-muted-foreground">{clase.description}</p>
                     <Link to={`/clases/curso/${clase.id}`}>
-                      <Button variant="link" className="px-0 mt-4 text-rose-600">
+                      <Button variant="link" className="px-0 mt-4 text-violet-600">
                         Ver más <ArrowRight className="ml-1 h-4 w-4" />
                       </Button>
                     </Link>
@@ -388,7 +388,7 @@ function Home() {
               <Card key={index}>
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-rose-100 text-rose-600 dark:bg-rose-900 dark:text-rose-50 text-sm font-bold">
+                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-violet-100 text-violet-600 dark:bg-violet-900 dark:text-violet-50 text-sm font-bold">
                       {index + 1}
                     </span>
                     {item.pregunta}

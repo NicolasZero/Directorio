@@ -10,8 +10,8 @@ const AdminLayout = () => {
             <main className="flex-2 pb-3">
                 <Outlet />
             </main>
-            <footer className="p-4 bg-rose-700 dark:bg-rose-950">
-                <p className="text-center text-rose-50 dark:text-rose-100">© Copyright {new Date().getFullYear()} Inamujer. Oficina de Sistema y Tecnología de la Información</p>
+            <footer className="p-4 bg-violet-700 dark:bg-violet-950">
+                <p className="text-center text-violet-50 dark:text-violet-100">© Copyright {new Date().getFullYear()} Inamujer. Oficina de Sistema y Tecnología de la Información</p>
             </footer>
         </div>
     )

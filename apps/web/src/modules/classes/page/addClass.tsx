@@ -235,7 +235,7 @@ export default function AddClass() {
         <section className="py-10 px-4 sm:px-8">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
             <div className="max-w-3xl">
-              <Badge variant="outline" className="mb-4 bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50">
+              <Badge variant="outline" className="mb-4 bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-50">
                 <GraduationCap className="w-3 h-3 mr-1" />
                 {isEdit ? 'Editar curso' : 'Nuevo curso'}
               </Badge>
@@ -268,7 +268,7 @@ export default function AddClass() {
                     value={title}
                     onChange={(event) => setTitle(event.target.value)}
                     placeholder="Título del curso"
-                    className="focus:border-rose-500! focus:ring-2! focus:ring-rose-500/20!"
+                    className="focus:border-violet-500! focus:ring-2! focus:ring-violet-500/20!"
                     required
                   />
                 </FormField>
@@ -280,7 +280,7 @@ export default function AddClass() {
                     onChange={(event) => setDescription(event.target.value)}
                     placeholder="Resumen corto del curso"
                     rows={4}
-                    className="w-full rounded-3xl border border-input bg-transparent px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20"
+                    className="w-full rounded-3xl border border-input bg-transparent px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
                     required
                   />
                 </FormField>
@@ -292,7 +292,7 @@ export default function AddClass() {
                     onChange={(event) => setFullDescription(event.target.value)}
                     placeholder="Detalles completos del curso"
                     rows={5}
-                    className="w-full rounded-3xl border border-input bg-transparent px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20"
+                    className="w-full rounded-3xl border border-input bg-transparent px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
                   />
                 </FormField>
 
@@ -366,7 +366,7 @@ export default function AddClass() {
                     onChange={(event) => setInstructorBio(event.target.value)}
                     placeholder="Breve biografía del instructor"
                     rows={4}
-                    className="w-full rounded-3xl border border-input bg-transparent px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20"
+                    className="w-full rounded-3xl border border-input bg-transparent px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
                   />
                 </FormField>
               </CardContent>
@@ -389,7 +389,7 @@ export default function AddClass() {
               placeholder="Duración del módulo"
               className="rounded-3xl px-4 py-3"
             />
-            <Button type="button" onClick={addModule} className="bg-rose-600 text-white rounded-3xl">
+            <Button type="button" onClick={addModule} className="bg-violet-600 text-white rounded-3xl">
               <CirclePlus className="w-4 h-4 mr-2" />
               Agregar módulo
             </Button>
@@ -428,7 +428,7 @@ export default function AddClass() {
                     placeholder="Agregar requisito"
                     className="rounded-3xl px-4 py-3"
                   />
-                  <Button type="button" className="bg-rose-600 text-white rounded-3xl" onClick={addRequirement}>
+                  <Button type="button" className="bg-violet-600 text-white rounded-3xl" onClick={addRequirement}>
                     <CirclePlus className="w-4 h-4 mr-2" />
                     Agregar
                   </Button>
@@ -460,7 +460,7 @@ export default function AddClass() {
                     placeholder="Agregar aprendizaje"
                     className="rounded-3xl px-4 py-3"
                   />
-                  <Button type="button" className="bg-rose-600 text-white rounded-3xl" onClick={addOutcome}>
+                  <Button type="button" className="bg-violet-600 text-white rounded-3xl" onClick={addOutcome}>
                     <CirclePlus className="w-4 h-4 mr-2" />
                     Agregar
                   </Button>
@@ -484,7 +484,7 @@ export default function AddClass() {
 
         <section className="py-10 px-4 sm:px-8">
           <div className="max-w-2xl flex flex-row items-center gap-4">
-            <Button type="submit" className="rounded-3xl bg-rose-600 text-white hover:bg-rose-700" disabled={saving}>
+            <Button type="submit" className="rounded-3xl bg-violet-600 text-white hover:bg-violet-700" disabled={saving}>
               {saving ? 'Guardando...' : isEdit ? 'Guardar cambios' : 'Guardar curso'}
             </Button>
             {isEdit && (

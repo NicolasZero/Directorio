@@ -22,11 +22,11 @@ function DirectoryCard({ directorio }: { directorio: DirectoryEntry }) {
 						<img
 							src={directorio.foto}
 							alt={directorio.nombre}
-							className="w-16 h-16 rounded-xl object-cover border-2 border-rose-100"
+							className="w-16 h-16 rounded-xl object-cover border-2 border-violet-100"
 						/>
 					) : (
-						<div className="w-16 h-16 rounded-xl bg-rose-100 dark:bg-rose-900 flex items-center justify-center">
-							<Building2 className="w-8 h-8 text-rose-600 dark:text-rose-100" />
+						<div className="w-16 h-16 rounded-xl bg-violet-100 dark:bg-violet-900 flex items-center justify-center">
+							<Building2 className="w-8 h-8 text-violet-600 dark:text-violet-100" />
 						</div>
 					)}
 					<div className="flex-1 min-w-0">
@@ -34,7 +34,7 @@ function DirectoryCard({ directorio }: { directorio: DirectoryEntry }) {
 							{directorio.nombre}
 						</CardTitle>
 						<div className="flex items-center gap-2 flex-wrap">
-							<Badge variant="outline" className="bg-rose-50 text-rose-700 dark:bg-rose-900 dark:text-rose-100 text-xs">
+							<Badge variant="outline" className="bg-violet-50 text-violet-700 dark:bg-violet-900 dark:text-violet-100 text-xs">
 								{directorio.estado}
 							</Badge>
 							<span className="text-xs text-muted-foreground">
@@ -47,12 +47,12 @@ function DirectoryCard({ directorio }: { directorio: DirectoryEntry }) {
 			<CardContent className="pt-0">
 				<div className="space-y-3">
 					<div className="flex items-start gap-2 text-sm">
-						<MapPin className="w-4 h-4 mt-0.5 text-rose-500 shrink-0" />
+						<MapPin className="w-4 h-4 mt-0.5 text-violet-500 shrink-0" />
 						<span className="text-muted-foreground">
 							{directorio.direccion}
 						</span>
 					</div>
-					<div className="flex items-center text-rose-500 gap-2 text-sm">
+					<div className="flex items-center text-violet-500 gap-2 text-sm">
 						<Phone className="w-4 h-4 shrink-0" />
 						<a
 							href={`tel:${directorio.telefono}`}
@@ -66,7 +66,7 @@ function DirectoryCard({ directorio }: { directorio: DirectoryEntry }) {
 					<Button
 						variant="ghost"
 						size="sm"
-						className="w-full justify-between text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition-colors"
+						className="w-full justify-between text-violet-600 hover:bg-violet-50 hover:text-violet-700 transition-colors"
 						asChild
 					>
 						<Link to={`/directorio/${directorio.id}`}>

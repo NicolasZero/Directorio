@@ -39,7 +39,7 @@ const Navbar = () => {
     const isAdmin = status === 'authenticated' ? true : false;
 
     return (
-        <nav className="bg-linear-to-r from-rose-800 dark:from-rose-950 dark:to-rose-600 to-rose-400 text-white px-4 py-2 relative z-50">
+        <nav className="bg-linear-to-r from-violet-800 dark:from-violet-950 dark:to-violet-600 to-violet-400 text-white px-4 py-2 relative z-50">
             <div className="flex justify-between items-center w-full">
                 {/* Mobile Menu Button */}
                 <button
@@ -108,7 +108,7 @@ const Navbar = () => {
 
             {/* Mobile Menu Dropdown */}
             {isOpen && (
-                <div className="md:hidden absolute top-full left-0 w-full bg-rose-700 dark:bg-rose-900 shadow-xl border-t border-white/10 flex flex-col">
+                <div className="md:hidden absolute top-full left-0 w-full bg-violet-700 dark:bg-violet-900 shadow-xl border-t border-white/10 flex flex-col">
                     <ul className="flex flex-col">
                         {publicLinks.map((link) => (
                             <li key={link.path} className="px-3">

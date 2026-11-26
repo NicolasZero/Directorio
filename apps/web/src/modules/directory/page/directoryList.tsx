@@ -123,9 +123,9 @@ export default function EditDirectory() {
 
   return (
     <div className="min-h-screen">
-      <section className="bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 py-6 px-4 mb-6">
+      <section className="bg-linear-to-br from-violet-100 dark:from-violet-950/80 via-white dark:via-black to-violet-100/50 dark:to-violet-950/30 py-6 px-4 mb-6">
         <div className="container mx-auto max-w-4xl text-center">
-          <Badge variant="outline" className="mb-4 bg-rose-100 dark:bg-rose-900 dark:text-rose-50 text-rose-700">
+          <Badge variant="outline" className="mb-4 bg-violet-100 dark:bg-violet-900 dark:text-violet-50 text-violet-700">
             Directorio
           </Badge>
           <h1 className="text-3xl md:text-4xl font-bold mb-3 text-foreground">
@@ -141,14 +141,14 @@ export default function EditDirectory() {
         <div className="grid gap-4 md:grid-cols-[1fr_auto_auto] md:items-end mb-4">
           <div>
             <p className="text-sm text-muted-foreground">Total de directorios</p>
-            <p className="text-3xl font-bold text-rose-600">{directories.length}</p>
+            <p className="text-3xl font-bold text-violet-600">{directories.length}</p>
             <p className="text-sm text-muted-foreground mt-1">
               {filteredDirectories.length} resultado{filteredDirectories.length !== 1 ? 's' : ''} encontrados
             </p>
           </div>
           <div>
             <Link to="/admin/directorio/nuevo" className="block w-full">
-              <Button size="lg" className="text-base font-bold bg-rose-600 hover:bg-rose-700">
+              <Button size="lg" className="text-base font-bold bg-violet-600 hover:bg-violet-700">
                 Agregar directorio
                 <Plus className="h-4 w-4" />
               </Button>
@@ -233,7 +233,7 @@ export default function EditDirectory() {
                       <TableCell>{directorio.nombre}</TableCell>
                       <TableCell>{directorio.direccion}</TableCell>
                       <TableCell>
-                        <Badge className="bg-rose-50 text-rose-700 dark:bg-rose-900 dark:text-rose-100">
+                        <Badge className="bg-violet-50 text-violet-700 dark:bg-violet-900 dark:text-violet-100">
                           {directorio.estado}
                         </Badge>
                       </TableCell>

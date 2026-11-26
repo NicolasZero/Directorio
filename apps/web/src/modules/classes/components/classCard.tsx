@@ -30,7 +30,7 @@ export default function ClassCard({ course, status }: { course: CourseEntry, sta
             </div>
             <CardHeader className="pb-3">
                 <div className="flex items-center justify-between mb-2">
-                    <Badge variant="outline" className="bg-rose-50 text-rose-700 dark:bg-rose-900 dark:text-rose-100 border-rose-200 dark:border-0">
+                    <Badge variant="outline" className="bg-violet-50 text-violet-700 dark:bg-violet-900 dark:text-violet-100 border-violet-200 dark:border-0">
                         {course.level}
                     </Badge>
                     <span className="text-xs text-muted-foreground flex items-center gap-1">
@@ -47,14 +47,14 @@ export default function ClassCard({ course, status }: { course: CourseEntry, sta
                     {course.description}
                 </CardDescription>
                 <div className="flex items-center gap-2 mt-4 text-sm text-muted-foreground">
-                    <User className="w-4 h-4 text-rose-500" />
+                    <User className="w-4 h-4 text-violet-500" />
                     <span>{course.instructor}</span>
                 </div>
             </CardContent>
             <div className="p-4 pt-0 space-y-3">
                 <Button
                     asChild
-                    className="w-full bg-rose-600 hover:bg-rose-700! dark:bg-rose-900 dark:hover:bg-rose-800 dark:text-rose-100"
+                    className="w-full bg-violet-600 hover:bg-violet-700! dark:bg-violet-900 dark:hover:bg-violet-800 dark:text-violet-100"
                 >
                     <Link to={`/clases/curso/${course.id}`}>
                         Ver Curso

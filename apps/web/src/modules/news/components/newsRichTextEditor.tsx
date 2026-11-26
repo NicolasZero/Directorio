@@ -132,7 +132,7 @@ export default function NewsRichTextEditor({ value, onChange }: NewsRichTextEdit
 
   return (
     <>
-      <div className="overflow-hidden rounded-2xl border border-input focus-within:border-rose-500 focus-within:ring-2 focus-within:ring-rose-500/20">
+      <div className="overflow-hidden rounded-2xl border border-input focus-within:border-violet-500 focus-within:ring-2 focus-within:ring-violet-500/20">
         <div className="flex flex-wrap items-center gap-1 border-b bg-muted/40 p-2">
         <ToolbarButton label="Negrita" icon={<Bold className="h-4 w-4" />} onClick={() => runCommand('bold')} />
         <ToolbarButton label="Cursiva" icon={<Italic className="h-4 w-4" />} onClick={() => runCommand('italic')} />

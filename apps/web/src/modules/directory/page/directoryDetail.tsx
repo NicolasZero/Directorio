@@ -98,7 +98,7 @@ function DirectoryDetail() {
       <Button
         variant="ghost"
         size="sm"
-        className="m-4 text-rose-600 hover:text-rose-700 hover:bg-rose-200"
+        className="m-4 text-violet-600 hover:text-violet-700 hover:bg-violet-200"
         asChild
       >
         <Link to="/directorio">
@@ -110,7 +110,7 @@ function DirectoryDetail() {
       <section className="px-4 sm:px-8 pb-8 flex flex-col lg:flex-row items-start gap-8">
         {/* Info principal */}
         <div className="flex-1">
-          <Badge variant="outline" className="mb-4 bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50">
+          <Badge variant="outline" className="mb-4 bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-50">
             <Building2 className="w-3 h-3 mr-1" />
             Detalles
           </Badge>
@@ -119,12 +119,12 @@ function DirectoryDetail() {
           </h1>
           <div className="flex flex-wrap gap-2 mb-6">
             {directorio.estado && (
-              <Badge variant="outline" title='Estado' className="bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50 border-rose-200 dark:border-0">
+              <Badge variant="outline" title='Estado' className="bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-50 border-violet-200 dark:border-0">
                 {directorio.estado}
               </Badge>
             )}
             {directorio.municipio && (
-              <Badge variant="outline" title='Municipio' className="bg-rose-100 text-rose-700 dark:bg-rose-900 dark:text-rose-50 border-rose-200 dark:border-0">
+              <Badge variant="outline" title='Municipio' className="bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-50 border-violet-200 dark:border-0">
                 {directorio.municipio}
               </Badge>
             )}
@@ -141,44 +141,44 @@ function DirectoryDetail() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-start gap-3">
-              <MapPin className="w-5 h-5 text-rose-500 mt-0.5" />
+              <MapPin className="w-5 h-5 text-violet-500 mt-0.5" />
               <div>
                 <p className="font-medium text-sm">Dirección</p>
                 <p className="text-sm text-muted-foreground">{directorio.direccion || 'No hay dirección disponible'}</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <Phone className="w-5 h-5 text-rose-500 mt-0.5" />
+              <Phone className="w-5 h-5 text-violet-500 mt-0.5" />
               <div>
                 <p className="font-medium text-sm">Teléfono</p>
                 <a
                   href={`tel:${directorio.telefono}`}
-                  className="text-sm text-rose-600 hover:text-rose-700"
+                  className="text-sm text-violet-600 hover:text-violet-700"
                 >
                   {directorio.telefono || 'No hay teléfono disponible'}
                 </a>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <Mail className="w-5 h-5 text-rose-500 mt-0.5" />
+              <Mail className="w-5 h-5 text-violet-500 mt-0.5" />
               <div>
                 <p className="font-medium text-sm">Correo</p>
                 <a
                   href={`mailto:${directorio.correo}`}
-                  className="text-sm text-rose-600 hover:text-rose-700"
+                  className="text-sm text-violet-600 hover:text-violet-700"
                 >
                   {directorio.correo || 'No hay correo disponible'}
                 </a>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <Clock className="w-5 h-5 text-rose-500 mt-0.5" />
+              <Clock className="w-5 h-5 text-violet-500 mt-0.5" />
               <div>
                 <p className="font-medium text-sm">Horario</p>
                 <p className="text-sm text-muted-foreground">{directorio.horario || 'No hay horario disponible'}</p>
               </div>
             </div>
-            <Button className="w-full font-bold bg-rose-600 hover:bg-rose-700 mt-2">
+            <Button className="w-full font-bold bg-violet-600 hover:bg-violet-700 mt-2">
               <Phone className="w-4 h-4 mr-2" />
               Llamar Ahora
             </Button>
@@ -193,8 +193,8 @@ function DirectoryDetail() {
           {directorio.servicios?.map((servicio, index) => (
             <Card key={index} className="hover:shadow-md transition-shadow">
               <CardContent className="p-4 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center shrink-0">
-                  <FileText className="w-5 h-5 text-rose-600 dark:text-rose-100" />
+                <div className="w-10 h-10 rounded-full bg-violet-100 dark:bg-violet-900 flex items-center justify-center shrink-0">
+                  <FileText className="w-5 h-5 text-violet-600 dark:text-violet-100" />
                 </div>
                 <span className="font-medium">{servicio}</span>
               </CardContent>
@@ -203,8 +203,8 @@ function DirectoryDetail() {
           {directorio.servicios?.length === 0 || !directorio.servicios && (
             <Card>
               <CardContent className="p-4 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center shrink-0">
-                  <FileText className="w-5 h-5 text-rose-600 dark:text-rose-100" />
+                <div className="w-10 h-10 rounded-full bg-violet-100 dark:bg-violet-900 flex items-center justify-center shrink-0">
+                  <FileText className="w-5 h-5 text-violet-600 dark:text-violet-100" />
                 </div>
                 <span className="font-medium">No hay servicios especificados</span>
               </CardContent>
@@ -219,7 +219,7 @@ function DirectoryDetail() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <User className="w-5 h-5 text-rose-600" />
+              <User className="w-5 h-5 text-violet-600" />
               Equipo Responsable
             </CardTitle>
             <CardDescription>
@@ -231,8 +231,8 @@ function DirectoryDetail() {
               {directorio.responsables?.length ? (
                 directorio.responsables.map((responsable, index) => (
                   <div key={index} className="flex items-center gap-4 p-3 rounded-lg bg-muted/50">
-                    <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center">
-                      <User className="w-6 h-6 text-rose-600 dark:text-rose-100" />
+                    <div className="w-12 h-12 rounded-full bg-violet-100 dark:bg-violet-900 flex items-center justify-center">
+                      <User className="w-6 h-6 text-violet-600 dark:text-violet-100" />
                     </div>
                     <div>
                       <p className="font-medium">{responsable.nombre}</p>
@@ -250,7 +250,7 @@ function DirectoryDetail() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <AlertCircle className="w-5 h-5 text-rose-600" />
+              <AlertCircle className="w-5 h-5 text-violet-600" />
               Requisitos de Atención
             </CardTitle>
             <CardDescription>
@@ -262,8 +262,8 @@ function DirectoryDetail() {
               <ul className="space-y-3">
                 {directorio.requisitos.map((requisito, index) => (
                   <li key={index} className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center shrink-0 mt-0.5">
-                      <span className="text-xs font-bold text-rose-600 dark:text-rose-100">{index + 1}</span>
+                    <div className="w-6 h-6 rounded-full bg-violet-100 dark:bg-violet-900 flex items-center justify-center shrink-0 mt-0.5">
+                      <span className="text-xs font-bold text-violet-600 dark:text-violet-100">{index + 1}</span>
                     </div>
                     <span className="text-muted-foreground">{requisito}</span>
                   </li>
@@ -283,14 +283,14 @@ function DirectoryDetail() {
           {directorio.redes?.length ? (
             directorio.redes.map((red, index) => (
               <div key={index} className="flex items-center gap-4 p-3 rounded-lg border bg-card">
-                <div className="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-900 flex items-center justify-center">
-                  {red.icono === 'Facebook' && <FacebookLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                  {red.icono === 'Instagram' && <InstagramLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                  {red.icono === 'Twitter' && <TwitterLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                  {red.icono === 'Whatsapp' && <WhatsappLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                  {red.icono === 'Tiktok' && <TiktokLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                  {red.icono === 'Linkedin' && <LinkedinLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
-                  {red.icono === 'Youtube' && <YoutubeLogoIcon className="w-6 h-6 text-rose-600 dark:text-rose-100" />}
+                <div className="w-12 h-12 rounded-full bg-violet-100 dark:bg-violet-900 flex items-center justify-center">
+                  {red.icono === 'Facebook' && <FacebookLogoIcon className="w-6 h-6 text-violet-600 dark:text-violet-100" />}
+                  {red.icono === 'Instagram' && <InstagramLogoIcon className="w-6 h-6 text-violet-600 dark:text-violet-100" />}
+                  {red.icono === 'Twitter' && <TwitterLogoIcon className="w-6 h-6 text-violet-600 dark:text-violet-100" />}
+                  {red.icono === 'Whatsapp' && <WhatsappLogoIcon className="w-6 h-6 text-violet-600 dark:text-violet-100" />}
+                  {red.icono === 'Tiktok' && <TiktokLogoIcon className="w-6 h-6 text-violet-600 dark:text-violet-100" />}
+                  {red.icono === 'Linkedin' && <LinkedinLogoIcon className="w-6 h-6 text-violet-600 dark:text-violet-100" />}
+                  {red.icono === 'Youtube' && <YoutubeLogoIcon className="w-6 h-6 text-violet-600 dark:text-violet-100" />}
                 </div>
                 <div>
                   <p className="font-medium">{red.nombre}</p>

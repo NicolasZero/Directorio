@@ -19,9 +19,9 @@ const About = () => {
 
   return (
     <div className="min-h-screen">
-      <section className="bg-linear-to-br from-rose-100 dark:from-rose-950/80 via-white dark:via-black to-rose-100/50 dark:to-rose-950/30 py-4 md:py-10 px-4">
+      <section className="bg-linear-to-br from-violet-100 dark:from-violet-950/80 via-white dark:via-black to-violet-100/50 dark:to-violet-950/30 py-4 md:py-10 px-4">
         <div className="container mx-auto text-center max-w-4xl">
-          <Badge variant="outline" className="mb-4 bg-rose-100 dark:bg-rose-900 dark:text-rose-50 text-rose-700">
+          <Badge variant="outline" className="mb-4 bg-violet-100 dark:bg-violet-900 dark:text-violet-50 text-violet-700">
             <Heart className="w-3 h-3 mr-1" />
             Conócenos
           </Badge>
@@ -46,7 +46,7 @@ const About = () => {
           {/* mision */}
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
-              <div className="p-3 w-fit rounded-lg bg-rose-100 text-rose-600 dark:bg-rose-900 dark:text-rose-100 mb-3">
+              <div className="p-3 w-fit rounded-lg bg-violet-100 text-violet-600 dark:bg-violet-900 dark:text-violet-100 mb-3">
                 <Target className="w-8 h-8" />
               </div>
               <CardTitle className="text-xl">Misión</CardTitle>
@@ -59,7 +59,7 @@ const About = () => {
           {/* vision */}
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
-              <div className="p-3 w-fit rounded-lg bg-rose-100 text-rose-600 dark:bg-rose-900 dark:text-rose-100 mb-3">
+              <div className="p-3 w-fit rounded-lg bg-violet-100 text-violet-600 dark:bg-violet-900 dark:text-violet-100 mb-3">
                 <Lightbulb className="w-8 h-8" />
               </div>
               <CardTitle className="text-xl">Visión</CardTitle>
@@ -84,7 +84,7 @@ const About = () => {
           {institucion.valores.map((valor, index) => (
             <Card key={index} className="text-center hover:shadow-lg transition-shadow">
               <CardContent className="p-6">
-                <div className="p-4 w-fit rounded-full bg-rose-100 text-rose-600 dark:bg-rose-900 dark:text-rose-100 mx-auto mb-4">
+                <div className="p-4 w-fit rounded-full bg-violet-100 text-violet-600 dark:bg-violet-900 dark:text-violet-100 mx-auto mb-4">
                   {getIconComponent(valor.icono)}
                 </div>
                 <h3 className="text-lg font-semibold mb-2">{valor.titulo}</h3>
@@ -96,9 +96,9 @@ const About = () => {
       </section>
 
       {/* Logros */}
-      <section className="py-10 px-4 bg-rose-600 dark:bg-rose-900 text-white">
+      <section className="py-10 px-4 bg-violet-600 dark:bg-violet-900 text-white">
         <h2 className="text-center text-3xl font-bold mb-3">Nuestro Impacto</h2>
-        <p className="text-center text-rose-100 dark:text-rose-300 max-w-xl mx-auto mb-10">
+        <p className="text-center text-violet-100 dark:text-violet-300 max-w-xl mx-auto mb-10">
           Números que reflejan nuestro compromiso con las mujeres
         </p>
 
@@ -106,8 +106,8 @@ const About = () => {
           {institucion.logros.map((logro, index) => (
             <div key={index} className="text-center">
               <h2 className="text-4xl md:text-5xl font-bold mb-2">{logro.numero}</h2>
-              <h3 className="text-rose-100 font-medium">{logro.titulo}</h3>
-              <p className="text-rose-200 text-sm">{logro.descripcion}</p>
+              <h3 className="text-violet-100 font-medium">{logro.titulo}</h3>
+              <p className="text-violet-200 text-sm">{logro.descripcion}</p>
             </div>
           ))}
         </div>
@@ -128,7 +128,7 @@ const About = () => {
         {institucion.aliados.map((aliado, index) => (
           <Card key={index} className="hover:shadow-md transition-shadow max-w-[280px] mx-auto">
             <CardContent className="p-6 text-center">
-              <Globe className="w-8 h-8 mx-auto mb-3 text-rose-600" />
+              <Globe className="w-8 h-8 mx-auto mb-3 text-violet-600" />
               <h3 className="font-semibold mb-1">{aliado.nombre}</h3>
               <Badge variant="outline" className="text-xs">{aliado.tipo}</Badge>
             </CardContent>

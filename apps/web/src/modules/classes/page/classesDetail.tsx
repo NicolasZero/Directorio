@@ -77,7 +77,7 @@ export default function ClassesDetail() {
           <Button
             variant="ghost"
             size="sm"
-            className="text-rose-600 hover:text-rose-700 hover:bg-rose-200"
+            className="text-violet-600 hover:text-violet-700 hover:bg-violet-200"
             asChild
           >
             <Link to="/clases">
@@ -101,7 +101,7 @@ export default function ClassesDetail() {
           <div className="lg:col-span-2 space-y-6">
             {/* Badge y titulo */}
             <div>
-              <Badge variant="outline" className="mb-4 bg-rose-200 dark:bg-rose-900 dark:text-rose-50 text-rose-700">
+              <Badge variant="outline" className="mb-4 bg-violet-200 dark:bg-violet-900 dark:text-violet-50 text-violet-700">
                 <GraduationCap className="w-3 h-3 mr-1" />
                 {course.level}
               </Badge>
@@ -126,7 +126,7 @@ export default function ClassesDetail() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <BookOpen className="h-5 w-5 text-rose-600" />
+                  <BookOpen className="h-5 w-5 text-violet-600" />
                   Lo que aprenderás
                 </CardTitle>
               </CardHeader>
@@ -134,7 +134,7 @@ export default function ClassesDetail() {
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {outcomes.map((item, index) => (
                     <li key={index} className="flex items-start gap-2">
-                      <CheckCircle2 className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-5 h-5 text-violet-500 shrink-0 mt-0.5" />
                       <span className="text-sm">{item.outcome}</span>
                     </li>
                   ))}
@@ -146,7 +146,7 @@ export default function ClassesDetail() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <BarChart className="h-5 w-5 text-rose-600" />
+                  <BarChart className="h-5 w-5 text-violet-600" />
                   Contenido del Curso
                 </CardTitle>
                 <CardDescription>
@@ -158,9 +158,9 @@ export default function ClassesDetail() {
                   {modules.map((module, index) => (
                     <div
                       key={module.id}
-                      className="flex items-center gap-2 flex-wrap p-4 rounded-lg border bg-muted/30 hover:bg-rose-50 hover:border-rose-200 dark:hover:bg-rose-950 dark:hover:border-gray-800 transition-colors cursor-default"
+                      className="flex items-center gap-2 flex-wrap p-4 rounded-lg border bg-muted/30 hover:bg-violet-50 hover:border-violet-200 dark:hover:bg-violet-950 dark:hover:border-gray-800 transition-colors cursor-default"
                     >
-                      <span className="flex items-center justify-center w-8 h-8 rounded-full bg-rose-100 dark:bg-rose-900 text-rose-600 dark:text-rose-100 text-sm font-bold">
+                      <span className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 dark:bg-violet-900 text-violet-600 dark:text-violet-100 text-sm font-bold">
                         {index + 1}
                       </span>
                       <span className="font-medium">{module.title}</span>
@@ -177,15 +177,15 @@ export default function ClassesDetail() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            <Card className="sticky top-8 shadow-lg border-rose-200 dark:border-rose-800">
+            <Card className="sticky top-8 shadow-lg border-violet-200 dark:border-violet-800">
               <CardHeader>
                 <CardTitle>Información del Curso</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Instructor */}
                 <div className="flex items-start gap-3">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900">
-                    <User className="h-5 w-5 text-rose-600 dark:text-rose-100" />
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-violet-100 dark:bg-violet-900">
+                    <User className="h-5 w-5 text-violet-600 dark:text-violet-100" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Instructor</p>
@@ -195,8 +195,8 @@ export default function ClassesDetail() {
 
                 {/* Duración */}
                 <div className="flex items-start gap-3">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900">
-                    <Clock className="h-5 w-5 text-rose-600 dark:text-rose-100" />
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-violet-100 dark:bg-violet-900">
+                    <Clock className="h-5 w-5 text-violet-600 dark:text-violet-100" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Duración</p>
@@ -206,8 +206,8 @@ export default function ClassesDetail() {
 
                 {/* Nivel */}
                 <div className="flex items-start gap-3">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900">
-                    <BarChart className="h-5 w-5 text-rose-600 dark:text-rose-100" />
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-violet-100 dark:bg-violet-900">
+                    <BarChart className="h-5 w-5 text-violet-600 dark:text-violet-100" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Nivel</p>
@@ -217,8 +217,8 @@ export default function ClassesDetail() {
 
                 {/* Fecha de inicio */}
                 <div className="flex items-start gap-3">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-900">
-                    <Calendar className="h-5 w-5 text-rose-600 dark:text-rose-100" />
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-violet-100 dark:bg-violet-900">
+                    <Calendar className="h-5 w-5 text-violet-600 dark:text-violet-100" />
                   </div>
                   <div>
                     <p className="text-sm font-medium">Fecha de inicio</p>
@@ -227,7 +227,7 @@ export default function ClassesDetail() {
                 </div>
 
                 <div className="pt-4 border-t">
-                  <Button className="w-full font-bold bg-rose-600 hover:bg-rose-700" size="lg">
+                  <Button className="w-full font-bold bg-violet-600 hover:bg-violet-700" size="lg">
                     Inscríbete Ahora
                   </Button>
                   <p className="text-xs text-center text-muted-foreground mt-2">
@@ -241,7 +241,7 @@ export default function ClassesDetail() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <AlertCircle className="h-5 w-5 text-rose-600" />
+                  <AlertCircle className="h-5 w-5 text-violet-600" />
                   Requisitos
                 </CardTitle>
               </CardHeader>
@@ -249,7 +249,7 @@ export default function ClassesDetail() {
                 <ul className="space-y-3">
                   {requirements.map((req, index) => (
                     <li key={index} className="flex items-start gap-2 text-sm">
-                      <span className="flex items-center justify-center w-5 h-5 rounded-full bg-rose-100 dark:bg-rose-900 text-rose-600 dark:text-rose-100 text-xs font-bold shrink-0 mt-0.5">
+                      <span className="flex items-center justify-center w-5 h-5 rounded-full bg-violet-100 dark:bg-violet-900 text-violet-600 dark:text-violet-100 text-xs font-bold shrink-0 mt-0.5">
                         {index + 1}
                       </span>
                       <span className="text-muted-foreground">{req.requirement}</span>

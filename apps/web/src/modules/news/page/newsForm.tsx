@@ -123,10 +123,10 @@ export default function NewsForm() {
 
   return (
     <section className="min-h-full bg-muted/20 pb-10">
-      <div className="border-b bg-linear-to-br from-rose-50 via-background to-background dark:from-rose-950/30">
+      <div className="border-b bg-linear-to-br from-violet-50 via-background to-background dark:from-violet-950/30">
         <div className="container mx-auto flex max-w-6xl flex-col gap-5 px-4 py-7 sm:flex-row sm:items-center sm:justify-between sm:py-9">
           <div className="min-w-0">
-            <Badge variant="outline" className="mb-3 border-rose-200 bg-rose-100 text-rose-700 dark:border-rose-800 dark:bg-rose-950 dark:text-rose-100">
+            <Badge variant="outline" className="mb-3 border-violet-200 bg-violet-100 text-violet-700 dark:border-violet-800 dark:bg-violet-950 dark:text-violet-100">
               <Newspaper className="mr-1.5 h-3.5 w-3.5" />
               {isEdit ? 'Edición' : 'Gestión de noticias'}
             </Badge>
@@ -160,7 +160,7 @@ export default function NewsForm() {
             <Card className="min-w-0 overflow-hidden shadow-sm">
               <CardHeader className="border-b bg-muted/20 px-5 py-5 sm:px-7">
                 <div className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-200">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-700 dark:bg-violet-950 dark:text-violet-200">
                     <FileText className="h-5 w-5" />
                   </span>
                   <div>
@@ -193,7 +193,7 @@ export default function NewsForm() {
                     onChange={(event) => setSummary(event.target.value)}
                     rows={4}
                     placeholder="Describe brevemente de qué trata la noticia..."
-                    className="min-h-28 w-full resize-y rounded-xl border border-input bg-background px-3 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20"
+                    className="min-h-28 w-full resize-y rounded-xl border border-input bg-background px-3 py-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
                     required
                   />
                   <p className="text-xs text-muted-foreground">Este texto ayuda a las personas a decidir si quieren leer el artículo.</p>
@@ -212,7 +212,7 @@ export default function NewsForm() {
               <Card className="min-w-0 shadow-sm">
                 <CardHeader className="pb-4">
                   <div className="flex items-center gap-2">
-                    <Tag className="h-4 w-4 text-rose-600" />
+                    <Tag className="h-4 w-4 text-violet-600" />
                     <CardTitle className="text-base">Detalles</CardTitle>
                   </div>
                   <p className="text-sm text-muted-foreground">Organiza y programa la noticia.</p>
@@ -262,7 +262,7 @@ export default function NewsForm() {
               <Card className="min-w-0 shadow-sm">
                 <CardHeader className="pb-4">
                   <div className="flex items-center gap-2">
-                    <ImagePlus className="h-4 w-4 text-rose-600" />
+                    <ImagePlus className="h-4 w-4 text-violet-600" />
                     <CardTitle className="text-base">Imagen de portada</CardTitle>
                   </div>
                   <p className="text-sm text-muted-foreground">JPG, PNG, WEBP o GIF; máximo 5 MB.</p>
@@ -301,7 +301,7 @@ export default function NewsForm() {
                     aria-label="URL de imagen de portada"
                     className="min-w-0"
                   />
-                  <Button type="button" variant="outline" className="w-full" onClick={() => setImagePickerOpen(true)}>
+                  <Button type="button" variant="outline" size="icon-sm" className="w-full" onClick={() => setImagePickerOpen(true)}>
                     <ImagePlus className="mr-2 h-4 w-4" />
                     Seleccionar o subir imagen
                   </Button>
@@ -318,7 +318,7 @@ export default function NewsForm() {
               <Button type="button" variant="outline" asChild className="w-full sm:w-auto">
                 <Link to="/admin/noticias">Cancelar</Link>
               </Button>
-              <Button type="submit" disabled={saving} className="w-full bg-rose-600 hover:bg-rose-700 sm:w-auto">
+              <Button type="submit" disabled={saving} className="w-full bg-violet-600 hover:bg-violet-700 sm:w-auto">
                 <Save className="mr-2 h-4 w-4" />
                 {saving ? 'Guardando...' : isEdit ? 'Guardar cambios' : 'Guardar como borrador'}
               </Button>
