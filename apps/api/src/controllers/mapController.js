@@ -12,6 +12,7 @@ export const getMapCenters = async (_request, reply) => {
           COALESCE(c.tipo_organismo, 'OTRA') AS tipo_organismo,
           c.direccion,
           COALESCE(p.nombre, 'No indicada') AS parroquia,
+          '[]'::json AS defensoras,
           m.nombre AS municipio,
           e.nombre AS estado,
           c.latitud::double precision AS latitud,
@@ -41,6 +42,10 @@ export const getMapCenters = async (_request, reply) => {
           END AS tipo_organismo,
           MAX(c.direccion) AS direccion,
           COALESCE(MAX(p.nombre), 'No indicada') AS parroquia,
+          json_agg(
+            jsonb_build_object('id', c.id, 'nombre', c.nombre)
+            ORDER BY c.nombre, c.id
+          ) AS defensoras,
           m.nombre AS municipio,
           e.nombre AS estado,
           c.latitud::double precision AS latitud,

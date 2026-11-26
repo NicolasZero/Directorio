@@ -234,7 +234,6 @@ BEGIN
         direccion = s.direccion,
         estado_id = s.estado_id,
         municipio_id = s.municipio_id,
-        parroquia_id = NULL,
         latitud = s.latitud,
         longitud = s.longitud
     FROM directorios_suministrados s

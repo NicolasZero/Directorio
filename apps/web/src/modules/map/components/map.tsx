@@ -33,6 +33,7 @@ export interface MapCenter {
     tipo_organismo: 'INAMUJER' | 'MINISTERIO' | 'OTRA'
     direccion: string
     parroquia: string
+    defensoras: { id: number; nombre: string }[]
     municipio: string
     estado: string
     latitud: number
@@ -513,13 +514,19 @@ export default function Mapa({
                     const [x, y] = projection.point([center.longitud, center.latitud])
                     const isSelected = center.id === selectedCenterId
                     const label = `${center.nombre}, ${center.parroquia}, ${center.municipio}, ${center.estado}`
+                    const visibleMarkerScale = Math.min(1.65, Math.max(1, zoomScale / 4))
+                    const markerColor = {
+                        INAMUJER: '#ff4f9a',
+                        MINISTERIO: '#c084fc',
+                        OTRA: '#fbbf24',
+                    }[center.tipo_organismo]
 
                     return (
                         <g
                             key={center.id}
                             id={`center-${center.id}`}
                             className={`map-center map-center--${center.tipo_organismo.toLowerCase()}${isSelected ? ' is-selected' : ''}`}
-                            transform={`translate(${x} ${y}) scale(${1 / zoomScale})`}
+                            transform={`translate(${x} ${y}) scale(${visibleMarkerScale / zoomScale})`}
                             role="button"
                             tabIndex={0}
                             aria-label={label}
@@ -537,7 +544,12 @@ export default function Mapa({
                             }}
                         >
                             <circle className="map-center-hit-area" r="11" />
-                            <path className="map-center-icon" d="M-8 -1 0 -7.5 8 -1 6.5 0.8 6.5 7 -6.5 7 -6.5 0.8 -8 -1Z M-1.6 7V2H1.6V7Z" fillRule="evenodd" />
+                            <path
+                                className="map-center-icon"
+                                d="M-8 -1 0 -7.5 8 -1 6.5 0.8 6.5 7 -6.5 7 -6.5 0.8 -8 -1Z M-1.6 7V2H1.6V7Z"
+                                style={{ fill: markerColor, fillOpacity: 1 }}
+                                fillRule="evenodd"
+                            />
                             <title>{label}</title>
                         </g>
                     )

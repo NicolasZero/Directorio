@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { KeyboardEvent } from 'react'
+import type { CSSProperties, KeyboardEvent } from 'react'
+import { Link } from 'react-router'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -32,6 +33,19 @@ type ZoomToElement = (node: string, scale?: number, animationTime?: number) => v
 const isRecord = (value: unknown): value is Record<string, unknown> =>
     typeof value === 'object' && value !== null
 
+const parseDefensoras = (value: unknown): MapCenter['defensoras'] => {
+    if (!Array.isArray(value)) {
+        throw new Error('La API devolvió defensoras con formato inválido.')
+    }
+
+    return value.map((defensora): MapCenter['defensoras'][number] => {
+        if (!isRecord(defensora) || typeof defensora.id !== 'number' || typeof defensora.nombre !== 'string') {
+            throw new Error('La API devolvió una defensora con datos inválidos.')
+        }
+        return { id: defensora.id, nombre: defensora.nombre }
+    })
+}
+
 const parseCenter = (value: unknown): MapCenter => {
     if (!isRecord(value)) {
         throw new Error('La API devolvió una sede con formato inválido.')
@@ -45,12 +59,15 @@ const parseCenter = (value: unknown): MapCenter => {
         tipo_organismo,
         direccion,
         parroquia,
+        defensoras: rawDefensoras,
         municipio,
         estado,
         latitud,
         longitud,
         calificacion,
     } = value
+
+    const defensoras = parseDefensoras(rawDefensoras)
 
     if (
         typeof id !== 'number' ||
@@ -77,6 +94,7 @@ const parseCenter = (value: unknown): MapCenter => {
         tipo_organismo,
         direccion,
         parroquia,
+        defensoras,
         municipio,
         estado,
         latitud,
@@ -128,10 +146,13 @@ const MapaInteractivo = () => {
     const [refreshingCenters, setRefreshingCenters] = useState(false)
     const [isClosingPanel, setIsClosingPanel] = useState(false)
     const [mapZoomScale, setMapZoomScale] = useState(1)
+    const [maxMapZoom, setMaxMapZoom] = useState(20)
+    const [mapFrameHeight, setMapFrameHeight] = useState(0)
     const [error, setError] = useState<string | null>(null)
     const [mapError, setMapError] = useState<string | null>(null)
     const transformRef = useRef<ReactZoomPanPinchContentRef | null>(null)
     const mapFrameRef = useRef<HTMLDivElement | null>(null)
+    const mapSectionRef = useRef<HTMLElement | null>(null)
     const animationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
     const centerRequestRef = useRef<AbortController | null>(null)
 
@@ -190,6 +211,19 @@ const MapaInteractivo = () => {
         }
     }, [fetchCenters])
 
+    useEffect(() => {
+        const frame = mapFrameRef.current
+        if (!frame) return
+
+        const resizeObserver = new ResizeObserver(([entry]) => {
+            const nextHeight = Math.round(entry.contentRect.height)
+            setMapFrameHeight((currentHeight) => currentHeight === nextHeight ? currentHeight : nextHeight)
+        })
+        resizeObserver.observe(frame)
+
+        return () => resizeObserver.disconnect()
+    }, [])
+
     useEffect(
         () => () => {
             if (animationTimerRef.current) clearTimeout(animationTimerRef.current)
@@ -237,6 +271,7 @@ const MapaInteractivo = () => {
                 }
             }
 
+            setMaxMapZoom(scale)
             zoomToElement(elementId, scale, 650)
             animationTimerRef.current = null
         }, delay)
@@ -251,6 +286,11 @@ const MapaInteractivo = () => {
         setSelectedState(feature)
         setSelectedRegionElementId(elementId)
         setSelectedCenterId(null)
+        setMaxMapZoom(20)
+        mapSectionRef.current?.scrollIntoView({
+            behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+            block: 'start',
+        })
         scheduleMapFocus(elementId, zoomToElement)
     }
 
@@ -286,6 +326,7 @@ const MapaInteractivo = () => {
     const closeStatePanel = (resetTransform: (animationTime?: number) => void) => {
         if (!selectedState) {
             setSelectedCenterId(null)
+            setMaxMapZoom(20)
             resetTransform(450)
             return
         }
@@ -297,6 +338,7 @@ const MapaInteractivo = () => {
             setSelectedState(null)
             setSelectedRegionElementId(null)
             setIsClosingPanel(false)
+            setMaxMapZoom(20)
             resetTransform(500)
             animationTimerRef.current = null
         }, 260)
@@ -313,6 +355,9 @@ const MapaInteractivo = () => {
         ? `https://www.google.com/maps/search/?api=1&query=${selectedCenter.latitud},${selectedCenter.longitud}`
         : null
     const imageDirectory = selectedCenter ? getCenterImageDirectory(selectedCenter) : null
+    const directoryReturnQuery = selectedCenter
+        ? new URLSearchParams({ estado: selectedCenter.estado, nombre: selectedCenter.estado }).toString()
+        : ''
 
     return (
         <main className="min-h-screen">
@@ -359,7 +404,7 @@ const MapaInteractivo = () => {
                 </section>
             )}
 
-            <section className="w-full px-2 py-4 sm:px-4 lg:px-6">
+            <section ref={mapSectionRef} className="w-full scroll-mt-20 px-2 py-4 sm:px-4 lg:px-6">
                 <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
                     <div>
                         <h2 className="text-xl font-semibold">
@@ -379,7 +424,7 @@ const MapaInteractivo = () => {
                     ref={transformRef}
                     initialScale={1}
                     minScale={1}
-                    maxScale={20}
+                    maxScale={maxMapZoom}
                     onTransform={(_, state) => {
                         if (!Number.isFinite(state.scale) || state.scale <= 0) return
                         setMapZoomScale((currentScale) =>
@@ -397,7 +442,13 @@ const MapaInteractivo = () => {
                                     className="map-container relative overflow-hidden rounded-xl border shadow-lg"
                                 >
                                     <div className="absolute bottom-4 left-4 z-10 flex gap-2">
-                                        <Button aria-label="Acercar mapa" onClick={() => zoomIn()}>+</Button>
+                                        <Button
+                                            aria-label="Acercar mapa"
+                                            onClick={() => zoomIn()}
+                                            disabled={mapZoomScale >= maxMapZoom - 0.01}
+                                        >
+                                            +
+                                        </Button>
                                         <Button aria-label="Alejar mapa" onClick={() => zoomOut()} disabled={mapZoomScale <= 1.01}>−</Button>
                                         <Button
                                             variant="outline"
@@ -431,6 +482,9 @@ const MapaInteractivo = () => {
                                         className={`map-side-panel${isClosingPanel ? ' is-closing' : ''}`}
                                         aria-label={selectedCenter ? 'Detalles de la sede' : 'Sedes del estado'}
                                         aria-live="polite"
+                                        style={{
+                                            '--map-frame-height': mapFrameHeight > 0 ? `${mapFrameHeight}px` : 'auto',
+                                        } as CSSProperties}
                                     >
                                         <div className="map-panel-heading">
                                             {selectedCenter ? (
@@ -483,12 +537,43 @@ const MapaInteractivo = () => {
                                                         <h4>Ubicación completa</h4>
                                                         <p>{selectedCenter.direccion}</p>
                                                         <p>
-                                                            Parroquia {selectedCenter.parroquia}, municipio {selectedCenter.municipio},
+                                                            {selectedCenter.parroquia === 'No indicada'
+                                                                ? 'Parroquia no indicada'
+                                                                : `Parroquia ${selectedCenter.parroquia}`}, municipio {selectedCenter.municipio},
                                                             {' '}{selectedCenter.estado}.
                                                         </p>
-                                                        <p className="map-coordinates">
-                                                            {selectedCenter.latitud.toFixed(5)}, {selectedCenter.longitud.toFixed(5)}
-                                                        </p>
+                                                        {selectedCenter.parroquia === 'No indicada' && (
+                                                            <p className="map-coordinates">
+                                                                Esta sede aún no tiene una parroquia vinculada en la base de datos.
+                                                            </p>
+                                                        )}
+                                                    </section>
+
+                                                    <section className="map-detail-section">
+                                                        <h4>Defensoras asignadas ({selectedCenter.defensoras.length})</h4>
+                                                        {selectedCenter.defensoras.length > 0 ? (
+                                                            <div className="grid gap-2">
+                                                                {selectedCenter.defensoras.map((defensora, index) => (
+                                                                    <Button
+                                                                        key={defensora.id}
+                                                                        asChild
+                                                                        variant="outline"
+                                                                        className="map-defensora-button w-full justify-start"
+                                                                    >
+                                                                        <Link
+                                                                            to={`/directorio/${defensora.id}${directoryReturnQuery ? `?${directoryReturnQuery}` : ''}`}
+                                                                            onClick={() => window.scrollTo(0, 0)}
+                                                                            aria-label={`Ver el perfil de la defensora ${index + 1} en el directorio`}
+                                                                        >
+                                                                            <House className="mr-2 h-4 w-4 text-rose-600" aria-hidden="true" />
+                                                                            Defensora {index + 1}
+                                                                        </Link>
+                                                                    </Button>
+                                                                ))}
+                                                            </div>
+                                                        ) : (
+                                                            <p>No hay defensoras asociadas a esta sede.</p>
+                                                        )}
                                                     </section>
 
                                                     <section className="map-detail-section">

@@ -81,23 +81,11 @@
 }
 
 .map-center-icon {
-    fill: #b83b78;
-    stroke: #d7c3ec;
-    stroke-width: 0.9;
+    stroke: #4f3478;
+    stroke-width: 0.65;
+    fill-opacity: 1;
     vector-effect: non-scaling-stroke;
     stroke-linejoin: round;
-}
-
-.map-center--inamujer .map-center-icon {
-    fill: #d34b91;
-}
-
-.map-center--ministerio .map-center-icon {
-    fill: #9670ce;
-}
-
-.map-center--otra .map-center-icon {
-    fill: #d5ad61;
 }
 
 .map-center:hover .map-center-icon,
@@ -165,7 +153,9 @@
 
 .map-side-panel {
     min-width: 0;
-    max-height: min(70vh, 860px);
+    min-height: 0;
+    height: var(--map-frame-height, auto);
+    max-height: var(--map-frame-height, none);
     overflow: auto;
     border: 1px solid var(--border);
     border-radius: 0.9rem;
@@ -202,6 +192,52 @@
     display: grid;
     gap: 0.75rem;
     padding: 0.85rem;
+}
+
+.map-defensora-button[data-variant="outline"] {
+    border-color: rgb(194 173 220 / 75%);
+    background: linear-gradient(110deg, #fff 0%, #fbf7ff 45%, #eee4f8 100%);
+    background-size: 200% 100%;
+    color: #58357c;
+    box-shadow: 0 3px 12px rgb(105 67 149 / 12%);
+    transition:
+        background-position 420ms ease,
+        border-color 220ms ease,
+        box-shadow 220ms ease,
+        color 220ms ease,
+        transform 220ms ease;
+}
+
+.map-defensora-button[data-variant="outline"]:hover,
+.map-defensora-button[data-variant="outline"]:focus-visible {
+    border-color: #8969b3;
+    background-position: 100% 0;
+    color: #4f3478;
+    box-shadow: 0 8px 20px rgb(105 67 149 / 20%);
+    transform: translateY(-2px);
+}
+
+.map-defensora-button svg {
+    transition: color 220ms ease, transform 300ms ease;
+}
+
+.map-defensora-button:hover svg,
+.map-defensora-button:focus-visible svg {
+    color: #d34b91;
+    transform: scale(1.12) rotate(-8deg);
+}
+
+.dark .map-defensora-button[data-variant="outline"] {
+    border-color: rgb(194 173 220 / 48%);
+    background: linear-gradient(110deg, #241d32 0%, #302341 48%, #493263 100%);
+    background-size: 200% 100%;
+    color: #eee5fa;
+}
+
+.dark .map-defensora-button[data-variant="outline"]:hover,
+.dark .map-defensora-button[data-variant="outline"]:focus-visible {
+    border-color: #c2addc;
+    color: #fff;
 }
 
 .map-center-card {
@@ -324,15 +360,15 @@
 }
 
 .map-legend-icon--inamujer {
-    color: #d34b91;
+    color: #ff4f9a;
 }
 
 .map-legend-icon--ministerio {
-    color: #9670ce;
+    color: #c084fc;
 }
 
 .map-legend-icon--otra {
-    color: #d5ad61;
+    color: #fbbf24;
 }
 
 @keyframes map-panel-enter {
@@ -423,6 +459,7 @@
     }
 
     .map-side-panel {
+        height: auto;
         max-height: 65vh;
         animation-name: map-panel-enter-mobile;
     }
@@ -445,6 +482,11 @@
     .map-center-details,
     .map-center-photo img {
         animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .map-defensora-button,
+    .map-defensora-button svg {
         transition-duration: 0.01ms !important;
     }
 }
