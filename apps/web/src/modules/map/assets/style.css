@@ -82,9 +82,8 @@
 
 .map-center-icon {
     stroke: #4f3478;
-    stroke-width: 0.65;
+    stroke-width: 0.55;
     fill-opacity: 1;
-    vector-effect: non-scaling-stroke;
     stroke-linejoin: round;
 }
 
@@ -92,7 +91,7 @@
 .map-center:focus-visible .map-center-icon,
 .map-center.is-selected .map-center-icon {
     stroke: #f3e8ff;
-    stroke-width: 1.8;
+    stroke-width: 1.1;
     filter: drop-shadow(0 0 3px rgb(229 208 255 / 75%));
 }
 
@@ -188,8 +187,15 @@
     flex: none;
 }
 
+.map-side-panel {
+    display: flex;
+    flex-direction: column;
+}
+
 .map-center-list {
     display: grid;
+    align-content: start;
+    flex: 1;
     gap: 0.75rem;
     padding: 0.85rem;
 }

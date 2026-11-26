@@ -344,6 +344,51 @@ const getLabelPlacements = (
 const keepScreenSizeTransform = ([x, y]: Position, zoomScale: number) =>
     `translate(${x} ${y}) scale(${1 / zoomScale}) translate(${-x} ${-y})`
 
+const CENTER_SPREAD = 46
+
+// Agrupa por distancia en píxeles proyectados (no por coordenada exacta) y
+// separa cada grupo en un arco alrededor del punto central del grupo.
+const spreadOverlappingCenters = (centers: MapCenter[], project: Projection['point']) => {
+    const points = centers.map((center) => ({
+        center,
+        position: project([center.longitud, center.latitud]),
+    }))
+    const offsets = new Map<number, [number, number]>()
+    const grouped = new Set<number>()
+
+    for (const item of points) {
+        if (grouped.has(item.center.id)) continue
+        grouped.add(item.center.id)
+
+        const cluster = points.filter(
+            (other) =>
+                !grouped.has(other.center.id) &&
+                Math.abs(other.position[0] - item.position[0]) < 18 &&
+                Math.abs(other.position[1] - item.position[1]) < 18,
+        )
+        cluster.forEach((member) => grouped.add(member.center.id))
+
+        if (cluster.length === 1) {
+            offsets.set(item.center.id, [0, 0])
+            continue
+        }
+
+        cluster.forEach((member, index) => {
+            if (index === 0) {
+                offsets.set(member.center.id, [0, 0])
+                return
+            }
+            const angle = ((index - 1) / (cluster.length - 1)) * Math.PI - Math.PI / 2
+            offsets.set(member.center.id, [
+                Math.cos(angle) * CENTER_SPREAD,
+                Math.sin(angle) * CENTER_SPREAD * -1,
+            ])
+        })
+    }
+
+    return offsets
+}
+
 export default function Mapa({
     centers,
     selectedRegionKey,
@@ -396,6 +441,10 @@ export default function Mapa({
     const labelPlacements = useMemo(
         () => getLabelPlacements(labelCandidates, selectedRegionKey, zoomScale),
         [labelCandidates, selectedRegionKey, zoomScale],
+    )
+    const centerOffsets = useMemo(
+        () => (projection ? spreadOverlappingCenters(centers, projection.point) : new Map<number, [number, number]>()),
+        [centers, projection],
     )
 
     const selectCenter = (center: MapCenter) => {
@@ -512,9 +561,10 @@ export default function Mapa({
             <g className="map-centers" clipPath="url(#map-geography-clip)">
                 {centers.map((center) => {
                     const [x, y] = projection.point([center.longitud, center.latitud])
+                    const [offsetX, offsetY] = centerOffsets.get(center.id) ?? [0, 0]
                     const isSelected = center.id === selectedCenterId
                     const label = `${center.nombre}, ${center.parroquia}, ${center.municipio}, ${center.estado}`
-                    const visibleMarkerScale = Math.min(1.65, Math.max(1, zoomScale / 4))
+                    const visibleMarkerScale = Math.min(2.6, Math.max(1, zoomScale / 1.4))
                     const markerColor = {
                         INAMUJER: '#ff4f9a',
                         MINISTERIO: '#c084fc',
@@ -526,7 +576,7 @@ export default function Mapa({
                             key={center.id}
                             id={`center-${center.id}`}
                             className={`map-center map-center--${center.tipo_organismo.toLowerCase()}${isSelected ? ' is-selected' : ''}`}
-                            transform={`translate(${x} ${y}) scale(${visibleMarkerScale / zoomScale})`}
+                            transform={`translate(${x + offsetX / zoomScale} ${y + offsetY / zoomScale}) scale(${visibleMarkerScale / zoomScale})`}
                             role="button"
                             tabIndex={0}
                             aria-label={label}

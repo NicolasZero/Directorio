@@ -254,7 +254,7 @@ const MapaInteractivo = () => {
             const viewBox = svg?.viewBox.baseVal
             if (!svg || !viewBox || viewBox.width === 0 || viewBox.height === 0) return
 
-            let scale = fixedScale ?? 4
+            let scale = fixedScale ?? 6
             if (fixedScale === undefined) {
                 const bounds = target.getBBox()
                 const rect = svg.getBoundingClientRect()
@@ -265,7 +265,7 @@ const MapaInteractivo = () => {
                     scale = Math.min(
                         (frame.clientWidth * 0.82) / width,
                         (frame.clientHeight * 0.78) / height,
-                        20,
+                        8,
                     )
                     scale = Math.max(2.2, scale)
                 }
@@ -304,12 +304,12 @@ const MapaInteractivo = () => {
         if (region) setSelectedState(region)
         if (regionElementId) setSelectedRegionElementId(regionElementId)
         setSelectedCenterId(center.id)
-        scheduleMapFocus(`center-${center.id}`, zoomToElement, 4)
+        scheduleMapFocus(`center-${center.id}`, zoomToElement, 5)
     }
 
     const handleCenterCardSelect = (center: MapCenter, zoomToElement: ZoomToElement) => {
         setSelectedCenterId(center.id)
-        scheduleMapFocus(`center-${center.id}`, zoomToElement, 4, 80)
+        scheduleMapFocus(`center-${center.id}`, zoomToElement, 5, 80)
     }
 
     const handleCenterKeyDown = (
