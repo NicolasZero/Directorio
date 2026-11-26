@@ -1,17 +1,19 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { KeyboardEvent } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
-    ArrowLeft,
     ExternalLink,
+    House,
     Image as ImageIcon,
     MapPin,
+    RefreshCw,
     Search,
     Star,
     X,
 } from 'lucide-react'
+import BackArrowButton from '@/components/backArrowButton'
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch'
 import type { ReactZoomPanPinchContentRef } from 'react-zoom-pan-pinch'
 import Map from '@/modules/map/components/map'
@@ -70,7 +72,7 @@ const parseCenter = (value: unknown): MapCenter => {
     return {
         id,
         nombre,
-        descripcion,
+        descripcion: typeof descripcion === 'string' ? descripcion : null,
         organismo,
         tipo_organismo,
         direccion,
@@ -79,7 +81,7 @@ const parseCenter = (value: unknown): MapCenter => {
         estado,
         latitud,
         longitud,
-        calificacion,
+        calificacion: typeof calificacion === 'number' ? calificacion : null,
     }
 }
 
@@ -123,6 +125,7 @@ const MapaInteractivo = () => {
     const [selectedRegionElementId, setSelectedRegionElementId] = useState<string | null>(null)
     const [selectedCenterId, setSelectedCenterId] = useState<number | null>(null)
     const [loadingCenters, setLoadingCenters] = useState(true)
+    const [refreshingCenters, setRefreshingCenters] = useState(false)
     const [isClosingPanel, setIsClosingPanel] = useState(false)
     const [mapZoomScale, setMapZoomScale] = useState(1)
     const [error, setError] = useState<string | null>(null)
@@ -130,36 +133,62 @@ const MapaInteractivo = () => {
     const transformRef = useRef<ReactZoomPanPinchContentRef | null>(null)
     const mapFrameRef = useRef<HTMLDivElement | null>(null)
     const animationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+    const centerRequestRef = useRef<AbortController | null>(null)
 
-    useEffect(() => {
+    const fetchCenters = useCallback(async (initialLoad = false) => {
+        centerRequestRef.current?.abort()
         const controller = new AbortController()
+        centerRequestRef.current = controller
+        if (initialLoad) setLoadingCenters(true)
+        else setRefreshingCenters(true)
 
-        const fetchCenters = async () => {
-            try {
-                const response = await fetch('/api/map/centers', { signal: controller.signal })
-                const payload: ApiResponse = await response.json()
+        try {
+            const response = await fetch('/api/map/centers', {
+                signal: controller.signal,
+                cache: 'no-store',
+            })
+            const payload: ApiResponse = await response.json()
 
-                if (!response.ok) {
-                    throw new Error(payload.error || 'No se pudieron cargar las sedes.')
-                }
-                if (!Array.isArray(payload.data)) {
-                    throw new Error('La respuesta de sedes no tiene el formato esperado.')
-                }
+            if (!response.ok) {
+                throw new Error(payload.error || 'No se pudieron cargar las sedes.')
+            }
+            if (!Array.isArray(payload.data)) {
+                throw new Error('La respuesta de sedes no tiene el formato esperado.')
+            }
 
-                setCenters(payload.data.map(parseCenter))
-                setError(null)
-            } catch (fetchError) {
-                if (controller.signal.aborted) return
-                console.error(fetchError)
-                setError('No se pudieron cargar las sedes. Verifica la base de datos e inténtalo de nuevo.')
-            } finally {
-                if (!controller.signal.aborted) setLoadingCenters(false)
+            setCenters(payload.data.map(parseCenter))
+            setError(null)
+        } catch (fetchError) {
+            if (controller.signal.aborted) return
+            console.error(fetchError)
+            setError('No se pudieron cargar las sedes. Verifica la base de datos e inténtalo de nuevo.')
+        } finally {
+            if (!controller.signal.aborted) {
+                setLoadingCenters(false)
+                setRefreshingCenters(false)
+                centerRequestRef.current = null
             }
         }
-
-        fetchCenters()
-        return () => controller.abort()
     }, [])
+
+    useEffect(() => {
+        const initialRequest = window.setTimeout(() => {
+            void fetchCenters(true)
+        }, 0)
+
+        const refreshWhenVisible = () => {
+            if (!document.hidden) void fetchCenters()
+        }
+
+        window.addEventListener('focus', refreshWhenVisible)
+        document.addEventListener('visibilitychange', refreshWhenVisible)
+        return () => {
+            window.clearTimeout(initialRequest)
+            window.removeEventListener('focus', refreshWhenVisible)
+            document.removeEventListener('visibilitychange', refreshWhenVisible)
+            centerRequestRef.current?.abort()
+        }
+    }, [fetchCenters])
 
     useEffect(
         () => () => {
@@ -222,11 +251,7 @@ const MapaInteractivo = () => {
         setSelectedState(feature)
         setSelectedRegionElementId(elementId)
         setSelectedCenterId(null)
-        scheduleMapFocus(
-            elementId,
-            zoomToElement,
-            feature.status === 'disputed_claim' ? 2.1 : undefined,
-        )
+        scheduleMapFocus(elementId, zoomToElement)
     }
 
     const handleCenterSelect = (
@@ -309,6 +334,17 @@ const MapaInteractivo = () => {
                         </span>
                         <p className="text-sm text-muted-foreground">Sedes georreferenciadas</p>
                     </div>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="mt-4"
+                        onClick={() => void fetchCenters()}
+                        disabled={loadingCenters || refreshingCenters}
+                    >
+                        <RefreshCw className={`mr-2 h-4 w-4${refreshingCenters ? ' animate-spin' : ''}`} aria-hidden="true" />
+                        {refreshingCenters ? 'Actualizando…' : 'Actualizar mapa'}
+                    </Button>
                 </div>
             </section>
 
@@ -328,9 +364,7 @@ const MapaInteractivo = () => {
                     <div>
                         <h2 className="text-xl font-semibold">
                             {selectedState
-                                ? selectedState.status === 'disputed_claim'
-                                    ? 'Zona de reclamación'
-                                    : `Sedes en ${selectedState.mapName ?? selectedState.name}`
+                                ? `Sedes en ${selectedState.mapName ?? selectedState.name}`
                                 : 'Mapa de Venezuela'}
                         </h2>
                         <p className="text-sm text-muted-foreground">
@@ -400,14 +434,11 @@ const MapaInteractivo = () => {
                                     >
                                         <div className="map-panel-heading">
                                             {selectedCenter ? (
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    aria-label="Volver a las sedes del estado"
+                                                <BackArrowButton
+                                                    ariaLabel="Volver a las sedes del estado"
                                                     onClick={() => goBackToCenters(zoomToElement)}
-                                                >
-                                                    <ArrowLeft className="h-5 w-5" />
-                                                </Button>
+                                                    className="h-10 w-28"
+                                                />
                                             ) : (
                                                 <span className="map-panel-heading-spacer" />
                                             )}
@@ -524,9 +555,7 @@ const MapaInteractivo = () => {
                                                         <CardContent className="p-6 text-center">
                                                             <Search className="mx-auto mb-3 h-7 w-7 text-violet-600" />
                                                             <h3 className="mb-2 font-semibold">
-                                                                {selectedState.status === 'disputed_claim'
-                                                                    ? 'No hay sedes registradas en esta zona'
-                                                                    : 'No hay sedes registradas en este estado'}
+                                                                No hay sedes registradas en esta región
                                                             </h3>
                                                             <p className="text-sm text-muted-foreground">
                                                                 Las sedes disponibles se muestran al elegir otro estado.
@@ -541,9 +570,9 @@ const MapaInteractivo = () => {
                             </div>
 
                             <div className="map-legend" aria-label="Leyenda de tipos de sede">
-                                <span><i className="map-legend-dot map-legend-dot--inamujer" />INAMUJER</span>
-                                <span><i className="map-legend-dot map-legend-dot--ministerio" />Ministerio</span>
-                                <span><i className="map-legend-dot map-legend-dot--otra" />Otras sedes</span>
+                                <span><House aria-hidden="true" className="map-legend-icon map-legend-icon--inamujer" />INAMUJER</span>
+                                <span><House aria-hidden="true" className="map-legend-icon map-legend-icon--ministerio" />Ministerio</span>
+                                <span><House aria-hidden="true" className="map-legend-icon map-legend-icon--otra" />Otras sedes</span>
                             </div>
                         </>
                     )}

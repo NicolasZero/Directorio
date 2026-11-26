@@ -1,4 +1,5 @@
 import { useState, type SubmitEvent } from 'react'
+import { getCoordinateValidationError } from '../schemes/directory'
 
 export interface Responsable {
     nombre: string
@@ -19,6 +20,8 @@ export function useDirectoryForm() {
     const [correo, setCorreo] = useState('')
     const [foto, setFoto] = useState('')
     const [horario, setHorario] = useState('')
+    const [latitud, setLatitud] = useState('')
+    const [longitud, setLongitud] = useState('')
     const [selectedState, setSelectedState] = useState('')
     const [selectedMunicipality, setSelectedMunicipality] = useState('')
     const [saving, setSaving] = useState(false)
@@ -87,6 +90,8 @@ export function useDirectoryForm() {
         setCorreo('')
         setFoto('')
         setHorario('')
+        setLatitud('')
+        setLongitud('')
         setSelectedState('')
         setSelectedMunicipality('')
         setServicios([])
@@ -109,6 +114,12 @@ export function useDirectoryForm() {
             return
         }
 
+        const coordinateError = getCoordinateValidationError(latitud, longitud)
+        if (coordinateError) {
+            setError(coordinateError)
+            return
+        }
+
         setSaving(true)
 
         try {
@@ -125,6 +136,8 @@ export function useDirectoryForm() {
                     correo,
                     foto,
                     horario,
+                    latitud,
+                    longitud,
                     estado: selectedState,
                     municipio: selectedMunicipality,
                     servicios,
@@ -159,6 +172,8 @@ export function useDirectoryForm() {
         correo, setCorreo,
         foto, setFoto,
         horario, setHorario,
+        latitud, setLatitud,
+        longitud, setLongitud,
         selectedState, setSelectedState,
         selectedMunicipality, setSelectedMunicipality,
         saving, setSaving,

@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router'
+import { Link, useParams, useSearchParams } from 'react-router'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import BackArrowButton from '@/components/backArrowButton'
 import {
   MapPin,
   Phone,
@@ -10,17 +11,27 @@ import {
   Clock,
   User,
   Building2,
-  ArrowLeft,
   FileText,
-  AlertCircle
+  AlertCircle,
+  ArrowLeft
 } from 'lucide-react'
-import { Link } from 'react-router'
 import { type DirectoryDetailData } from '../schemes/directory'
 import { FacebookLogoIcon, InstagramLogoIcon, LinkedinLogoIcon, TiktokLogoIcon, TwitterLogoIcon, WhatsappLogoIcon, YoutubeLogoIcon } from '@phosphor-icons/react'
 
 
 function DirectoryDetail() {
   const { id } = useParams<{ id: string }>()
+  const [searchParams] = useSearchParams()
+  const selectedState = searchParams.get('estado')
+  const selectedStateName = searchParams.get('nombre')
+  const returnParams = new URLSearchParams()
+  if (selectedState) {
+    returnParams.set('estado', selectedState)
+    if (selectedStateName) returnParams.set('nombre', selectedStateName)
+  }
+  const returnToDirectory = returnParams.toString()
+    ? `/directorio?${returnParams.toString()}`
+    : '/directorio'
   const [directorio, setDirectorio] = useState<DirectoryDetailData | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
@@ -72,9 +83,7 @@ function DirectoryDetail() {
       <div className="min-h-screen flex items-center justify-center p-8">
         <div className="text-center text-foreground">
           <p className="text-lg font-medium mb-2">{error}</p>
-          <Button variant="outline" asChild>
-            <Link to="/directorio">Volver al directorio</Link>
-          </Button>
+          <BackArrowButton to={returnToDirectory} ariaLabel="Volver al directorio" />
         </div>
       </div>
     )
@@ -85,9 +94,7 @@ function DirectoryDetail() {
       <div className="min-h-screen flex items-center justify-center p-8">
         <div className="text-center">
           <p className="text-lg font-medium">No se encontró el directorio.</p>
-          <Button variant="outline" asChild>
-            <Link to="/directorio">Volver al directorio</Link>
-          </Button>
+          <BackArrowButton to={returnToDirectory} ariaLabel="Volver al directorio" />
         </div>
       </div>
     )
@@ -95,6 +102,7 @@ function DirectoryDetail() {
 
   return (
     <>
+      <BackArrowButton to={returnToDirectory} ariaLabel="Volver al directorio" className="m-2 sm:m-4" />
       <Button
         variant="ghost"
         size="sm"

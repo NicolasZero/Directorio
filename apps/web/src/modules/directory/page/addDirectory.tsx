@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import BackArrowButton from '@/components/backArrowButton'
 import {
     Select,
     SelectContent,
@@ -25,12 +26,13 @@ import {
     Building2,
     FileText,
     AlertCircle,
-    ArrowLeft,
+    ExternalLink,
 } from 'lucide-react'
 import { useDirectoryForm } from '../hooks/useDirectoryForm'
+import { getCoordinateValidationError } from '../schemes/directory'
 import { useLocations } from '../hooks/useLocations'
 import { FacebookLogoIcon, InstagramLogoIcon, TwitterLogoIcon, WhatsappLogoIcon, TiktokLogoIcon, LinkedinLogoIcon, YoutubeLogoIcon } from '@phosphor-icons/react'
-import { Link, useNavigate, useParams } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 import { Textarea } from '@/components/ui/textarea'
 import FormField from '@/components/formField'
 import SectionHeader from '@/components/sectionHeader'
@@ -49,6 +51,8 @@ export default function AddDirectory() {
         correo, setCorreo,
         foto, setFoto,
         horario, setHorario,
+        latitud, setLatitud,
+        longitud, setLongitud,
         selectedState, setSelectedState,
         selectedMunicipality, setSelectedMunicipality,
         saving, setSaving,
@@ -71,6 +75,11 @@ export default function AddDirectory() {
 
     const { listStates, listMunicipalities, loadingLocation, error: locationError } = useLocations()
     const [loading, setLoading] = useState(isEdit)
+    const coordinateError = getCoordinateValidationError(latitud, longitud)
+    const coordinatesReady = latitud.trim() !== '' && longitud.trim() !== '' && !coordinateError
+    const coordinateMapUrl = coordinatesReady
+        ? `https://www.google.com/maps/search/?api=1&query=${Number(latitud)},${Number(longitud)}`
+        : null
 
     // Load data if in edit mode
     useEffect(() => {
@@ -98,6 +107,8 @@ export default function AddDirectory() {
                 setCorreo(directorio.correo || '')
                 setFoto(directorio.foto || '')
                 setHorario(directorio.horario || '')
+                setLatitud(directorio.latitud == null ? '' : String(directorio.latitud))
+                setLongitud(directorio.longitud == null ? '' : String(directorio.longitud))
                 setSelectedState(directorio.estado || '')
                 setSelectedMunicipality(directorio.municipio || '')
                 setServicios(directorio.servicios || [])
@@ -113,7 +124,26 @@ export default function AddDirectory() {
         }
 
         fetchDirectory()
-    }, [id])
+    }, [
+        id,
+        setCorreo,
+        setDescripcion,
+        setDireccion,
+        setError,
+        setFoto,
+        setHorario,
+        setLatitud,
+        setLongitud,
+        setMessage,
+        setNombre,
+        setRedes,
+        setRequisitos,
+        setResponsables,
+        setSelectedMunicipality,
+        setSelectedState,
+        setServicios,
+        setTelefono,
+    ])
 
     const handleFormSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -127,6 +157,11 @@ export default function AddDirectory() {
 
         if (!nombre || !direccion || !telefono || !selectedState || !selectedMunicipality) {
             setError('Por favor completa todos los campos obligatorios.')
+            return
+        }
+
+        if (coordinateError) {
+            setError(coordinateError)
             return
         }
 
@@ -146,6 +181,8 @@ export default function AddDirectory() {
                     correo,
                     foto,
                     horario,
+                    latitud,
+                    longitud,
                     estado: selectedState,
                     municipio: selectedMunicipality,
                     servicios,
@@ -194,12 +231,7 @@ export default function AddDirectory() {
                             <Building2 className="w-3 h-3 mr-1" />
                             {isEdit ? 'Editar directorio' : 'Registro de directorio'}
                         </Badge>
-                        <Button variant="ghost" size="sm" asChild>
-                            <Link to="/admin/directorio">
-                                <ArrowLeft className="w-4 h-4 mr-2" />
-                                Volver al directorio
-                            </Link>
-                        </Button>
+                        <BackArrowButton to="/admin/directorio" ariaLabel="Volver al directorio" />
                     </div>
 
                     <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-2">
@@ -360,6 +392,57 @@ export default function AddDirectory() {
                                 required
                             />
                         </FormField>
+
+                        <FormField label="Latitud" htmlFor="latitud">
+                            <Input
+                                id="latitud"
+                                type="number"
+                                min="-90"
+                                max="90"
+                                step="any"
+                                value={latitud}
+                                onChange={(e) => setLatitud(e.target.value)}
+                                placeholder="Ej. 10.5061"
+                                className="w-full rounded-3xl px-4 py-3"
+                            />
+                        </FormField>
+
+                        <FormField label="Longitud" htmlFor="longitud">
+                            <Input
+                                id="longitud"
+                                type="number"
+                                min="-180"
+                                max="180"
+                                step="any"
+                                value={longitud}
+                                onChange={(e) => setLongitud(e.target.value)}
+                                placeholder="Ej. -66.9146"
+                                className="w-full rounded-3xl px-4 py-3"
+                            />
+                        </FormField>
+                        <div className="col-span-2 flex flex-col gap-3 rounded-2xl border bg-background/70 p-4 sm:flex-row sm:items-center sm:justify-between">
+                            <p
+                                className={`text-sm ${coordinateError ? 'text-destructive' : 'text-muted-foreground'}`}
+                                role="status"
+                                aria-live="polite"
+                            >
+                                {coordinateError ||
+                                    (coordinatesReady
+                                        ? `El centro aparecerá en el mapa en ${Number(latitud).toFixed(5)}, ${Number(longitud).toFixed(5)}.`
+                                        : 'Las coordenadas son opcionales. Completa ambas para mostrar el centro en el mapa.')}
+                            </p>
+                            {coordinateMapUrl && (
+                                <a
+                                    href={coordinateMapUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex shrink-0 items-center gap-2 text-sm font-medium text-rose-700 underline-offset-4 hover:underline dark:text-rose-300"
+                                >
+                                    Verificar ubicación
+                                    <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                                </a>
+                            )}
+                        </div>
                     </div>
                 </fieldset>
 
@@ -634,10 +717,8 @@ export default function AddDirectory() {
                         </Button>
 
                         {isEdit && (
-                            <Button type="button" variant="outline" onClick={() => navigate('/admin/directorio')}>
-                                <ArrowLeft className="w-4 h-4 mr-2" />
-                                Volver sin guardar
-                            </Button>
+                            // <BackArrowButton onClick={() => navigate('/admin/directorio')} ariaLabel="Volver sin guardar" />
+                            <Button onClick={() => navigate('/admin/directorio')}>Volver sin guardar</Button>
                         )}
                     </div>
 

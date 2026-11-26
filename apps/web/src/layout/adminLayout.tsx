@@ -4,10 +4,10 @@ import Navbar from "@/components/navbar";
 
 const AdminLayout = () => {
     return (
-        <div className="h-screen flex flex-col justify-between">
+        <div className="min-h-screen w-full flex flex-col">
             <Header />
             <Navbar />
-            <main className="flex-2 pb-3">
+            <main className="w-full flex-1 pb-3">
                 <Outlet />
             </main>
             <footer className="p-4 bg-violet-700 dark:bg-violet-950">

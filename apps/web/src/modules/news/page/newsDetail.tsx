@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { ArrowLeft } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { useAuth } from '@/context/authContext'
 import { formatNewsDate, type NewsEntry } from '../types/news'
 import { sanitizeNewsHtml } from '../utils/newsContent'
+import { Button } from '@/components/ui/button'
 
 export default function NewsDetail() {
   const { id } = useParams()
@@ -60,7 +60,12 @@ export default function NewsDetail() {
             <p role={error ? 'alert' : undefined} className="text-muted-foreground">
               {error || 'No se encontró la noticia.'}
             </p>
-            <Button asChild variant="outline"><Link to="/noticias">Volver a noticias</Link></Button>
+            <Button asChild variant="ghost" className="mb-6 text-violet-600">
+              <Link to={isAdministrator ? '/admin/noticias' : '/noticias'}>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Volver a noticias
+              </Link>
+            </Button>
           </CardContent>
         </Card>
       </section>

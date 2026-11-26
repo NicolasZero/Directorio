@@ -1,106 +1,105 @@
 # Directorio INAMUJER
 
-Aplicación web y API para el directorio, cursos y noticias de INAMUJER.
+Aplicación web para consultar directorios de centros de atención, explorar sedes georreferenciadas y administrar contenidos institucionales. El repositorio es un monorepo PNPM con una API Fastify, una aplicación web React y scripts de base de datos PostgreSQL.
 
-## Base de datos
+## Requisitos
 
-Para crear las tablas, ejecuta `db/create_table.sql` en PostgreSQL. Si la base de
-datos ya existe, vuelve a ejecutar el script para crear las tablas que falten;
-las definiciones usan `IF NOT EXISTS`.
+- Node.js 22.12 o posterior.
+- pnpm 10.
+- PostgreSQL.
 
-### Mapa y sedes georreferenciadas
+## Instalación y ejecución local
 
-Las parroquias se relacionan con municipios y estos con estados. Las sedes del
-mapa se almacenan en `centros_atencion`, relacionadas con una parroquia y con
-coordenadas decimales (`latitud`, `longitud`). Las calificaciones pueden ser
-nulas si no fueron suministradas. La tabla `directorios` existente permanece
-separada, ya que representa registros del directorio público y requiere datos
-de contacto que no están disponibles para todas las sedes.
+1. Instala las dependencias desde la raíz del repositorio:
 
-Para instalar el esquema y cargar las ubicaciones suministradas, ejecutar en
-este orden desde la raíz del repositorio:
+   ```bash
+   pnpm install
+   ```
 
-1. `db/create_table.sql`
-2. `db/inster_data.sql` (catálogo existente de estados y municipios)
-3. `db/parroquias.sql` (crea la tabla y carga las parroquias requeridas por las
-   sedes entregadas)
-4. `db/data_centros.sql` (carga las sedes y coordenadas)
+2. Crea y configura una base de datos PostgreSQL. En una instalación nueva, ejecuta `db/create_table.sql`, `db/inster_data.sql` y `db/parroquias.sql`; después carga `db/insert_directorios.sql`, luego `db/data_centros.sql` y finalmente crea las vistas con `db/create_view.sql`. Son scripts SQL planos: ejecútalos desde el Query Tool de pgAdmin o con `psql`, no con `pg_restore`.
 
-Los dos scripts de carga son transaccionales e idempotentes. En la lista actual
-se usan los nombres de estados y municipios existentes; Distrito Capital se
-relaciona con `CARACAS`, y Girardot con `GIRARDOT (MARACAY)`. Las parroquias de
-las sedes se cargan en esta primera migración; el catálogo nacional completo
-debe incorporarse en una carga posterior tras normalizar y validar sus alias
-contra los municipios ya existentes. Las sedes se clasifican como `INAMUJER`,
-`MINISTERIO` u `OTRA`; las entidades estadales y municipales se mantienen como
-`OTRA` para no atribuirles una dependencia institucional sin confirmación.
+   `db/data_centros.sql` completa la dirección, descripción y coordenadas de los 133 registros de directorio suministrados sin reemplazar sus teléfonos ni correos. Agrupa los registros asociados a una misma sede para mostrar una sola ubicación en el mapa y elimina, dentro de la transacción, únicamente los 19 registros de prueba conocidos (`MAPA` / `CENTRO_ATENCION`, IDs de origen 1–19). El script se cancela si falta alguno de los 133 registros, si las ubicaciones no corresponden al estado indicado, si el conjunto de prueba está incompleto o si tiene datos relacionados. Realiza un respaldo antes de ejecutarlo.
 
-Documentación de la migración: Ing. Marco Quintana, 2026-11-14.
+   En una base que ya tiene los 133 registros de directorio y las 19 sedes de prueba, basta con ejecutar `db/data_centros.sql` una vez. Para conservar la ubicación enriquecida si luego vuelves a cargar `db/insert_directorios.sql`, su actualización idempotente respeta la descripción y dirección de los registros que ya tienen coordenadas. Las coordenadas indicadas como referencias de ciudad para ciertos municipios de Táchira, Trujillo y Zulia son aproximadas y deben confirmarse en terreno.
 
-#### Mapa interactivo y límites GeoJSON
+   Si ya tienes una base creada con las tablas `directorios` y `centros_atencion`, haz primero un respaldo PostgreSQL y luego ejecuta una sola vez `db/migrate_directorios_centros.sql`. La migración copia ambos conjuntos y sus servicios, responsables, redes y requisitos a `centros` y sus tablas relacionadas; valida los conteos y solo entonces elimina las tablas antiguas dentro de la misma transacción. Si encuentra datos existentes en las tablas destino o faltan tablas de origen, se cancela sin borrar las fuentes. Los scripts de carga actuales ya apuntan a la nueva tabla y pueden volver a ejecutarse sin duplicar registros, gracias a `fuente` y `fuente_id`.
 
-La página `/mapa` lee las sedes desde `GET /api/map/centers` y dibuja los
-GeoJSON locales en `apps/web/src/modules/map/assets/`. Los límites de estados
-usan coordenadas WGS84 (longitud, latitud) y las propiedades `mapName` (alias
-para la interfaz) y `databaseName` (nombre del catálogo local). Colombia y
-Brasil se representan como países vecinos no seleccionables. Al seleccionar un
-estado, el mapa se acerca, filtra sus marcadores y abre el panel lateral con las
-sedes. Al elegir una sede se muestra su detalle, fotografías (cuando existan),
-ubicación y enlace a Google Maps. Restablecer o cerrar la selección devuelve el
-mapa a la vista general y muestra todos los marcadores.
+   Los registros se conservan diferenciados en `tipo_registro` (`DIRECTORIO` o `MAPA`) y con su origen en `fuente`/`fuente_id`. No se fusionan automáticamente coincidencias entre ambos conjuntos: los esquemas no comparten una clave confiable para identificar una misma sede, y una unión aproximada podría borrar datos de contacto o ubicación. Los registros sospechosos de duplicidad deben compararse y consolidarse explícitamente antes de eliminar cualquiera.
 
-Los límites provienen de geoBoundaries, conjunto VEN-ADM1-42786344, basados en
-OCHA Venezuela e Instituto Nacional de Estadística, año representado 2020.
-Licencia del conjunto: CC BY 3.0 IGO. Atribución:
-[geoBoundaries](https://www.geoboundaries.org/). El mapa incluye también el
-polígono Natural Earth `West of Essequibo River`, con `status:
-disputed_claim`, `claimedBy: Venezuela` y `administeredBy: Guyana`; se presenta
-como zona reclamada, no como límite internacional acordado. Fuente del polígono:
-[Natural Earth](https://www.naturalearthdata.com/), dominio público. Las
-atribuciones se conservan en esta documentación.
+3. Configura las variables de entorno de la API en `apps/api/.env`: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD` y `DB_NAME` para PostgreSQL; `JWT_SECRET`, `ACCESS_TOKEN_EXPIRATION`, `REFRESH_TOKEN_EXPIRATION`, `ACCESS_COOKIE_NAME` y `REFRESH_COOKIE_NAME` para autenticación. `PORT` y `CORS_URL` permiten configurar el puerto y el origen de la web. No guardes credenciales reales en el repositorio.
 
-Los contornos de Nicaragua, Costa Rica, Panamá, Colombia, Brasil, Guyana y
-Surinam se derivan de Natural Earth 1:50m
-(`venezuela-paises-vecinos.geojson`), dominio público; se muestran como
-contexto regional, sin selección ni datos administrativos asociados. El
-encuadre visible se recorta al occidente para centrar Venezuela y sus fronteras
-cercanas; parte de Centroamérica queda fuera del recuadro. En escritorio, el
-marco ocupa hasta 96rem de ancho por 36rem de alto; el terreno conserva su
-proporción geográfica mientras el fondo marino se extiende hacia los lados.
-Al seleccionar una región el mapa se desplaza para dejar espacio al panel, y
-al cerrar o restablecer vuelve a quedar centrado. En pantallas pequeñas usa
-una relación 4:3 y mantiene el panel debajo del mapa.
+   La API escucha por defecto en el puerto `3001`; Vite publica la web en `http://localhost:3000` y redirige las solicitudes `/api` a la API.
 
-La fuente contiene Dependencias Federales, que aún no tiene un estado
-relacionado en la base y por eso lleva `databaseName: null`. No contiene
-el polígono de Guyana Esequiba como estado ADM1; este se integra aparte como
-reclamación geográfica. La geometría superpuesta no añade municipios o sedes a
-la base de datos de esa zona. El agua y el terreno se representan con colores
-planos y gradientes, sin texturas lineales ni datos de elevación. Para mostrar
-altimetría real se debe integrar una fuente DEM con licencia y atribución
-compatibles.
+4. Inicia los dos servicios desde la raíz:
 
-#### Fotografías de las sedes
+   ```bash
+   pnpm dev
+   ```
 
-Las imágenes opcionales se sirven desde `apps/web/public/img_sede/`, de modo
-que Vite las publique como archivos estáticos y no aumenten el paquete JavaScript.
-Para cada centro se genera un nombre de carpeta estable a partir de
-`nombre-estado-municipio`, normalizado a minúsculas y guiones. Colocar los
-archivos con estos nombres:
+   También puedes iniciarlos por separado:
 
-```
-apps/web/public/img_sede/<slug-del-centro>/img1.jpg
-apps/web/public/img_sede/<slug-del-centro>/img2.jpg
+   ```bash
+   pnpm dev:web
+   pnpm dev:api
+   ```
+
+   La ruta raíz de la API (`http://localhost:3001/`) devuelve un mensaje de estado; la interfaz web se abre en `http://localhost:3000`.
+
+## Directorio público
+
+La sección pública evita mostrar todos los registros en una sola vista y permite navegar por etapas:
+
+1. **Exploración por estado:** cada tarjeta presenta el contorno SVG del estado desde `apps/web/src/modules/map/assets/venezuela-estados.geojson`, su nombre y el total de directorios. Las siluetas usan la paleta violeta del mapa y se realzan al pasar el cursor. La búsqueda local acepta nombres con o sin acentos. Las siluetas provienen del GeoJSON local; no se incorporó una dependencia de banderas estatales.
+2. **Centros del estado:** al seleccionar una tarjeta, la URL conserva el estado mediante los parámetros `estado` y `nombre`. El estado queda visible como dato fijo y el selector de municipio ofrece únicamente municipios de ese estado.
+3. **Listado de centros:** los resultados se cargan en páginas de nueve registros con carga progresiva. Cada tarjeta completa abre los detalles del centro; el enlace telefónico sigue permitiendo iniciar una llamada.
+4. **Regreso desde el detalle:** al entrar al centro, se conservan los parámetros del estado en la URL. El botón «VOLVER» utiliza ese contexto para regresar a la lista de centros del estado seleccionado. Si el detalle se abrió directamente, vuelve al directorio general.
+
+Las tarjetas de estado y centro aparecen con una transición escalonada. El selector anima la apertura, el cierre y la entrada de sus municipios; las animaciones de tarjetas y del selector respetan la preferencia del sistema para reducir movimiento. Al cambiar de estado o abrir un centro, la página se desplaza suavemente hacia arriba cuando el usuario no ha solicitado movimiento reducido.
+
+## Mapa interactivo
+
+El mapa es una sección independiente del directorio por estado. Muestra únicamente las regiones venezolanas dentro de un marco horizontal adaptable (proporción 14:11), ajustado al contorno para reducir el espacio vacío superior e inferior, sin dibujar ni etiquetar los países vecinos. Permite acercar y alejar el mapa, seleccionar una región para ver sus sedes y abrir el panel de detalles de una sede. Las sedes se identifican con iconos de casa, conservando el tamaño de los símbolos anteriores y los colores correspondientes: rosa para INAMUJER, violeta para el Ministerio y dorado para otras sedes. En teléfonos y tabletas, el panel se organiza debajo del mapa; en pantallas amplias puede mostrarse a su lado. La flecha del panel de detalle devuelve a las sedes de la región seleccionada sin cerrar esa región. Las transiciones del panel, las tarjetas y las fotografías están definidas en `apps/web/src/modules/map/assets/style.css`.
+
+Los layouts públicos y administrativos permiten que el contenido crezca más allá de la altura de la pantalla. La navegación de escritorio usa el ancho disponible y en móvil conserva el menú desplegable, para evitar que la barra fuerce un desbordamiento horizontal.
+
+## Botón de regreso compartido
+
+Las pantallas que requieren navegación de regreso reutilizan `apps/web/src/components/backArrowButton.tsx`. El componente presenta una flecha con la paleta rojo-rosa del encabezado institucional, sombra y animaciones sutiles de interacción. Puede navegar a una ruta o ejecutar una acción local, y recibe una etiqueta accesible mediante `ariaLabel`.
+
+## API del directorio
+
+Las rutas públicas del directorio usan el prefijo `/api/directory`:
+
+| Método y ruta | Uso |
+| --- | --- |
+| `GET /api/directory/state-counts` | Total de directorios por estado para construir las tarjetas. |
+| `GET /api/directory/municipalities?estado=...` | Municipios del estado que tienen al menos un registro de directorio. |
+| `GET /api/directory/count` | Totales generales de centros, estados y municipios. |
+| `GET /api/directory?estado=...&municipio=...&page=...&limit=...` | Consulta paginada, filtrable por estado y municipio. |
+| `GET /api/directory/:id` | Detalle de un centro, incluyendo servicios, responsables, redes y requisitos. |
+| `GET /api/directory/all` | Consulta de todos los directorios, utilizada por vistas que requieren el conjunto completo. |
+
+Las operaciones `POST`, `PUT` y `DELETE` sobre `/api/directory` requieren autenticación. Los endpoints se implementan en `apps/api/src/routes/directory.js` y `apps/api/src/controllers/directoryController.js`. Los formularios de alta y edición permiten guardar latitud y longitud opcionales; deben ingresarse ambas y estar dentro de los rangos geográficos válidos. El mapa incluye los centros de mapa existentes y agrupa los registros de directorio georreferenciados que comparten municipio, dirección y coordenadas, por lo que un nuevo registro con ubicación aparece automáticamente. Si el mapa ya está abierto, al volver a su pestaña se actualiza; también se puede solicitar la actualización manualmente.
+
+## Compilación y lint
+
+Compila el monorepo:
+
+```bash
+pnpm build
 ```
 
-Si una imagen no existe o no se puede cargar, el panel muestra un marcador de
-imagen pendiente. No hay fotografías institucionales incluidas todavía.
+Para compilar únicamente la aplicación web:
 
-## Noticias
+```bash
+pnpm --filter web build
+```
 
-Las noticias se consultan públicamente en `/api/news` y `/api/news/:id`. La
-creación, edición y eliminación requieren una sesión con rol `Administrador` o
-`Usuario`. El panel se encuentra en `/admin/noticias`.
+Para ejecutar ESLint en la aplicación web:
+
+```bash
+pnpm --filter web lint
+```
 
 Las noticias nuevas se guardan como `Borrador`; solo el rol `Administrador`
 puede consultar esos borradores. La API pública muestra únicamente noticias

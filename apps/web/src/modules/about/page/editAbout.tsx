@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import BackArrowButton from '@/components/backArrowButton'
 // import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { ArrowLeft, Building2, FileText, Hammer, Handbag, Handshake, Heart, Mail, Medal, Plus, Scale, Shield, Trophy, User, X } from 'lucide-react'
-import { useNavigate, Link } from 'react-router'
+import { Building2, FileText, Hammer, Handbag, Handshake, Heart, Mail, Medal, Plus, Scale, Shield, Trophy, User, X } from 'lucide-react'
+import { useNavigate } from 'react-router'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import getIconComponent from '@/modules/about/hooks/useIconComponent'
 
@@ -120,12 +121,7 @@ export default function EditAbout() {
           <h1 className="text-3xl font-bold text-foreground md:text-4xl">Editar datos de la institución</h1>
           <p className="mt-2 text-sm">Actualiza la información institucional.</p>
         </div>
-        <Button variant="ghost" size="sm" asChild>
-          <Link to="/admin/about">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Volver
-          </Link>
-        </Button>
+        <BackArrowButton to="/admin/about" ariaLabel="Volver" />
       </header>
 
       <fieldset className="p-4 sm:p-8 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -351,9 +347,7 @@ export default function EditAbout() {
         <Button type="submit" className="rounded-3xl bg-violet-600 text-white hover:bg-violet-700" disabled={loading}>
           {loading ? 'Guardando...' : 'Guardar cambios'}
         </Button>
-        <Button type="button" variant="outline" onClick={() => navigate('/admin/about')}>
-          Volver sin guardar
-        </Button>
+        <BackArrowButton onClick={() => navigate('/admin/about')} ariaLabel="Volver sin guardar" />
         {message && (
           <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-4 mt-3 text-sm text-emerald-700">{message}</div>
         )}
