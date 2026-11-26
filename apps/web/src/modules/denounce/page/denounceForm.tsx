@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type ReactNode } from 'react'
+import { useState, type SubmitEvent, type ReactNode } from 'react'
 import { AlertCircle, ArrowLeft, ArrowRight, CheckCircle2, LoaderCircle, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -195,7 +195,7 @@ export default function DenounceForm() {
     const [submitError, setSubmitError] = useState('')
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [confirmation, setConfirmation] = useState<{ caseCode: string; secretKey: string } | null>(null)
-    const { listStates, listMunicipalities, loadingLocation, error: locationError } = useLocations()
+    const { listStates, listMunicipalities, listParishes, loadingLocation, error: locationError } = useLocations()
 
     const updateForm = <K extends keyof DenounceFormData>(key: K, value: DenounceFormData[K]) => {
         setForm((current) => ({ ...current, [key]: value }))
@@ -275,7 +275,7 @@ export default function DenounceForm() {
         updateForm('details', `${form.details.trimEnd()}${separator}${text}`)
     }
 
-    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
         event.preventDefault()
         const messages = validateStep(step)
         if (messages.length) {
@@ -518,14 +518,24 @@ export default function DenounceForm() {
                                 </fieldset>
                             )}
                             {form.municipality && (
-                                <Field label="Parroquia (opcional)" htmlFor="parish" hint="Si no la sabes, puedes dejar este espacio vacío.">
-                                    <Input
-                                        id="parish"
-                                        value={form.parish}
-                                        onChange={(event) => updateForm('parish', event.target.value)}
-                                        className="h-12"
-                                    />
-                                </Field>
+                                <fieldset className="space-y-3">
+                                    <legend className="mb-3 text-base font-semibold">Parroquia (opcional)</legend>
+                                    <p className="text-sm text-muted-foreground">
+                                        Si no la sabes, puedes dejar este espacio sin seleccionar.
+                                    </p>
+                                    {listParishes[form.state]?.[form.municipality]?.length ? (
+                                        <ChoiceGroup
+                                            name="parish"
+                                            options={listParishes[form.state][form.municipality]}
+                                            value={form.parish}
+                                            onChange={(parish) => updateForm('parish', parish)}
+                                        />
+                                    ) : (
+                                        <p role="status" className="text-sm text-muted-foreground">
+                                            No hay parroquias registradas para este municipio.
+                                        </p>
+                                    )}
+                                </fieldset>
                             )}
                             <Field label="Comunidad o punto de referencia (opcional)" htmlFor="reference">
                                 <Input
