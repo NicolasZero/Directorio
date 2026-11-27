@@ -143,20 +143,39 @@ function DirectoryDetail() {
                 <p className="text-sm text-muted-foreground">{directorio.direccion || 'No hay dirección disponible'}</p>
               </div>
             </div>
-            <div className="flex items-start gap-3">
-              <Phone className="w-5 h-5 text-rose-500 mt-0.5" />
-              <div>
-                <p className="font-medium text-sm">Teléfono</p>
-                <a
-                  href={`tel:${directorio.telefono}`}
-                  className="text-sm text-rose-600 hover:text-rose-700"
-                >
-                  {directorio.telefono || 'No hay teléfono disponible'}
-                </a>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <Mail className="w-5 h-5 text-rose-500 mt-0.5" />
+            {(directorio as unknown as { defensoras?: { id: number; correo: string | null; telefono: string | null }[] }).defensoras?.length ? (
+              (directorio as unknown as { defensoras: { id: number; correo: string | null; telefono: string | null }[] }).defensoras.map(
+                (defensora, index) => (
+                  <div key={defensora.id} className="rounded-2xl border p-3 space-y-2">
+                    <p className="font-medium text-sm">Defensora {index + 1}</p>
+                    <div className="flex items-start gap-2">
+                      <Phone className="w-4 h-4 text-rose-500 mt-0.5 shrink-0" />
+                      <a href={`tel:${defensora.telefono ?? ''}`} className="text-sm text-rose-600 hover:text-rose-700">
+                        {defensora.telefono || 'Sin teléfono'}
+                      </a>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <Mail className="w-4 h-4 text-rose-500 mt-0.5 shrink-0" />
+                      <a href={`mailto:${defensora.correo ?? ''}`} className="text-sm text-rose-600 hover:text-rose-700 break-all">
+                        {defensora.correo || 'Sin correo'}
+                      </a>
+                    </div>
+                  </div>
+                ),
+              )
+            ) : (
+              <>
+                <div className="flex items-start gap-3">
+                  <Phone className="w-5 h-5 text-rose-500 mt-0.5" />
+                  <div>
+                    <p className="font-medium text-sm">Teléfono</p>
+                    <a href={`tel:${directorio.telefono}`} className="text-sm text-rose-600 hover:text-rose-700">
+                      {directorio.telefono || 'No hay teléfono disponible'}
+                    </a>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Mail className="w-5 h-5 text-rose-500 mt-0.5" />
               <div>
                 <p className="font-medium text-sm">Correo</p>
                 <a
@@ -167,6 +186,8 @@ function DirectoryDetail() {
                 </a>
               </div>
             </div>
+              </>
+            )}
             <div className="flex items-start gap-3">
               <Clock className="w-5 h-5 text-rose-500 mt-0.5" />
               <div>
@@ -216,10 +237,10 @@ function DirectoryDetail() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <User className="w-5 h-5 text-rose-600" />
-              Equipo Responsable
+              Directora del Centro
             </CardTitle>
             <CardDescription>
-              Personas a cargo del centro
+              Persona a cargo del centro
             </CardDescription>
           </CardHeader>
           <CardContent>

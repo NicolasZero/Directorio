@@ -44,6 +44,30 @@ export const municipalitiesAll = async (request, reply) => {
     }
 }
 
+export const parroquiasByMunicipio = async (request, reply) => {
+    try {
+        const { estado, municipio } = request.query || {}
+
+        if (!estado || !municipio) {
+            return reply.code(400).send({ error: 'estado y municipio son obligatorios', status: 'failed' })
+        }
+
+        const response = await query(
+            `SELECT p.nombre
+             FROM parroquias p
+             JOIN municipios m ON m.id = p.municipio_id
+             JOIN estados e ON e.id = m.estado_id
+             WHERE e.nombre = $1 AND m.nombre = $2
+             ORDER BY p.nombre ASC`,
+            [estado, municipio]
+        )
+        return reply.code(200).send({ status: 'OK', data: response.rows.map((r) => r.nombre) })
+    } catch (error) {
+        console.log(error)
+        return reply.code(500).send({ error: 'Error interno', status: 'failed' })
+    }
+}
+
 export const allLocations = async (request, reply) => {
     try {
         const resultMunicipality = await query(`

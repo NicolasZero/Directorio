@@ -1,10 +1,9 @@
-﻿import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Dialog } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Plus, Search, Eye, Pencil, Trash2, MoreHorizontal } from 'lucide-react'
+import { Plus, Eye, Pencil, Trash2, MoreHorizontal, Filter, RotateCcw } from 'lucide-react'
 import {
   Table,
   TableBody,
@@ -13,61 +12,124 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { type DirectoryEntry } from '../schemes/directory'
 import { Link } from 'react-router'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 const PAGE_SIZE = 10
 
+interface AdminCenter {
+  id: number
+  nombre: string
+  organismo: string
+  direccion: string
+  estado: string
+  municipio: string
+  parroquia: string | null
+  defensoras: { id: number; correo: string | null; telefono: string | null }[]
+}
+
+interface FilterOptions {
+  estados: string[]
+  municipios: string[]
+  parroquias: string[]
+}
+
 export default function EditDirectory() {
-  const [directories, setDirectories] = useState<DirectoryEntry[]>([])
+  const [centers, setCenters] = useState<AdminCenter[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string>('')
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
-  const [directoryToDelete, setDirectoryToDelete] = useState<DirectoryEntry | null>(null)
-  const [deletingDirectoryId, setDeletingDirectoryId] = useState<number | null>(null)
-  const [search, setSearch] = useState<string>('')
-  const [page, setPage] = useState<number>(1)
+  const [centerToDelete, setCenterToDelete] = useState<AdminCenter | null>(null)
+  const [deletingCenterId, setDeletingCenterId] = useState<number | null>(null)
 
+  // Filtros encadenados: estado -> municipio -> parroquia
+  const [estadoFilter, setEstadoFilter] = useState<string>('')
+  const [municipioFilter, setMunicipioFilter] = useState<string>('')
+  const [parroquiaFilter, setParroquiaFilter] = useState<string>('')
+  const [filters, setFilters] = useState<FilterOptions>({ estados: [], municipios: [], parroquias: [] })
+  const [total, setTotal] = useState<number>(0)
+
+  const [page, setPage] = useState<number>(1)
+  const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE))
+
+  const buildQuery = (pageNumber: number) => {
+    const query = new URLSearchParams({ page: String(pageNumber), limit: String(PAGE_SIZE) })
+    if (estadoFilter) query.set('estado', estadoFilter)
+    if (municipioFilter) query.set('municipio', municipioFilter)
+    if (parroquiaFilter) query.set('parroquia', parroquiaFilter)
+    return query.toString()
+  }
+
+  const fetchCenters = useCallback(async (pageNumber: number) => {
+    setLoading(true)
+    setError(null)
+
+    try {
+      const response = await fetch(`/api/directory/admin/centers?${buildQuery(pageNumber)}`)
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data?.error || 'Error al cargar los centros')
+      }
+
+      setCenters(data?.data || [])
+      setTotal(data?.count || 0)
+    } catch (fetchError) {
+      console.error(fetchError)
+      setError('No se pudieron cargar los centros. Intenta de nuevo más tarde.')
+    } finally {
+      setLoading(false)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [estadoFilter, municipioFilter, parroquiaFilter])
+
+  // Opciones de filtros encadenados
   useEffect(() => {
-    const fetchDirectories = async () => {
-      setLoading(true)
-      setError(null)
+    const fetchFilters = async () => {
+      const query = new URLSearchParams()
+      if (estadoFilter) query.set('estado', estadoFilter)
+      if (municipioFilter) query.set('municipio', municipioFilter)
 
       try {
-        const response = await fetch('/api/directory')
+        const response = await fetch(`/api/directory/admin/filters?${query}`)
         const data = await response.json()
 
         if (!response.ok) {
-          throw new Error(data?.error || 'Error al cargar directorios')
+          throw new Error(data?.error || 'Error al cargar los filtros')
         }
 
-        setDirectories(data?.data || [])
+        setFilters({
+          estados: data?.data?.estados || [],
+          municipios: data?.data?.municipios || [],
+          parroquias: data?.data?.parroquias || [],
+        })
       } catch (fetchError) {
         console.error(fetchError)
-        setError('No se pudieron cargar los directorios. Intenta de nuevo más tarde.')
-      } finally {
-        setLoading(false)
       }
     }
 
-    fetchDirectories()
-  }, [])
+    void fetchFilters()
+  }, [estadoFilter, municipioFilter])
 
-  const filteredDirectories = useMemo(() => {
-    const query = search.trim().toLowerCase()
-    if (!query) return directories
-
-    return directories.filter((directorio) =>
-      [directorio.nombre, directorio.direccion, directorio.estado, directorio.municipio]
-        .join(' ')
-        .toLowerCase()
-        .includes(query)
-    )
-  }, [directories, search])
-
-  const pageCount = Math.max(1, Math.ceil(filteredDirectories.length / PAGE_SIZE))
+  useEffect(() => {
+    void fetchCenters(page)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [estadoFilter, municipioFilter, parroquiaFilter, page])
 
   useEffect(() => {
     if (page > pageCount) {
@@ -75,13 +137,15 @@ export default function EditDirectory() {
     }
   }, [page, pageCount])
 
-  const currentPageDirectories = filteredDirectories.slice(
-    (page - 1) * PAGE_SIZE,
-    page * PAGE_SIZE,
-  )
+  const clearFilters = () => {
+    setEstadoFilter('')
+    setMunicipioFilter('')
+    setParroquiaFilter('')
+    setPage(1)
+  }
 
-  const openDeleteDialog = (directorio: DirectoryEntry) => {
-    setDirectoryToDelete(directorio)
+  const openDeleteDialog = (center: AdminCenter) => {
+    setCenterToDelete(center)
     setShowDeleteDialog(true)
     setError(null)
     setMessage('')
@@ -89,37 +153,40 @@ export default function EditDirectory() {
 
   const closeDeleteDialog = () => {
     setShowDeleteDialog(false)
-    setDirectoryToDelete(null)
+    setCenterToDelete(null)
   }
 
   const handleDelete = async () => {
-    if (!directoryToDelete) return
+    if (!centerToDelete) return
 
     setShowDeleteDialog(false)
-    setDeletingDirectoryId(directoryToDelete.id)
+    setDeletingCenterId(centerToDelete.id)
     setError(null)
     setMessage('')
 
     try {
-      const response = await fetch(`/api/directory/${directoryToDelete.id}`, {
+      const response = await fetch(`/api/directory/admin/centers/${centerToDelete.id}`, {
         method: 'DELETE',
       })
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data?.error || 'Error al eliminar el directorio')
+        throw new Error(data?.error || 'Error al bloquear el centro')
       }
 
-      setDirectories((current) => current.filter((item) => item.id !== directoryToDelete.id))
-      setMessage('Directorio eliminado correctamente.')
+      setCenters((current) => current.filter((item) => item.id !== centerToDelete.id))
+      setTotal((current) => Math.max(0, current - 1))
+      setMessage('El centro fue bloqueado y quedará registrado con su fecha de eliminación.')
     } catch (deleteError) {
       console.error(deleteError)
-      setError('No se pudo eliminar el directorio. Intenta de nuevo más tarde.')
+      setError('No se pudo bloquear el centro. Intenta de nuevo más tarde.')
     } finally {
-      setDeletingDirectoryId(null)
-      setDirectoryToDelete(null)
+      setDeletingCenterId(null)
+      setCenterToDelete(null)
     }
   }
+
+  const hasActiveFilters = Boolean(estadoFilter || municipioFilter || parroquiaFilter)
 
   return (
     <div className="min-h-screen">
@@ -129,58 +196,125 @@ export default function EditDirectory() {
             Directorio
           </Badge>
           <h1 className="text-3xl md:text-4xl font-bold mb-3 text-foreground">
-            Gestión de directorios
+            Gestión de centros
           </h1>
           <p className="text-lg text-muted-foreground">
-            Aquí puede administrar los directorios
+            Centros agrupados por organismo con sus defensoras registradas
           </p>
         </div>
       </section>
 
       <section className="container mx-auto px-4">
-        <div className="grid gap-4 md:grid-cols-[1fr_auto_auto] md:items-end mb-4">
+        <div className="grid gap-4 md:grid-cols-[auto_1fr_auto] md:items-end mb-4">
           <div>
-            <p className="text-sm text-muted-foreground">Total de directorios</p>
-            <p className="text-3xl font-bold text-rose-600">{directories.length}</p>
-            <p className="text-sm text-muted-foreground mt-1">
-              {filteredDirectories.length} resultado{filteredDirectories.length !== 1 ? 's' : ''} encontrados
-            </p>
+            <p className="text-sm text-muted-foreground">Total de centros</p>
+            <p className="text-3xl font-bold text-rose-600">{total}</p>
           </div>
-          <div>
-            <Link to="/admin/directorio/nuevo" className="block w-full">
-              <Button size="lg" className="text-base font-bold bg-rose-600 hover:bg-rose-700">
-                Agregar directorio
-                <Plus className="h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center justify-end">
-            <label className="relative w-full max-w-sm">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                value={search}
-                name='search'
-                onChange={(event) => {
-                  setSearch(event.target.value)
-                  setPage(1)
-                }}
-                placeholder="Buscar"
-                className="pl-9"
-                title='Buscar por nombre, dirección o estado'
-              />
-            </label>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setSearch('')
+
+          {/* Filtros encadenados */}
+          <div className="grid gap-3 sm:grid-cols-3 md:justify-self-center w-full">
+            <Select
+              value={estadoFilter || undefined}
+              onValueChange={(value) => {
+                setEstadoFilter(value === estadoFilter ? '' : value)
+                setMunicipioFilter('')
+                setParroquiaFilter('')
                 setPage(1)
               }}
             >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Estado" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Estados con centros</SelectLabel>
+                  {filters.estados.map((estado) => (
+                    <SelectItem key={estado} value={estado}>
+                      {estado}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={municipioFilter || undefined}
+              onValueChange={(value) => {
+                setMunicipioFilter(value === municipioFilter ? '' : value)
+                setParroquiaFilter('')
+                setPage(1)
+              }}
+              disabled={!estadoFilter}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder={estadoFilter ? 'Municipio' : 'Elige un estado'} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Municipios con centros</SelectLabel>
+                  {filters.municipios.map((municipio) => (
+                    <SelectItem key={municipio} value={municipio}>
+                      {municipio}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={parroquiaFilter || undefined}
+              onValueChange={(value) => {
+                setParroquiaFilter(value === parroquiaFilter ? '' : value)
+                setPage(1)
+              }}
+              disabled={!municipioFilter}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder={municipioFilter ? 'Parroquia' : 'Elige un municipio'} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Parroquias con centros</SelectLabel>
+                  {filters.parroquias.map((parroquia) => (
+                    <SelectItem key={parroquia} value={parroquia}>
+                      {parroquia}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center md:justify-end">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={clearFilters}
+              disabled={!hasActiveFilters}
+              title="Volver a mostrar todos los centros"
+            >
+              <RotateCcw className="mr-2 h-4 w-4" />
               Limpiar
             </Button>
+            <Link to="/admin/directorio/nuevo" className="block">
+              <Button size="sm" className="font-bold bg-rose-600 hover:bg-rose-700">
+                Agregar centro
+                <Plus className="ml-1 h-4 w-4" />
+              </Button>
+            </Link>
           </div>
         </div>
+
+        {hasActiveFilters && (
+          <p className="mb-3 flex items-center gap-2 text-sm text-muted-foreground">
+            <Filter className="h-4 w-4" />
+            Filtros activos: {[
+              estadoFilter && `Estado: ${estadoFilter}`,
+              municipioFilter && `Municipio: ${municipioFilter}`,
+              parroquiaFilter && `Parroquia: ${parroquiaFilter}`,
+            ].filter(Boolean).join(' · ')}
+          </p>
+        )}
 
         {message && (
           <div className="mb-4 rounded-3xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
@@ -189,18 +323,23 @@ export default function EditDirectory() {
         )}
         <Dialog
           open={showDeleteDialog}
-          title="Eliminar directorio"
-          description={directoryToDelete ? `¿Estás seguro de eliminar el directorio “${directoryToDelete.nombre}”?` : ''}
-          confirmText="Eliminar"
+          title="Bloquear centro"
+          description={
+            centerToDelete
+              ? `¿Bloquear “${centerToDelete.organismo}”? El centro quedará registrado en la base de datos con la fecha de bloqueo, pero no se mostrará en el directorio ni en el mapa.`
+              : ''
+          }
+          confirmText="Bloquear"
           cancelText="Cancelar"
           onClose={closeDeleteDialog}
           onConfirm={handleDelete}
-          loading={deletingDirectoryId !== null}
+          loading={deletingCenterId !== null}
         />
+
         {loading ? (
           <Card className="shadow-sm">
             <CardContent className="text-center py-10">
-              <p className="font-medium">Cargando directorios...</p>
+              <p className="font-medium">Cargando centros...</p>
             </CardContent>
           </Card>
         ) : error ? (
@@ -209,10 +348,14 @@ export default function EditDirectory() {
               <p className="text-foreground font-medium">{error}</p>
             </CardContent>
           </Card>
-        ) : directories.length === 0 ? (
+        ) : centers.length === 0 ? (
           <Card className="shadow-sm">
             <CardContent className="text-center py-10">
-              <p className="font-medium">No hay directorios disponibles.</p>
+              <p className="font-medium">
+                {hasActiveFilters
+                  ? 'No hay centros con los filtros seleccionados.'
+                  : 'No hay centros disponibles.'}
+              </p>
             </CardContent>
           </Card>
         ) : (
@@ -222,64 +365,58 @@ export default function EditDirectory() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Nombre</TableHead>
-                    <TableHead>Dirección</TableHead>
-                    <TableHead>Estado</TableHead>
+                    <TableHead>Organismo</TableHead>
+                    <TableHead>Ubicación</TableHead>
+                    <TableHead>Defensoras</TableHead>
                     <TableHead>Opciones</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {currentPageDirectories.map((directorio) => (
-                    <TableRow key={directorio.id}>
-                      <TableCell>{directorio.nombre}</TableCell>
-                      <TableCell>{directorio.direccion}</TableCell>
+                  {centers.map((center) => (
+                    <TableRow key={center.id}>
+                      <TableCell className="max-w-[16rem]">
+                        <p className="font-medium truncate">{center.nombre}</p>
+                        <p className="text-xs text-muted-foreground truncate">{center.direccion}</p>
+                      </TableCell>
+                      <TableCell className="max-w-[14rem]">
+                        <p className="truncate font-medium text-rose-700 dark:text-rose-300">
+                          {center.organismo}
+                        </p>
+                      </TableCell>
+                      <TableCell className="max-w-[16rem]">
+                        <p className="text-sm truncate">{center.parroquia ?? '—'}</p>
+                        <p className="text-xs text-muted-foreground truncate">
+                          {center.municipio}, {center.estado}
+                        </p>
+                      </TableCell>
                       <TableCell>
                         <Badge className="bg-rose-50 text-rose-700 dark:bg-rose-900 dark:text-rose-100">
-                          {directorio.estado}
+                          {center.defensoras?.length ?? 0} defensora{(center.defensoras?.length ?? 0) === 1 ? '' : 's'}
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        {/* <div className="flex flex-wrap gap-2">
-                          <Link to={`/directorio/${directorio.id}`}>
-                            <Button variant="outline" size="sm">
-                              <Eye className="mr-2 h-4 w-4" />Ver
-                            </Button>
-                          </Link>
-                          <Link to={`/admin/directorio/editar/${directorio.id}`}>
-                            <Button variant="secondary" size="sm">
-                              <Pencil className="mr-2 h-4 w-4" />Editar
-                            </Button>
-                          </Link>
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => openDeleteDialog(directorio)}
-                            disabled={deletingDirectoryId === directorio.id}
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            {deletingDirectoryId === directorio.id ? 'Eliminando...' : 'Eliminar'}
-                          </Button>
-                        </div> */}
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm">
+                            <Button variant="outline" size="sm" aria-label={`Opciones de ${center.organismo}`}>
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent>
-                            <DropdownMenuItem>
-                              <Link className="w-full h-full flex items-center" to={`/directorio/${directorio.id}`}>
+                          <DropdownMenuContent className="animate-in fade-in-0 zoom-in-95 slide-in-from-top-1 duration-200">
+                            <DropdownMenuItem asChild>
+                              <Link className="w-full cursor-pointer" to={`/directorio/${center.id}`}>
                                 <Eye className="mr-2 h-4 w-4" />Ver
                               </Link>
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <Link className="w-full h-full flex items-center" to={`/admin/directorio/editar/${directorio.id}`}>
+                            <DropdownMenuItem asChild>
+                              <Link className="w-full cursor-pointer" to={`/admin/directorio/editar/${center.id}`}>
                                 <Pencil className="mr-2 h-4 w-4" />Editar
                               </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem
-                              className='gap-0'
-                              onClick={() => openDeleteDialog(directorio)}
-                              disabled={deletingDirectoryId === directorio.id}>
+                              onClick={() => openDeleteDialog(center)}
+                              disabled={deletingCenterId === center.id}
+                              className="cursor-pointer text-red-600 focus:text-red-700"
+                            >
                               <Trash2 className="mr-2 h-4 w-4" />Eliminar
                             </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -289,13 +426,10 @@ export default function EditDirectory() {
                   ))}
                 </TableBody>
               </Table>
-              {/* <TableCaption>
-                Listado de directorios cargados desde la API.
-              </TableCaption> */}
             </CardContent>
             <div className="flex flex-col gap-3 border-t bg-muted/50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-sm text-muted-foreground">
-                Mostrando {currentPageDirectories.length} de {filteredDirectories.length} resultados
+                Mostrando {centers.length} de {total} centros · Página {page} de {pageCount}
               </p>
               <div className="inline-flex flex-wrap items-center gap-2">
                 <Button

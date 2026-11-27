@@ -1,5 +1,5 @@
 // import { authenticate } from "../middlewares/authMiddleware.js"
-import { statesAll, stateById, municipalitiesAll, municipalityByStateId, allLocations } from "../controllers/locationController.js"
+import { statesAll, stateById, municipalitiesAll, municipalityByStateId, allLocations, parroquiasByMunicipio } from "../controllers/locationController.js"
 
 export default async function (fastify) {
     // fastify.addHook("preHandler", authenticate)
@@ -8,4 +8,5 @@ export default async function (fastify) {
     fastify.get("/state/:id", stateById)
     fastify.get("/state/:id/municipality", municipalityByStateId)
     fastify.get("/municipality", municipalitiesAll)
+    fastify.get("/parroquias", parroquiasByMunicipio)
 }
